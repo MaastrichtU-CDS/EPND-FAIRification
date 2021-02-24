@@ -1,4 +1,3 @@
-
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
@@ -25,20 +24,20 @@ def queryresult():
 
     SELECT ?patient ?IDvalue ?agevalue ?gendervalue ?genderCode ?tstageCode
 
-WHERE {
+    WHERE {
    
-   ?tablerow roo:P100061 ?patientID.
-   ?tablerow roo:hasage ?age. 
-   ?tablerow roo:P100018 ?gender.
-   ?tablerow roo:P100029 ?neoplasm.
-   ?neoplasm roo:P100244 ?tstage.
+    ?tablerow roo:P100061 ?patientID.
+    ?tablerow roo:hasage ?age. 
+    ?tablerow roo:P100018 ?gender.
+    ?tablerow roo:P100029 ?neoplasm.
+    ?neoplasm roo:P100244 ?tstage.
   
-   ?patientID roo:P100042 ?IDvalue. 
-   ?age roo:P100042 ?agevalue.
-   ?gender roo:P100042 ?gendervalue.
-   ?tstage roo:P100042 ?tstagevalue.
+    ?patientID roo:P100042 ?IDvalue. 
+    ?age roo:P100042 ?agevalue.
+    ?gender roo:P100042 ?gendervalue.
+    ?tstage roo:P100042 ?tstagevalue.
     
-   BIND(strafter(str(?tablerow), "http://172.20.10.14/rdf/data/") AS ?patient)
+    BIND(strafter(str(?tablerow), "http://172.20.10.14/rdf/data/") AS ?patient)
  
     OPTIONAL
     {
