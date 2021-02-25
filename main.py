@@ -78,14 +78,14 @@ app.layout = html.Div([
     html.P("Columns:"),
     dcc.Dropdown(
         id='columns',
-        value='a',
+        value='genderCode',
         options=[{'label': 'Gender', 'value': 'genderCode'},
                  {'label': 'Tstage', 'value': 'tstageCode'}],
         clearable=False
     ),
     html.P("Dataset:"),
     dcc.Checklist(
-        id = 'patient',
+        id = 'dataset',
         options=[
         {'label': 'Maastricht', 'value': 'triplifier_test_HN_Maastricht'},
         {'label': 'Montréal', 'value': 'triplifier_test_HN_Montreal'},
@@ -101,9 +101,15 @@ app.layout = html.Div([
 
 @app.callback(
     Output("pie-chart", "figure"), 
-    [Input("columns", "value")])
-def generate_chart(columns):
-    fig = px.pie(data, names=columns, color_discrete_sequence=px.colors.sequential.RdBu)
+    [Input("dataset", "value"),
+        Input("columns", "value")])
+def generate_chart(dataset, columns):
+    result = pd.DataFrame()
+    for d in dataset:
+        var = data[data['patient'].str.contains(d)]
+        result = result.append(var)
+    #print(result)
+    fig = px.pie(data, names=result[columns], color_discrete_sequence=px.colors.sequential.RdBu)
     return fig
 
 app.run_server(debug=True)
