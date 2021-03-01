@@ -6,6 +6,8 @@ import plotly.express as px
 import requests
 import pandas as pd
 from io import StringIO
+import time
+
 
 def queryresult(repo):
     endpoint = "http://docker-graphdb-root-johan-graphdb.app.dsri.unimaas.nl/repositories/"+repo
@@ -38,7 +40,7 @@ def queryresult(repo):
         ?nstage a ?n.
         #?mstage a ?m.
         ?survival a ?s.
-  
+        
    		FILTER regex(str(?g), ("http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C16576|http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C20197"))
         FILTER regex(str(?t), ("http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C48719|http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C48720|http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C48724|http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C48728|http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C48732"))
         FILTER regex(str(?n), ("http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C48705|http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C48706|http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C48786|http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C48714"))
@@ -72,8 +74,8 @@ def queryresult(repo):
 app = dash.Dash(__name__)
 
 app.layout = html.Div(
-     [
-    html.P("Columns:"),
+     children = [
+    html.H3("Columns:"),
     dcc.Dropdown(
         id='columns',
         value='genderCode',
@@ -82,7 +84,8 @@ app.layout = html.Div(
                  {'label': 'Nstage', 'value': 'nstageCode'},
                  {'label': 'Survival Status', 'value': 'survivalCode'}],
         clearable=False ),
-    html.P("Dataset:"),
+    html.Div([
+    html.H3("Dataset:"),
     dcc.Checklist(
         id='dataset',
         options=[
@@ -94,9 +97,14 @@ app.layout = html.Div(
         value=['Maastricht'],
         labelStyle={'display': 'inline-block'}
     ),
+    dcc.Loading(
+        id="loading-2",
+        children=[html.Div([html.Div(id="loading-output-2")])],
+        type="default"
+                )]),
+
     dcc.Graph(id="pie-chart")
 ])
-
 
 @app.callback(
     Output("pie-chart", "figure"),
@@ -110,5 +118,11 @@ def generate_chart(dataset, columns):
         result = result.append(data)
     fig = px.pie(result, names=result[columns], color_discrete_sequence=px.colors.sequential.RdBu)
     return fig
+
+@app.callback(
+    Output("loading-output-2", "children"),
+    Input("dataset", "value"))
+def input_triggers_nested(value):
+        time.sleep(2)
 
 app.run_server(debug=True)
