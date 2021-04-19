@@ -23,6 +23,7 @@ A simple graphical interface tool for helping a local user to describe the data 
 
 pip install -r requirements.txt
 
+It is recommended that you execute the script - main.py - using the PyCharm IDE, for example the free Community Edition can be obtained from here : https://www.jetbrains.com/pycharm/download/
 
 
 ### Data Annotation Module
