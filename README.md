@@ -17,6 +17,17 @@ Demonstration data (OPC) - OPC-RADIOMICS clinical data accessed from The Cancer 
 
 
 
+### Data Descriptor Module
+
+A simple graphical interface tool for helping a local user to describe the data is provided in ./data-descriptor/main.py. First, check the dependencies and install the required libraries using pip and the requirements file :
+
+pip install -r requirements.txt
+
+
+
+### Data Annotation Module
+
+
 
 
 
