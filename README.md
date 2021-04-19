@@ -26,7 +26,22 @@ pip install -r requirements.txt
 It is recommended that you execute the script - main.py - using the PyCharm IDE, for example the free Community Edition can be obtained from here : https://www.jetbrains.com/pycharm/download/
 
 
-### Data Annotation Module
+### Data "Triplifier"
+
+
+
+
+### Publishing anonyous METADATA
+
+
+
+### Data Annotation
+
+
+
+### FAIR Data Dashboard Module
+
+
 
 
 
