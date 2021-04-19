@@ -25,9 +25,15 @@ pip install -r requirements.txt
 
 It is recommended that you execute the script - main.py - using the PyCharm IDE, for example the free Community Edition can be obtained from here : https://www.jetbrains.com/pycharm/download/
 
+In the javaTools subdirectory, there is a Java archive (jar) file that contains the application to parse an entire structured table as a simple flattened Resource Descriptor Format (RDF) object. The so-called "Triplifier" tool works with PostGreSQL and CSV tables, however for the current demonstration we only point it towards CSV input objects.
 
-### Data "Triplifier"
+The end result of the main.py process in the Data Descriptor module is :
 
+1) An ontology (OWL) file that describes the schema of the structured data but does not contain any data elements in itself.
+
+2) A Turtle RDF (TTL) file that contains the data elements in term subject-predicate-object sentences
+
+3) A JSON file containing the selections and annotations entered by the user through the simple graphical user interface.
 
 
 
