@@ -32,3 +32,10 @@ services:
       - GDB_HEAP_SIZE=2g
       - GDB_MIN_MEM=1g
       - GDB_MAX_MEM=2g
+
+  triplifier_head_neck:
+    image: registry.gitlab.com/um-cds/fair/tools/triplifier:remoteEndpoint
+    environment:
+      - SLEEPTIME=60
+    volumes:
+      - ./data_descriptor/triplifier_head_neck.properties:/triplifier.properties
