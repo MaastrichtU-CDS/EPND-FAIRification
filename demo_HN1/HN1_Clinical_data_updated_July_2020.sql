@@ -1,3 +1,6 @@
+CREATE DATABASE hn_one;
+\c hn_one;
+
 CREATE TABLE "HN1_Clinical_data_updated_July_2020" (
     "id" TEXT,
     "index_tumour_location" TEXT,

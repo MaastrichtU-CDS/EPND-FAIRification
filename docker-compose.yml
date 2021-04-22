@@ -6,7 +6,10 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - pg-dataset:/var/lib/postgresql/data
+      - ./demo_HEAD-NECK/INFOclinical_HN_Version2_30may2018_concat.sql:/docker-entrypoint-initdb.d/INFOclinical_HN_Version2_30may2018_concat.sql
+      - ./demo_HN1/HN1_Clinical_data_updated_July_2020.sql:/docker-entrypoint-initdb.d/HN1_Clinical_data_updated_July_2020.sql
+      - ./demo_HNSCC/HNSCC_Clinical_Data.sql:/docker-entrypoint-initdb.d/HNSCC_Clinical_Data.sql
+      - ./demo_OPC/Clinical_data_list_OPC_v3.sql:/docker-entrypoint-initdb.d/Clinical_data_list_OPC_v3.sql
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -29,6 +32,3 @@ services:
       - GDB_HEAP_SIZE=2g
       - GDB_MIN_MEM=1g
       - GDB_MAX_MEM=2g
-
-volumes:
-  pg-dataset:

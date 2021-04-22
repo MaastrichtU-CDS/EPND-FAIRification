@@ -1,3 +1,6 @@
+CREATE DATABASE head_neck;
+\c head_neck;
+
 CREATE TABLE "INFOclinical_HN_Version2_30may2018_concat" (
     "Patient" TEXT,
     "Sex" TEXT,
@@ -22,9 +25,9 @@ CREATE TABLE "INFOclinical_HN_Version2_30may2018_concat" (
     "Time_diagnosis_to_LR_days" INT,
     "Time_diagnosis_to_DM_days" INT,
     "Time_diagnosis_to_Death_days" INT,
-    "" INT,
-    ""_1 INT,
-    ""_2 INT
+    "_0" INT,
+    "_1" INT,
+    "_2" INT
 );
 INSERT INTO "INFOclinical_HN_Version2_30may2018_concat" VALUES
     ('HN-HGJ-001','M',79,'Larynx','T3','N0','M0','stage III','-',0,71,'64',97,140,'chemo radiation','0',2123,1,0,0,692,NULL,NULL,NULL,NULL,NULL),

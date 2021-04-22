@@ -1,3 +1,6 @@
+CREATE DATABASE opc;
+\c opc;
+
 CREATE TABLE IF NOT EXISTS "Clinical_data_list_OPC_v3" (
     "Trial_PatientID" TEXT,
     "Age_at_diagnosis" NUMERIC(5, 3),

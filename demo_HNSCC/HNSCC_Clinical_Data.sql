@@ -1,3 +1,6 @@
+CREATE DATABASE hnscc;
+\c hnscc;
+
 CREATE TABLE IF NOT EXISTS "HNSCC_Clinical_Data" (
     "TCIA_Radiomics_ID" TEXT,
     "Gender" TEXT,
