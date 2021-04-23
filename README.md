@@ -53,7 +53,6 @@ Clone the repository (or download) on your machine. On **windows** please use th
 
 To execute the complete workflow, please execute the following commands:
 ```
-docker-compose pull
 docker-compose up -d
 ```
 
