@@ -7,7 +7,6 @@ from psycopg2 import sql, connect
 import json
 import subprocess
 import re
-import requests
 import shutil
 
 app = Flask(__name__)
