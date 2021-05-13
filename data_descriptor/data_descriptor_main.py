@@ -10,52 +10,30 @@ import re
 import shutil
 
 app = Flask(__name__)
-
 app.secret_key = "secret_key"
-
 # enable debugging mode
 app.config["DEBUG"] = True
-
-# Upload folder
 UPLOAD_FOLDER = 'static/files'
-app.config['UPLOAD_FOLDER'] =  UPLOAD_FOLDER
-file_path = None
-table = None
-url = None
-username = None
-password = None
-db_name = None
-conn = None
-col_cursor = None
-csvPath = False
-mydict = {}
-uploaded_file = None
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+class Cache:
+    file_path = None
+    table = None
+    url = None
+    username = None
+    password = None
+    db_name = None
+    conn = None
+    col_cursor = None
+    csvPath = False
+    mydict = {}
+    uploaded_file = None
+
+v = Cache()
 
 # Root URL
 @app.route('/')
 def index():
-    global file_path
-    file_path = None
-    global table
-    table = None
-    global url
-    url = None
-    global username
-    username = None
-    global password
-    password = None
-    global db_name
-    db_name = None
-    global conn
-    conn = None
-    global col_cursor
-    col_cursor = None
-    global csvPath
-    csvPath = False
-    global mydict
-    mydict = {}
-    global uploaded_file
-    uploaded_file = None
      # Set The upload HTML template '\templates\index.html'
     return render_template('index.html')
 
@@ -66,25 +44,21 @@ def allowed_log_file(filename):
 @app.route("/csv", methods=['POST'])
 def uploadFiles():
       # get the uploaded file
-      global file_path
-      global csvPath
-      global uploaded_file
-
       if not request.files:
           flash('No file selected for uploading!')
           return render_template('index.html')
-      uploaded_file = request.files['file']
+      v.uploaded_file = request.files['file']
 
-      if uploaded_file.filename == '':
+      if v.uploaded_file.filename == '':
           flash('No file selected for uploading!')
           return render_template('index.html')
 
-      if uploaded_file and allowed_log_file(uploaded_file.filename):
-          file_path = os.path.join(app.config['UPLOAD_FOLDER'], "data.csv")
+      if v.uploaded_file and allowed_log_file(v.uploaded_file.filename):
+          v.file_path = os.path.join(UPLOAD_FOLDER, "data.csv")
           # set the file path
-          uploaded_file.save(file_path)
-          columns = getColumns(file_path)
-          csvPath = True
+          v.uploaded_file.save(v.file_path)
+          columns = getColumns(v.file_path)
+          v.csvPath = True
           return render_template('categories.html', variable=columns)
 
       else:
@@ -100,24 +74,23 @@ def getColumns(csvfile):
 
 @app.route("/postgres", methods=['POST'])
 def getCredentials():
-      global url, db_name, password, username, table, conn
-      username = request.form.get('username')
-      password = request.form.get('password')
-      url= request.form.get('POSTGRES_URL')
-      db_name = request.form.get('POSTGRES_DB')
-      table = request.form.get('table')
+      v.username = request.form.get('username')
+      v.password = request.form.get('password')
+      v.url= request.form.get('POSTGRES_URL')
+      v.db_name = request.form.get('POSTGRES_DB')
+      v.table = request.form.get('table')
 
       try:
           # declare a new PostgreSQL connection object
-          conn = connect(
-              dbname=db_name,
-              user=username,
-              host=url,
-              password=password
+          v.conn = connect(
+              dbname=v.db_name,
+              user=v.username,
+              host=v.url,
+              password=v.password
           )
 
           # print the connection if successful
-          print("Connection:", conn)
+          print("Connection:", v.conn)
 
       except Exception as err:
           print("connect() ERROR:", err)
@@ -125,17 +98,16 @@ def getCredentials():
           flash('Connection unsuccessful. Please check your details!')
           return render_template('index.html')
 
-      columns = get_columns_names(conn, table)
+      columns = get_columns_names(v.conn, v.table)
 
       return render_template('categories.html', variable = columns)
 
 def get_columns_names(conn, table):
 
     columns = []
-    global col_cursor
 
     # declare cursor objects from the connection
-    col_cursor = conn.cursor()
+    v.col_cursor = conn.cursor()
 
     # concatenate string for query to get column names
     # SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = 'some_table';
@@ -152,11 +124,11 @@ def get_columns_names(conn, table):
             sql.Identifier(table)
         )
 
-        # execute the SQL string to get list with col names in a tuple
-        col_cursor.execute(sql_object)
+        # evecute the SQL string to get list with col names in a tuple
+        v.col_cursor.execute(sql_object)
 
         # get the tuple element from the liast
-        col_names = (col_cursor.fetchall())
+        col_names = (v.col_cursor.fetchall())
         #print(col_names)
         # iterate list of tuples and grab first element
         for tup in col_names:
@@ -164,7 +136,7 @@ def get_columns_names(conn, table):
             columns += [tup[0]]
 
         # close the cursor object to prevent memory leaks
-        col_cursor.close()
+        v.col_cursor.close()
 
     except Exception as err:
         print("get_columns_names ERROR:", err)
@@ -174,21 +146,20 @@ def get_columns_names(conn, table):
 
 @app.route("/units", methods=['POST'])
 def units():
-    global mydict
     conList = []
     f = open('python_output.json', 'w')
     for key in request.form:
          if not re.search("^ncit_comment_", key):
-             mydict[key] = {}
+             v.mydict[key] = {}
              value = request.form.get(key)
              ncit = request.form.get('ncit_comment_'+key)
              comment = request.form.get('comment_'+key)
-             mydict[key]['type'] = value
-             mydict[key]['description'] = ncit
-             mydict[key]['comments'] = comment
+             v.mydict[key]['type'] = value
+             v.mydict[key]['description'] = ncit
+             v.mydict[key]['comments'] = comment
              if value == 'Categorical Nominal' or value == 'Categorical Ordinal':
                  cat = getCategories(key, value)
-                 mydict[key]['categories'] = cat
+                 v.mydict[key]['categories'] = cat
              elif value == 'Continuous':
                  conList.append(key)
 
@@ -196,29 +167,29 @@ def units():
 
 def getCategories(key, value):
 
-    if (csvPath == True):
-         demo_data = pd.read_csv(file_path)
+    if (v.csvPath == True):
+         demo_data = pd.read_csv(v.file_path)
          x = demo_data[key].value_counts()
          y = x.to_dict()
          return y
 
     else:
         columns = []
-        sqlQuery = "select \"{0}\", count(*) from \"{1}\" " .format(key, table)
+        sqlQuery = "select \"{0}\", count(*) from \"{1}\" " .format(key, v.table)
         sqlQuery += "group by \"{}\";" .format(key)
         #print(sqlQuery)
-        sql_object = sql.SQL(sqlQuery).format(sql.Identifier(table))
+        sql_object = sql.SQL(sqlQuery).format(sql.Identifier(v.table))
         #print(sql_object)
-        col_cursor = conn.cursor()
-        # execute the SQL string to get list with col names in a tuple
-        col_cursor.execute(sql_object)
+        v.col_cursor = v.conn.cursor()
+        # evecute the SQL string to get list with col names in a tuple
+        v.col_cursor.execute(sql_object)
 
         # get the tuple element from the liast
-        col_count = (col_cursor.fetchall())
+        col_count = (v.col_cursor.fetchall())
         # print(col_count)
 
         # close the cursor object to prevent memory leaks
-        col_cursor.close()
+        v.col_cursor.close()
         counts = dict((x, y) for x, y in col_count)
         return counts
 
@@ -228,29 +199,14 @@ def unitNames():
     for key in request.form:
         unitValue = request.form.get(key)
         if unitValue!= "":
-            mydict[key]['units'] = unitValue
+            v.mydict[key]['units'] = unitValue
 
-    jsonObj = json.dumps(mydict, indent= 4)
+    jsonObj = json.dumps(v.mydict, indent= 4)
     f = open('python_output.json', 'a')
     f.write(jsonObj)
     f.close()
-    #delete existing JSON output
-    if os.path.exists("static/files/python_output.json"):
-        os.remove("static/files/python_output.json")
-    else:
-        print("The file does not exist")
-    #move new JSON output to static/files
-    shutil.move("python_output.json", "static/files/python_output.json")
-    #delete existing output and OWL files
-    if os.path.exists("static/files/ontology.owl"):
-        os.remove("static/files/ontology.owl")
-    else:
-        print("The file does not exist")
-
-    if os.path.exists("static/files/output.ttl"):
-        os.remove("static/files/output.ttl")
-    else:
-        print("The file does not exist")
+    # move new JSON output
+    shutil.move("python_output.json", "JSON_Output/python_output.json")
     #initialize Triplifier
     initTriples()
     #fileupload()
@@ -259,22 +215,29 @@ def unitNames():
 def initTriples():
 
     try:
-        if (csvPath == True):
-            args1 = "java -jar javaTool/triplifier-1.0-SNAPSHOT-jar-with-dependencies.jar -p javaTool/triplifier.properties"
+        if (v.csvPath == True):
+            f = open("triplifierCSV.properties", "w")
+            f.write("jdbc.url = jdbc:relique:csv:static//files?fileExtension=.csv\njdbc.user = \njdbc.password = \njdbc.driver = org.relique.jdbc.csv.CsvDriver"
+                    "\n\nrepo.type = rdf4j\nrepo.url = http://rdf-store:7200\nrepo.id = "+os.path.splitext(str(v.uploaded_file.filename))[0])
+            f.close()
+            args1 = "docker run --rm ^ -v %cd%/output.ttl:/output.ttl ^" \
+                    "-v %cd%/ontology.owl:/ontology.owl ^" \
+                    "-v %cd%/triplifierCSV.properties:/triplifier.properties ^" \
+                    "registry.gitlab.com/ud-cds/fair/tools/triplifier:1.0.0"
             #print(args1)
             subprocess.call(args1, shell=True)
         else:
-            f = open("javaTool//triplifierSQL.properties", "w")
-            f.write("jdbc.url = jdbc:postgresql://localhost/" +db_name+"\njdbc.user = " +username+ "\njdbc.password = " +password+ "\njdbc.driver = org.postgresql.Driver")
-            f.close()
-            args2 = "java -jar javaTool/triplifier-1.0-SNAPSHOT-jar-with-dependencies.jar -p javaTool/triplifierSQL.properties"
+            #f = open("triplifierSQL.properties", "w")
+            #f.write("jdbc.url = jdbc:postgresql://localhost/" +db_name+"\njdbc.user = " +username+ "\njdbc.password = " +password+ "\njdbc.driver = org.postgresql.Driver")
+            #f.close()
+            args2 = "docker run --rm ^ -v %cd%/output.ttl:/output.ttl ^" \
+                    "-v %cd%/ontology.owl:/ontology.owl ^" \
+                    "-v %cd%/triplifier_"+v.db_name+".properties:/triplifier.properties ^" \
+                    "registry.gitlab.com/ud-cds/fair/tools/triplifier:1.0.0"
             subprocess.call(args2, shell=True)
-
-        shutil.move("ontology.owl", "static/files/ontology.owl")
-        shutil.move("output.ttl", "static/files/output.ttl")
 
     except Exception as err:
         print(err)
 
 if (__name__ == "__main__"):
-     app.run(port = 5000)
+     app.run(port = 5050)
