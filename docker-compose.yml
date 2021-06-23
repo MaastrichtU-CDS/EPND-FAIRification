@@ -33,28 +33,108 @@ services:
       - GDB_HEAP_SIZE=2g
       - GDB_MIN_MEM=1g
       - GDB_MAX_MEM=2g
+    healthcheck:
+      test: "exit 0"
 
   triplifier_head_neck:
     image: registry.gitlab.com/um-cds/fair/tools/triplifier:1.1.0
+    hostname: head_neck.local
     # environment:
       # - SLEEPTIME=360
     volumes:
       - ./data_descriptor/triplifier_head_neck.properties:/triplifier.properties
+    healthcheck:
+      test: ["CMD", "exited with code 0"]
   triplifier_hn_one:
     image: registry.gitlab.com/um-cds/fair/tools/triplifier:1.1.0
+    hostname: hn_one.local
     # environment:
       # - SLEEPTIME=360
     volumes:
       - ./data_descriptor/triplifier_hn_one.properties:/triplifier.properties
+    healthcheck:
+      test: ["CMD", "exited with code 0"]
   triplifier_hnscc:
     image: registry.gitlab.com/um-cds/fair/tools/triplifier:1.1.0
+    hostname: hnscc.local
     # environment:
     #   - SLEEPTIME=360
     volumes:
       - ./data_descriptor/triplifier_hnscc.properties:/triplifier.properties
+    healthcheck:
+      test: ["CMD", "exited with code 0"]  
   triplifier_opc:
     image: registry.gitlab.com/um-cds/fair/tools/triplifier:1.1.0
+    hostname: opc.local
     # environment:
     #   - SLEEPTIME=360
     volumes:
       - ./data_descriptor/triplifier_opc.properties:/triplifier.properties
+    healthcheck:
+      test: ["CMD", "exited with code 0"]
+
+  flask_hn_one:
+    depends_on: 
+        #rdf-store:
+        #  condition: service_started
+        triplifier_hn_one:
+          condition: service_healthy
+    build: ./annotations/Maastro
+    container_name: maastro
+    volumes:
+      - ./annotations/Maastro:/app
+    healthcheck:
+      test: ["CMD", "exited with code 0"]
+  flask_head_neck:
+    depends_on: 
+        #rdf-store:
+        #  condition: service_started
+        triplifier_head_neck:
+          condition: service_healthy
+    build: ./annotations/Montreal
+    container_name: montreal
+    volumes:
+      - ./annotations/Montreal:/app
+    healthcheck:
+      test: ["CMD", "exited with code 0"]
+  flask_hnscc:
+    depends_on: 
+        #rdf-store:
+        #  condition: service_started
+        triplifier_hnscc:
+          condition: service_healthy
+    build: ./annotations/Houston
+    container_name: houston
+    volumes:
+      - ./annotations/Houston:/app
+    healthcheck:
+      test: ["CMD", "exited with code 0"]
+  flask_opc:
+    depends_on: 
+        #rdf-store:
+        #  condition: service_started
+        triplifier_opc:
+          condition: service_healthy
+    build: ./annotations/Toronto
+    container_name: toronto
+    volumes:
+      - ./annotations/Toronto:/app
+    healthcheck:
+      test: ["CMD", "exited with code 0"]
+
+  dashoard:
+    depends_on:
+        flask_hn_one:
+          condition: service_healthy
+        flask_head_neck:
+          condition: service_healthy
+        flask_hnscc:
+          condition: service_healthy
+        flask_opc:
+          condition: service_healthy
+    build: ./annotations/demo_dash
+    ports:
+      - "8050:8050"
+    container_name: dashboard
+    volumes:
+      - ./annotations/demo_dash:/app

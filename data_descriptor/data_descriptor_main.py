@@ -94,7 +94,7 @@ def getCredentials():
 
       except Exception as err:
           print("connect() ERROR:", err)
-          conn = None
+          v.conn = None
           flash('Connection unsuccessful. Please check your details!')
           return render_template('index.html')
 
@@ -212,32 +212,43 @@ def unitNames():
     #fileupload()
     return render_template('success.html')
 
+@app.route("/triple", methods=['POST'])
 def initTriples():
-
-    try:
-        if (v.csvPath == True):
-            f = open("triplifierCSV.properties", "w")
-            f.write("jdbc.url = jdbc:relique:csv:static//files?fileExtension=.csv\njdbc.user = \njdbc.password = \njdbc.driver = org.relique.jdbc.csv.CsvDriver"
-                    "\n\nrepo.type = rdf4j\nrepo.url = http://rdf-store:7200\nrepo.id = "+os.path.splitext(str(v.uploaded_file.filename))[0])
-            f.close()
-            args1 = "docker run --rm ^ -v %cd%/output.ttl:/output.ttl ^" \
-                    "-v %cd%/ontology.owl:/ontology.owl ^" \
-                    "-v %cd%/triplifierCSV.properties:/triplifier.properties ^" \
-                    "registry.gitlab.com/ud-cds/fair/tools/triplifier:1.0.0"
-            #print(args1)
-            subprocess.call(args1, shell=True)
+    message = ""
+    command_run = None
+    if request.form.get('action') == "Yes":
+        try:
+            if (v.csvPath == True):
+                #f = open("triplifierCSV.properties", "w")
+                #f.write("jdbc.url = jdbc:relique:csv:static//files?fileExtension=.csv\njdbc.user = \njdbc.password = \njdbc.driver = org.relique.jdbc.csv.CsvDriver"
+                #        "\n\nrepo.type = rdf4j\nrepo.url = http://rdf-store:7200\nrepo.id = "+os.path.splitext(str(v.uploaded_file.filename))[0])
+                #f.close()
+                args1 = "docker run --rm ^ -v %cd%/output.ttl:/output.ttl ^" \
+                        "-v %cd%/ontology.owl:/ontology.owl ^" \
+                        "-v %cd%/triplifierCSV.properties:/triplifier.properties ^" \
+                        "registry.gitlab.com/um-cds/fair/tools/triplifier:1.1.0"
+                #print(args1)
+                command_run = subprocess.call(args1, shell=True)
+            else:
+                f = open("triplifierSQL.properties", "w")
+                f.write("jdbc.url = jdbc:postgresql://"+v.url+"/"+v.db_name+"\njdbc.user = " +v.username+ "\njdbc.password = " +v.password+ "\njdbc.driver = org.postgresql.Driver")
+                f.close()
+                args2 = "docker run --rm ^ -v %cd%/output.ttl:/output.ttl ^" \
+                        "-v %cd%/ontology.owl:/ontology.owl ^" \
+                        "-v %cd%/triplifierSQL.properties:/triplifier.properties ^" \
+                        "registry.gitlab.com/um-cds/fair/tools/triplifier:1.0.0"
+                #print(args2)
+                command_run = subprocess.call(args2, shell=True)
+        except Exception as err:
+            print(err)
+            message = "Triplifier run Unsucessful"
+            flash(err)
+        if command_run == 0:
+            message = "Triplifier run successful!"
         else:
-            #f = open("triplifierSQL.properties", "w")
-            #f.write("jdbc.url = jdbc:postgresql://localhost/" +db_name+"\njdbc.user = " +username+ "\njdbc.password = " +password+ "\njdbc.driver = org.postgresql.Driver")
-            #f.close()
-            args2 = "docker run --rm ^ -v %cd%/output.ttl:/output.ttl ^" \
-                    "-v %cd%/ontology.owl:/ontology.owl ^" \
-                    "-v %cd%/triplifier_"+v.db_name+".properties:/triplifier.properties ^" \
-                    "registry.gitlab.com/ud-cds/fair/tools/triplifier:1.0.0"
-            subprocess.call(args2, shell=True)
-
-    except Exception as err:
-        print(err)
+            message = "Triplifier run Unsuccessful!"
+    return render_template('end.html', variable = message)
 
 if (__name__ == "__main__"):
-     app.run(port = 5050)
+     app.run(port = 5001)
+     #change to host ='0.0.0.0'
