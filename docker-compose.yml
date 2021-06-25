@@ -123,15 +123,15 @@ services:
       test: ["CMD", "exited with code 0"]
 
   dashoard:
-    depends_on:
-        flask_hn_one:
-          condition: service_healthy
-        flask_head_neck:
-          condition: service_healthy
-        flask_hnscc:
-          condition: service_healthy
-        flask_opc:
-          condition: service_healthy
+    #depends_on:
+        #flask_hn_one:
+        #  condition: service_healthy
+        #flask_head_neck:
+        #  condition: service_healthy
+        #flask_hnscc:
+        #  condition: service_healthy
+        #flask_opc:
+        #  condition: service_healthy
     build: ./annotations/demo_dash
     ports:
       - "8050:8050"
