@@ -13,4 +13,4 @@ COPY . /app
 
 EXPOSE 8050
 
-CMD ["python", "dash_main.py"]
+CMD ["python3", "dash_main.py"]
