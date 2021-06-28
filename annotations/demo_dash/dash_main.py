@@ -109,7 +109,7 @@ queryAgeSurv = """
     WHERE 
         {
         ?tablerow roo:hasage ?age.
-        ?age dbo:has_cell ?cell
+        ?age dbo:has_cell ?cell.
         ?cell roo:P100042 ?agevalue.        
         OPTIONAL {   
             ?tablerow roo:has ?overallsurvivaldays.
@@ -307,7 +307,6 @@ app.layout = html.Div([
 
     ])
 ])
-
 
 @app.callback(
     Output("sunburst", "figure"),

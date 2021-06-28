@@ -207,6 +207,9 @@ INSERT
      dbo:has_value owl:sameAs roo:P100042.    #has_value
     
      dbo:has_unit owl:sameAs roo:P100047.    #has_value
+     
+     dbo:cell_of rdf:type owl:ObjectProperty;
+                 owl:inverseOf dbo:has_cell.
        
     } 
 }
@@ -308,28 +311,25 @@ def addMapping(localTerm, targetClass, superClass):
             PREFIX owl: <http://www.w3.org/2002/07/owl#>
             PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
             PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+            PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+            PREFIX db: <http://hn_one.local/rdf/ontology/>
+            PREFIX dbo: <http://um-cds/ontologies/databaseontology/>
             INSERT {
                 GRAPH <http://annotation.local/> {
-                    ?term owl:equivalentClass [
-                        rdf:type owl:Class;
-                        owl:intersectionOf [
-                            rdf:first ?superClass;
-                            rdf:rest [
-                                rdf:first [
-                                    rdf:type owl:Class;
-                                    owl:unionOf [
-                                        rdf:first [
-                                            rdf:type owl:Restriction;
-                                            owl:hasValue ?localValue;
-                                            owl:onProperty <http://um-cds/ontologies/databaseontology/has_value>;
-                                        ];
-                                        rdf:rest rdf:nil;
-                                    ]
-                                ];
-                                rdf:rest rdf:nil;
-                            ]
-                        ]
-                    ].
+                    ?term rdf:type owl:Class ;
+          			 owl:equivalentClass [ owl:intersectionOf 
+                									( [ rdf:type owl:Restriction ;
+                                                        owl:onProperty dbo:cell_of ;
+                                                        owl:someValuesFrom ?superClass;
+                                                      ]
+                                                      [ rdf:type owl:Restriction ;
+                                                        owl:onProperty dbo:has_value ;
+                                                        owl:hasValue ?localValue;
+                                                      ]
+                                                    ) ;
+                                 rdf:type owl:Class
+                               ] ;
+          			 rdfs:subClassOf ?superClass .
                 }
             } WHERE { 
                 BIND(<%s> AS ?term).

@@ -73,10 +73,8 @@ services:
     healthcheck:
       test: ["CMD", "exited with code 0"]
 
-  flask_hn_one:
+  annotations_hn_one:
     depends_on: 
-        #rdf-store:
-        #  condition: service_started
         triplifier_hn_one:
           condition: service_healthy
     build: ./annotations/Maastro
@@ -85,10 +83,8 @@ services:
       - ./annotations/Maastro:/app
     healthcheck:
       test: ["CMD", "exited with code 0"]
-  flask_head_neck:
+  annotations_head_neck:
     depends_on: 
-        #rdf-store:
-        #  condition: service_started
         triplifier_head_neck:
           condition: service_healthy
     build: ./annotations/Montreal
@@ -97,10 +93,8 @@ services:
       - ./annotations/Montreal:/app
     healthcheck:
       test: ["CMD", "exited with code 0"]
-  flask_hnscc:
+  annotations_hnscc:
     depends_on: 
-        #rdf-store:
-        #  condition: service_started
         triplifier_hnscc:
           condition: service_healthy
     build: ./annotations/Houston
@@ -109,10 +103,8 @@ services:
       - ./annotations/Houston:/app
     healthcheck:
       test: ["CMD", "exited with code 0"]
-  flask_opc:
+  annotations_opc:
     depends_on: 
-        #rdf-store:
-        #  condition: service_started
         triplifier_opc:
           condition: service_healthy
     build: ./annotations/Toronto
@@ -123,15 +115,6 @@ services:
       test: ["CMD", "exited with code 0"]
 
   dashoard:
-    depends_on:
-        flask_hn_one:
-          condition: service_healthy
-        flask_head_neck:
-          condition: service_healthy
-        flask_hnscc:
-          condition: service_healthy
-        flask_opc:
-          condition: service_healthy
     build: ./annotations/demo_dash
     ports:
       - "8050:8050"
