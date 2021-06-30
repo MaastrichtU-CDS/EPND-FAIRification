@@ -99,7 +99,19 @@ queryS = """
     }
     }
 """
-
+queryAge = """
+	PREFIX dbo: <http://um-cds/ontologies/databaseontology/>
+    PREFIX roo: <http://www.cancerdata.org/roo/>
+    PREFIX ncit: <http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#>
+    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+    SELECT ?agevalue   
+    WHERE 
+        {
+        ?tablerow roo:hasage ?age.
+        ?age dbo:has_cell ?cell.
+        ?cell roo:P100042 ?agevalue.  
+	}
+"""
 queryAgeSurv = """
     PREFIX dbo: <http://um-cds/ontologies/databaseontology/>
     PREFIX roo: <http://www.cancerdata.org/roo/>
@@ -228,13 +240,10 @@ queryChemo = """
     PREFIX roo: <http://www.cancerdata.org/roo/>
     PREFIX ncit: <http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#>
     PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-    SELECT ?IDvalue ?therapy
+    SELECT ?therapy
     WHERE {
-    ?tablerow roo:P100061 ?patientID.
-    ?patientID dbo:has_cell ?cell.
-    ?cell roo:P100042 ?IDvalue.
     OPTIONAL {
-    ?tablerow roo:C94626 ?chemov.
+    ?tablerow roo:P100231 ?chemov.
     ?chemov dbo:has_cell ?chemocell.
     ?chemocell a ?c.
     FILTER regex(str(?c), ("http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C94626|http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C15313"))
@@ -242,8 +251,6 @@ queryChemo = """
    }
 }
 """
-
-
 def queryresult(repo, query):
     endpoint = "http://rdf-store:7200/repositories/" + repo
     annotationResponse = requests.post(endpoint,
@@ -254,7 +261,6 @@ def queryresult(repo, query):
                                        })
     output = annotationResponse.text
     return output
-
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
@@ -364,7 +370,6 @@ def update_sun(dataset, columns):
         fig = px.sunburst(None)
         return fig
 
-
 @app.callback(
     Output("scatter", "figure"),
     [Input("dataset", "value"),
@@ -373,15 +378,12 @@ def update_scatter(dataset, columns):
     result = pd.DataFrame()
     if dataset:
         for d in dataset:
-            result_data = queryresult(d, queryAgeSurv)
+            result_data = queryresult(d, queryAge)
             data = pd.read_csv(StringIO(result_data))
             result = result.append(data)
         result['Age_Range'] = pd.cut(result['agevalue'], [0, 40, 50, 60, 70, 80, 90],
                                      labels=['0-40', '40-50', '50-60', '60-70', '70-80', '80-90'])
         x = result.groupby(['Age_Range']).count()
-        x = x.drop(['survival'], axis=1)
-        x = x.drop(['survivaldays'], axis=1)
-        # print(x)
         if (x.empty == False):
             fig = px.scatter(x, color_discrete_sequence=px.colors.qualitative.Antique, size='value', color='value')
             fig.update_layout(title_text='Cases per Age_range', title_x=0.5)
@@ -393,7 +395,6 @@ def update_scatter(dataset, columns):
     else:
         fig = px.scatter(None)
         return fig
-
 
 @app.callback(
     Output("box", "figure"),

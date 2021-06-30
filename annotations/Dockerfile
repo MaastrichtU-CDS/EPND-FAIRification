@@ -11,4 +11,4 @@ RUN pip3 install -r requirements.txt
 
 COPY . /app
 
-CMD ["python3", "annotations_maastro.py"]
+CMD ["python3", "annotations.py"]

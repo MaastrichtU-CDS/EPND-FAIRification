@@ -73,46 +73,18 @@ services:
     healthcheck:
       test: ["CMD", "exited with code 0"]
 
-  annotations_hn_one:
+  annotations:
     depends_on: 
         triplifier_hn_one:
           condition: service_healthy
-    build: ./annotations/Maastro
-    container_name: maastro
-    volumes:
-      - ./annotations/Maastro:/app
-    healthcheck:
-      test: ["CMD", "exited with code 0"]
-  annotations_head_neck:
-    depends_on: 
         triplifier_head_neck:
           condition: service_healthy
-    build: ./annotations/Montreal
-    container_name: montreal
-    volumes:
-      - ./annotations/Montreal:/app
-    healthcheck:
-      test: ["CMD", "exited with code 0"]
-  annotations_hnscc:
-    depends_on: 
         triplifier_hnscc:
           condition: service_healthy
-    build: ./annotations/Houston
-    container_name: houston
-    volumes:
-      - ./annotations/Houston:/app
-    healthcheck:
-      test: ["CMD", "exited with code 0"]
-  annotations_opc:
-    depends_on: 
         triplifier_opc:
           condition: service_healthy
-    build: ./annotations/Toronto
-    container_name: toronto
-    volumes:
-      - ./annotations/Toronto:/app
-    healthcheck:
-      test: ["CMD", "exited with code 0"]
+    build: ./annotations
+    container_name: annotations
 
   dashoard:
     build: ./annotations/demo_dash
