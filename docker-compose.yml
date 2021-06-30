@@ -33,6 +33,8 @@ services:
       - GDB_HEAP_SIZE=2g
       - GDB_MIN_MEM=1g
       - GDB_MAX_MEM=2g
+  #  healthcheck:
+  #    test: "exit 0"
 
   triplifier_head_neck:
     image: registry.gitlab.com/um-cds/fair/tools/triplifier:1.1.0
@@ -41,8 +43,8 @@ services:
       # - SLEEPTIME=360
     volumes:
       - ./data_descriptor/triplifier_head_neck.properties:/triplifier.properties
-    healthcheck:
-      test: ["CMD", "exited with code 0"]
+  #  healthcheck:
+  #    test: ["CMD", "exited with code 0"]
   triplifier_hn_one:
     image: registry.gitlab.com/um-cds/fair/tools/triplifier:1.1.0
     hostname: hn_one.local
@@ -50,8 +52,8 @@ services:
       # - SLEEPTIME=360
     volumes:
       - ./data_descriptor/triplifier_hn_one.properties:/triplifier.properties
-    healthcheck:
-      test: ["CMD", "exited with code 0"]
+  #  healthcheck:
+  #    test: ["CMD", "exited with code 0"]
   triplifier_hnscc:
     image: registry.gitlab.com/um-cds/fair/tools/triplifier:1.1.0
     hostname: hnscc.local
@@ -59,8 +61,8 @@ services:
     #   - SLEEPTIME=360
     volumes:
       - ./data_descriptor/triplifier_hnscc.properties:/triplifier.properties
-    healthcheck:
-      test: ["CMD", "exited with code 0"]  
+  #  healthcheck:
+  #    test: ["CMD", "exited with code 0"]
   triplifier_opc:
     image: registry.gitlab.com/um-cds/fair/tools/triplifier:1.1.0
     hostname: opc.local
@@ -68,21 +70,21 @@ services:
     #   - SLEEPTIME=360
     volumes:
       - ./data_descriptor/triplifier_opc.properties:/triplifier.properties
-    healthcheck:
-      test: ["CMD", "exited with code 0"]
+  #  healthcheck:
+  #    test: ["CMD", "exited with code 0"]
 
-  annotations:
-    depends_on: 
-        triplifier_hn_one:
-          condition: service_healthy
-        triplifier_head_neck:
-          condition: service_healthy
-        triplifier_hnscc:
-          condition: service_healthy
-        triplifier_opc:
-          condition: service_healthy
-    build: ./annotations
-    container_name: annotations
+  #annotations:
+  #  depends_on:
+  #      triplifier_hn_one:
+  #        condition: service_healthy
+  #      triplifier_head_neck:
+  #        condition: service_healthy
+  #      triplifier_hnscc:
+  #        condition: service_healthy
+  #      triplifier_opc:
+  #        condition: service_healthy
+  #  build: ./annotations
+  #  container_name: annotations
 
   dashoard:
     build: ./annotations/demo_dash
