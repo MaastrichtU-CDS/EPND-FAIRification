@@ -15,9 +15,10 @@ Demonstration data (OPC) - OPC-RADIOMICS clinical data accessed from The Cancer 
 
 ## Components
 1. FAIR_data_dashboard (Demo version)
+
 2. Data_descriptor (For user data)
 
-### FAIR_data_dashboard
+### FAIR data dashboard
 
 #### How to run?
 Clone the repository (or download) on your machine. On **windows** please use the WSL2 with Docker, on **macOS/Linux**, you can use docker directly.
