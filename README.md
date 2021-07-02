@@ -46,7 +46,7 @@ Afterwards you can find the following systems:
 
 
 ### Data Descriptor Module
-A simple graphical interface tool for helping a local user to describe their own data in the form of CSV or PostGreSQL. After data descriptor, the user has an option to run Triplifier on their data. 
+A simple graphical interface tool for helping a local user to describe their own data in the form of CSV or PostGreSQL. After data description, the user has an option to run Triplifier on their data. 
 
 #### How to run?
 
@@ -64,7 +64,7 @@ The end result of the data_descriptor_main.py process in the Data Descriptor mod
 
 #### Publishing anonyous METADATA
 
-The user can upload their TTL files to graphDB, and publish the OWL and the JSON file to a private cloud repository, which can be used to create a customised annotation graph for their data. The usage of metadata for the creation of annotations ensures the privacy of user data.
+The user can upload their TTL files to graphDB, and publish the OWL and the JSON file to a private cloud repository, which can then be used to create a customised annotation graph for their data. The usage of metadata for the creation of annotations ensures the privacy of user data.
 
 ### Data Descriptor Module
 
