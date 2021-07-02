@@ -62,10 +62,9 @@ The end result of the data_descriptor_main.py process in the Data Descriptor mod
 
 3) A JSON file containing the selections and annotations entered by the user through the simple graphical user interface.
 
-The user can then upload their TTL files to graphDB, and send us the OWL and the JSON file (or upload it to a private cloud repo) which can be used to create a customised annotation graph for their data. This ensures the privacy of user data.
+#### Publishing anonyous METADATA
 
-#### Workflow
-
+The user can upload their TTL files to graphDB, and publish the OWL and the JSON file to a private cloud repository, which can be used to create a customised annotation graph for their data. The usage of metadata for the creation of annotations ensures the privacy of user data.
 
 ### Data Descriptor Module
 
@@ -76,11 +75,6 @@ pip install -r requirements.txt
 It is recommended that you execute the script - main.py - using the PyCharm IDE, for example the free Community Edition can be obtained from here : https://www.jetbrains.com/pycharm/download/
 
 In the javaTools subdirectory, there is a Java archive (jar) file that contains the application to parse an entire structured table as a simple flattened Resource Descriptor Format (RDF) object. The so-called "Triplifier" tool works with PostGreSQL and CSV tables, however for the current demonstration we only point it towards CSV input objects.
-
-
-
-### Publishing anonyous METADATA
-
 
 ## Developers
 - Varsha Gouthamchand
