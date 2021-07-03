@@ -1,9 +1,9 @@
 import requests
 
-endpoint1 = "http://localhost:7200/repositories/hn_one/statements"
-endpoint2 = "http://localhost:7200/repositories/head_neck/statements"
-endpoint3 = "http://localhost:7200/repositories/opc/statements"
-endpoint4 = "http://localhost:7200/repositories/hnscc/statements"
+endpoint1 = "http://rdf-store:7200/repositories/hn_one/statements"
+endpoint2 = "http://rdf-store:7200/repositories/head_neck/statements"
+endpoint3 = "http://rdf-store:7200/repositories/opc/statements"
+endpoint4 = "http://rdf-store:7200/repositories/hnscc/statements"
 
 query1 = """
 PREFIX db: <http://hn_one.local/rdf/ontology/>
