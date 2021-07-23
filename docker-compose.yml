@@ -13,6 +13,8 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+    networks:
+      - proxynet
 
   pgadmin:
     image: dpage/pgadmin4
@@ -23,6 +25,8 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: root@pgadmin.com
       PGADMIN_DEFAULT_PASSWORD: root
+    networks:
+      - proxynet
 
   rdf-store:
     build:
@@ -33,6 +37,8 @@ services:
       - GDB_HEAP_SIZE=2g
       - GDB_MIN_MEM=1g
       - GDB_MAX_MEM=2g
+    networks:
+      - proxynet
 
   triplifier_head_neck:
     image: registry.gitlab.com/um-cds/fair/tools/triplifier:1.1.0
@@ -41,6 +47,8 @@ services:
       # - SLEEPTIME=360
     volumes:
       - ./data_descriptor/triplifier_head_neck.properties:/triplifier.properties
+    networks:
+      - proxynet
 
   triplifier_hn_one:
     image: registry.gitlab.com/um-cds/fair/tools/triplifier:1.1.0
@@ -49,6 +57,8 @@ services:
       # - SLEEPTIME=360
     volumes:
       - ./data_descriptor/triplifier_hn_one.properties:/triplifier.properties
+    networks:
+      - proxynet
 
   triplifier_hnscc:
     image: registry.gitlab.com/um-cds/fair/tools/triplifier:1.1.0
@@ -57,6 +67,8 @@ services:
     #   - SLEEPTIME=360
     volumes:
       - ./data_descriptor/triplifier_hnscc.properties:/triplifier.properties
+    networks:
+      - proxynet
 
   triplifier_opc:
     image: registry.gitlab.com/um-cds/fair/tools/triplifier:1.1.0
@@ -65,16 +77,9 @@ services:
     #   - SLEEPTIME=360
     volumes:
       - ./data_descriptor/triplifier_opc.properties:/triplifier.properties
+    networks:
+      - proxynet
 
-  annotations:
-    depends_on:
-      triplifier_opc:
-        condition: service_completed_successfully
-    build: ./annotations
-    container_name: annotations
-
-  dashoard:
-    build: ./annotations/demo_dash
-    ports:
-      - "8050:8050"
-    container_name: dashboard
+networks:
+  proxynet:
+    name: custom_network

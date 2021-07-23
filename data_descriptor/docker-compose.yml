@@ -5,6 +5,13 @@ services:
     build: ./
     ports: 
       - 5000:5000
-    container_name: flask-tutorial
+    container_name: dataDescriptor
     volumes:
       - ./:/app
+    networks:
+      - my-proxy
+
+networks:
+  my-proxy:
+    external:
+      name: custom_network

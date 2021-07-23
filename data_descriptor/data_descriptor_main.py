@@ -34,6 +34,8 @@ v = Cache()
 # Root URL
 @app.route('/')
 def index():
+    if os.path.exists("JSON_Output/python_output.json"):
+        os.remove("JSON_Output/python_output.json")
      # Set The upload HTML template '\templates\index.html'
     return render_template('index.html')
 
@@ -147,7 +149,8 @@ def get_columns_names(conn, table):
 @app.route("/units", methods=['POST'])
 def units():
     conList = []
-    f = open('python_output.json', 'w')
+    #f = open('python_output.json', 'w')
+    v.mydict = {}
     for key in request.form:
          if not re.search("^ncit_comment_", key):
              v.mydict[key] = {}
@@ -202,10 +205,12 @@ def unitNames():
             v.mydict[key]['units'] = unitValue
 
     jsonObj = json.dumps(v.mydict, indent= 4)
-    f = open('python_output.json', 'a')
+    f = open('python_output.json', 'w')
     f.write(jsonObj)
     f.close()
     # move new JSON output
+    if os.path.exists("JSON_Output/python_output.json"):
+        os.remove("JSON_Output/python_output.json")
     shutil.move("python_output.json", "JSON_Output/python_output.json")
     #initialize Triplifier
     initTriples()
@@ -250,5 +255,5 @@ def initTriples():
     return render_template('end.html', variable = message)
 
 if (__name__ == "__main__"):
-     app.run(port = 5001)
-     #change to host ='0.0.0.0'
+     #app.run(port = 5001)
+     app.run(host ='0.0.0.0')
