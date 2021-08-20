@@ -10,6 +10,8 @@ services:
       - ./demo_HN1/HN1_Clinical_data_updated_July_2020.sql:/docker-entrypoint-initdb.d/HN1_Clinical_data_updated_July_2020.sql
       - ./demo_HNSCC/HNSCC_Clinical_Data.sql:/docker-entrypoint-initdb.d/HNSCC_Clinical_Data.sql
       - ./demo_OPC/Clinical_data_list_OPC_v3.sql:/docker-entrypoint-initdb.d/Clinical_data_list_OPC_v3.sql
+    #uncomment out the following line if you wish to make the POSTGRESQL databases persistent on your host filesystem
+    #  - ./postgres-data:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -37,6 +39,24 @@ services:
       - GDB_HEAP_SIZE=2g
       - GDB_MIN_MEM=1g
       - GDB_MAX_MEM=2g
+    networks:
+      - proxynet
+
+  jupyter-note:
+    build:
+      context: ./jupyter
+      #dockerfile: Dockerfile
+    env_file: .env
+    ports:
+      - 8881:8888
+      - 8050:8050
+      - 5000:5000
+    volumes:
+      #-  /var/run/docker.sock:/var/run/docker.sock
+      - ./annotations:/home/jovyan/work/demo_module
+      - ./data_descriptor:/home/jovyan/work/user_data
+    environment:
+      - JUPYTER_TOKEN=flyover-1
     networks:
       - proxynet
 
