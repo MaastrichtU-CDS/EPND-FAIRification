@@ -69,17 +69,7 @@ def uploadFiles():
           output = annotationResponse.text
 
           try:
-              #myfile = Path('triplifierCSV.properties')
-              #myfile.touch(exist_ok=True)
-              #f = open(myfile, "w")
-              #f = open("triplifierCSV.properties", "w+")
-              #f.write("jdbc.url = jdbc:relique:csv:static/files?fileExtension=.csv\njdbc.user =\njdbc.password =\n"
-              #        "jdbc.driver = org.relique.jdbc.csv.CsvDriver\n\n"
-              #        "repo.type = rdf4j\nrepo.url = http://rdf-store:7200\nrepo.id = userRepo")
-              #f.close()
               args1 = "java -jar javaTool/triplifier.jar -p triplifierCSV.properties"
-              #args1 = "docker run -u 0 --rm -d --hostname user_data.local --network custom_network -v $(pwd)/triplifierCSV.properties:/triplifier.properties registry.gitlab.com/um-cds/fair/tools/triplifier:1.1.0"
-              #args1 = "docker-compose up -d"
               print(args1)
               command_run = subprocess.call(args1, shell=True)
           except Exception as err:
