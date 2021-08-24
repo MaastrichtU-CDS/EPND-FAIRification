@@ -46,7 +46,6 @@ services:
     build:
       context: ./jupyter
       #dockerfile: Dockerfile
-    env_file: .env
     ports:
       - 8881:8888
       - 8050:8050
