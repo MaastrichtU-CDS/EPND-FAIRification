@@ -51,7 +51,6 @@ services:
       - 8050:8050
       - 5000:5000
     volumes:
-      - ./annotations:/home/jovyan/work/demo_module
       - ./data_descriptor:/home/jovyan/work/user_module
     environment:
       - JUPYTER_TOKEN=flyover-1
