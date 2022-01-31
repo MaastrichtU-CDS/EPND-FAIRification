@@ -18,15 +18,18 @@ To execute the complete workflow, please execute the following commands from the
 ```
 docker-compose up -d
 ```
-The end result of the data_descriptor_main.py process in the Data Descriptor module is:
 
-1) An ontology (OWL) file that describes the schema of the structured data but does not contain any data elements in itself, along with the selections and annotations entered by the user through the simple graphical user interface.
+The user interface will then be available at [http://localhost:5000/](http://localhost:5000/).
 
-2) A Turtle RDF (TTL) file that contains the data elements in term subject-predicate-object sentences.
+The end result of going through the entire process is:
+
+1) An ontology in the RDF repository (under graph `http://ontology.local/`) that describes the schema of the structured data but does not contain any data elements in itself, along with the selections and annotations entered by the user through the simple graphical user interface.
+
+2) A triples database in the RDF repository (under graph `http://data.local/`) that contains the data elements in term subject-predicate-object sentences.
 
 You can find the following systems:
-* Postgres web admin: [[http://localhost/]]
-* RDF repository: [[http://localhost:7200]]
+* Postgres web admin: http://localhost/
+* RDF repository: http://localhost:7200
 
 #### Publishing anonyous METADATA
 The user can publish their OWL files to a private cloud repository, which can then be used to create a customised annotation graph for their data. The usage of metadata for the creation of annotations ensures the privacy of user data.
