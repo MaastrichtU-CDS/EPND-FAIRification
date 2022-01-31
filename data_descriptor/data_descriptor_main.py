@@ -142,7 +142,7 @@ def getCredentials():
       return render_template('triples.html', variable = message)
 
 # Get the uploaded files
-@app.route("/repo", methods=['POST'])
+@app.route("/repo", methods=['GET', 'POST'])
 def queryresult():
     queryColumn ="""
     PREFIX dbo: <http://um-cds/ontologies/databaseontology/>
