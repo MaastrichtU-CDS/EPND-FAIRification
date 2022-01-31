@@ -39,25 +39,9 @@ services:
       - GDB_HEAP_SIZE=2g
       - GDB_MIN_MEM=1g
       - GDB_MAX_MEM=2g
-    networks:
-      - proxynet
 
-  jupyter-note:
+  data-descriptor:
     build:
-      context: ./jupyter
-      #dockerfile: Dockerfile
+      context: ./data_descriptor
     ports:
-      - 8881:8888
-      - 8050:8050
       - 5000:5000
-    volumes:
-      - ./data_descriptor:/home/jovyan/work/user_module
-    environment:
-      - JUPYTER_TOKEN=flyover-1
-    hostname: "data.local"
-    networks:
-      - proxynet
-
-networks:
-  proxynet:
-    name: custom_network
