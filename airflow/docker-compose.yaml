@@ -70,6 +70,14 @@ x-airflow-common:
       condition: service_healthy
 
 services:
+  management:
+    build: ./management_webpage
+    ports:
+      - 5000:5000
+    volumes:
+      - ./management_webpage:/app
+    restart: always
+  
   postgres:
     image: postgres:13
     environment:
