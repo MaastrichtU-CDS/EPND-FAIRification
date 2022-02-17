@@ -15,6 +15,10 @@ app.config["DEBUG"] = True
 UPLOAD_FOLDER = 'static/files'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
+# if folder does not exist, create
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
+
 class Cache:
     mydict = {}
     repo = 'userRepo'
