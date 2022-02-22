@@ -71,7 +71,7 @@ x-airflow-common:
 
 services:
   management:
-    build: ./management_webpage
+    build: ../management_webpage
     ports:
       - 5000:5000
     volumes:
