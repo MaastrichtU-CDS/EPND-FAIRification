@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!--
+<p>{{ name }}</p>
+
+<img src={{ url }} alt="Chart" height="42" width="42">-->
+
+    {% for CDMtable in CDMtables %}
+        {{ CDMtable|safe }}
+    {% endfor %}
+
+    {% for table in tables %}
+        {{ table|safe }}
+    {% endfor %}
+
+<select name="columns" method="GET" action="/">
+    {% for column in columns %}
+        <option value=" {{column}}" SELECTED>{{column}}</option>
+    {% endfor %}
+</select>
+<select name="cdmcolumns" method="GET" action="/">
+    {% for cdmcolumn in cdmcolumns %}
+        <option value=" {{cdmcolumn}}" SELECTED>{{cdmcolumn}}</option>
+    {% endfor %}
+</select>
+<button>Ready</button>
+
+{% endblock %}
