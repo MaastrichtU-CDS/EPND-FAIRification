@@ -5,14 +5,19 @@
 <p>{{ name }}</p>
 
 <img src={{ url }} alt="Chart" height="42" width="42">-->
-
+<div style="overflow-x:auto;">
     {% for CDMtable in CDMtables %}
         {{ CDMtable|safe }}
     {% endfor %}
+</div>
+<br>
 
+<div style="overflow-x:auto;">
     {% for table in tables %}
         {{ table|safe }}
     {% endfor %}
+</div>
+<br>
 
 <select name="columns" method="GET" action="/">
     {% for column in columns %}

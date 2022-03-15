@@ -21,7 +21,12 @@ cdmcol = list(CDM['variable'])
 #plt.plot(idValue)
 #plt.savefig('/new_plot.png')
 
-@bp.route('/linkdatasets', methods=('GET', 'POST'))
+@bp.route('/')
 def linker():
+    return render_template("linkdatasets/linkdatasets.html", columns=datacol, cdmcolumns=cdmcol, CDMtables=[CDM.to_html(classes='data')], CDMtitles=CDM.columns.values, tables=[datadescribe.to_html(classes='data')], titles=datadescribe.columns.values)
+    #return render_template("linkdatasets/linkdatasets.html", name = 'new_plot', url='/new_plot.png', columns=datacol, cdmcolumns=cdmcol, CDMtables=[CDM.to_html(classes='data')], CDMtitles=CDM.columns.values, tables=[datadescribe.to_html(classes='data')], titles=datadescribe.columns.values)
+
+@bp.route('/linkdatasets', methods=('GET', 'POST'))
+def linker2():
     return render_template("linkdatasets/linkdatasets.html", columns=datacol, cdmcolumns=cdmcol, CDMtables=[CDM.to_html(classes='data')], CDMtitles=CDM.columns.values, tables=[datadescribe.to_html(classes='data')], titles=datadescribe.columns.values)
     #return render_template("linkdatasets/linkdatasets.html", name = 'new_plot', url='/new_plot.png', columns=datacol, cdmcolumns=cdmcol, CDMtables=[CDM.to_html(classes='data')], CDMtitles=CDM.columns.values, tables=[datadescribe.to_html(classes='data')], titles=datadescribe.columns.values)
