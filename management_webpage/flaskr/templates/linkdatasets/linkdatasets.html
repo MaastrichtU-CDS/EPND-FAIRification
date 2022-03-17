@@ -19,13 +19,7 @@
     {% endfor %}
 </div>
 <br>
--->
-<div style="overflow-x:auto;">
-    {% for linkeddatatable in linkeddatatables %}
-        {{ linkeddatatable|safe }}
-    {% endfor %}
-</div>
-<br>
+<br>-->
 
 
 <form class = "linkColumns" method="POST" action="{{ url_for('linkdatasets.submitForm') }}">
