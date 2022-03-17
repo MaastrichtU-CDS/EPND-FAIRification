@@ -5,6 +5,7 @@
 <p>{{ name }}</p>
 
 <img src={{ url }} alt="Chart" height="42" width="42">-->
+<!--
 <div style="overflow-x:auto;">
     {% for CDMtable in CDMtables %}
         {{ CDMtable|safe }}
@@ -18,17 +19,41 @@
     {% endfor %}
 </div>
 <br>
-
-<select name="columns" method="GET" action="/">
-    {% for column in columns %}
-        <option value=" {{column}}" SELECTED>{{column}}</option>
+-->
+<div style="overflow-x:auto;">
+    {% for linkeddatatable in linkeddatatables %}
+        {{ linkeddatatable|safe }}
     {% endfor %}
-</select>
-<select name="cdmcolumns" method="GET" action="/">
-    {% for cdmcolumn in cdmcolumns %}
-        <option value=" {{cdmcolumn}}" SELECTED>{{cdmcolumn}}</option>
-    {% endfor %}
-</select>
-<button>Ready</button>
+</div>
+<br>
 
+
+<form class = "linkColumns" method="POST" action="{{ url_for('linkdatasets.submitForm') }}">
+    <div>
+        <select name="columns" method="GET" action="/">
+            {% for column in columns %}
+                <option value="{{column}}" SELECTED>{{column}}</option>
+            {% endfor %}
+        </select>
+        <select name="cdmcolumns" smethod="GET" action="/">
+            {% for cdmcolumn in cdmcolumns %}
+                <option value=" {{cdmcolumn}}" SELECTED>{{cdmcolumn}}</option>
+            {% endfor %}
+        </select>
+        <button>Ready</button>
+    </div>
+</form>
+
+<table>
+    <tr>
+        <th>Dataset Column</th>
+        <th>CDM Column</th>
+    </tr>
+    {% for link in links %}
+    <tr>
+        <td> {{link['datacolumn']}} </td>
+        <td> {{link['cdmcolumn']}} </td>
+    </tr>
+    {% endfor %}
+</table>
 {% endblock %}
