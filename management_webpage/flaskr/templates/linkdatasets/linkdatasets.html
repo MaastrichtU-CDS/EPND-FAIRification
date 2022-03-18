@@ -26,12 +26,12 @@
     <div>
         <select name="columns" method="GET" action="/">
             {% for column in columns %}
-                <option value="{{column}}" SELECTED>{{column}}</option>
+                    <option value="{{column}}" SELECTED>{{column}}</option>
             {% endfor %}
         </select>
         <select name="cdmcolumns" smethod="GET" action="/">
             {% for cdmcolumn in cdmcolumns %}
-                <option value=" {{cdmcolumn}}" SELECTED>{{cdmcolumn}}</option>
+                <option value="{{cdmcolumn}}" SELECTED>{{cdmcolumn}}</option>
             {% endfor %}
         </select>
         <button>Ready</button>
@@ -42,12 +42,17 @@
     <tr>
         <th>Dataset Column</th>
         <th>CDM Column</th>
+        <th></th>
     </tr>
     {% for link in links %}
     <tr>
         <td> {{link['datacolumn']}} </td>
         <td> {{link['cdmcolumn']}} </td>
+        <td>   <form action="{{ url_for('linkdatasets.deleteLink', name=link['datacolumn']) }}" method="post">
+            <input class="danger" type="submit" value="Delete">
+          </form> </td>
     </tr>
+    
     {% endfor %}
 </table>
 {% endblock %}

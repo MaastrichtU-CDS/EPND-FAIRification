@@ -21,3 +21,8 @@ def newLink(value1, value2):
     db = get_db()
     db.execute("INSERT INTO linkedTable (datacolumn, cdmcolumn) VALUES (?, ?)", (value1, value2))
     db.commit()
+    
+def deleteLink(value1):
+    db = get_db()
+    db.execute("DELETE FROM linkedTable WHERE datacolumn=?", (value1,))
+    db.commit()

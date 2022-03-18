@@ -1,5 +1,6 @@
 from flaskr.db import get_db
 import pandas as pd
+import sparql_dataframe
 
 def getDatabase():
     db = get_db()
