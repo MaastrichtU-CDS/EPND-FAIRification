@@ -1,6 +1,7 @@
 from flaskr.db import get_db
 import pandas as pd
 import sparql_dataframe
+from flaskr import useDataset
 
 def getDatabase():
     db = get_db()
@@ -27,3 +28,10 @@ def deleteLink(value1):
     db = get_db()
     db.execute("DELETE FROM linkedTable WHERE datacolumn=?", (value1,))
     db.commit()
+
+def getDataframeTest():
+    db = get_db
+    df = pd.read_sql_query('SELECT * FROM linkedTable, db')
+    df2 = useDataset.getDatasetVariables()
+
+

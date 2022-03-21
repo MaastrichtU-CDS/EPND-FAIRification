@@ -9,8 +9,6 @@ bp = Blueprint("linkdatasets",__name__,url_prefix="/linkdatasets")
 
 @bp.route('/linkdatasets', methods=('GET', 'POST'))
 def linker():
-    useDataset.getTest()
-
     links = useLinkdata.getDatabase()
     linksdf = useLinkdata.getDataframe()
 
@@ -29,8 +27,9 @@ def linker():
 def submitForm():
     selectValueData = request.form.get('columns')
     selectValueCDM = request.form.get('cdmcolumns')
-    print(selectValueData)
-    print(selectValueCDM)
+
+    datasetUri = useDataset.getDatasetUrl(selectValueData)
+
     useLinkdata.newLink(selectValueData, selectValueCDM)
 
     links = useLinkdata.getDatabase()
