@@ -1,0 +1,8 @@
+# Deletes a class mapping (owl:equivalentClass) between the column identifier in the original dataset and the term in the CDM
+
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+delete {
+    GRAPH <http://mapping.local/> {
+        <http://umbp-johan.fritz.box/rdf/ontology/data.sex> owl:equivalentClass <http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C28421>
+    }
+} where { } 
