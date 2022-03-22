@@ -40,7 +40,12 @@ def create_app(test_config=None):
 
      from . import linkdatasets
      app.register_blueprint(linkdatasets.bp)
+     app.add_url_rule('/', endpoint='linker')
 
 
      
      return app
+
+#@app.route('/')
+#def hello():
+#    return redirect("/linkdatasets/linkdatasets/")

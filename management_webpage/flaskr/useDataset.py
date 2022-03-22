@@ -1,6 +1,7 @@
 import pandas as pd
 import sparql_dataframe as sd
 
+#Get all column names in the dataset
 def getDatasetNames():
     endpoint = 'https://graphdb.jvsoest.eu/repositories/epnd_dummy'
     q = """
@@ -19,6 +20,7 @@ def getDatasetNames():
     df = df['columnName']
     return df
 
+#Get all dataset Uri's and Names, and select the Uri that belongs to the given value
 def getDatasetUrl(value):
     endpoint = 'https://graphdb.jvsoest.eu/repositories/epnd_dummy'
     q = """
@@ -39,6 +41,7 @@ def getDatasetUrl(value):
     information = df['colUri']
     return information
     
+#Get all dataset variables and Uri's
 def getDatasetVariables():
     endpoint = 'https://graphdb.jvsoest.eu/repositories/epnd_dummy'
     q = """

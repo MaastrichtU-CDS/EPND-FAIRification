@@ -21,6 +21,11 @@
 <br>
 <br>-->
 
+<div style="overflow-x:auto;">
+    {% for CDMtable in linksdf %}
+        {{ CDMtable|safe }}
+    {% endfor %}
+</div>
 
 <form class = "linkColumns" method="POST" action="{{ url_for('linkdatasets.submitForm') }}">
     <div>
@@ -48,7 +53,7 @@
     <tr>
         <td> {{link['datacolumn']}} </td>
         <td> {{link['cdmcolumn']}} </td>
-        <td>   <form action="{{ url_for('linkdatasets.deleteLink', name=link['datacolumn']) }}" method="post">
+        <td>   <form action="{{ url_for('linkdatasets.deleteLink', value1=link['datacolumn'], value2=link['cdmcolumn']) }}" method="post">
             <input class="danger" type="submit" value="Delete">
           </form> </td>
     </tr>
