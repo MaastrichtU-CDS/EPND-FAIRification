@@ -1,1 +1,4 @@
 Flask
+pandas
+SPARQLWrapper
+sparql_dataframe
