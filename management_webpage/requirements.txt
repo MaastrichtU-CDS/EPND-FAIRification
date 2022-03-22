@@ -4,3 +4,7 @@ Pandas
 Numpy
 SPARQLWrapper
 sparql_dataframe
+
+Dataset (maybe not necessary:
+sqlite3
+click
