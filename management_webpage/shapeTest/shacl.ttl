@@ -1,14 +1,18 @@
+@prefix myshape: <./shacl.ttl#> .
 @prefix dash: <http://datashapes.org/dash#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix schema: <http://schema.org/> .
 @prefix sh: <http://www.w3.org/ns/shacl#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix sio: <http://semanticscience.org/resource/>.
 
-schema:nerd rdfs:subClassOf schema:Person.
-schema:alpha rdfs:subClassOf schema:Person.
+sio:SIO_000137 rdfs:label "category".
+sio:SIO_000915 rdfs:label "numeric scale".
+sio:SIO_000221 rdfs:label "has unit".
+sio:SIO_000300 rdfs:label "has value".
 
-schema:PersonShape
+myshape:PersonShape
     a sh:NodeShape ;
     sh:targetClass schema:Person;
     sh:property [
@@ -28,18 +32,18 @@ schema:PersonShape
     ] ;
     sh:property [
         sh:path schema:has_gender ;
-        sh:node schema:GenderShape ;
+        sh:node myshape:GenderShape ;
         sh:minCount 1;
     ] ;
     sh:property [
         sh:path schema:has_age ;
-        sh:node schema:AgeDiagnosisShape ;
+        sh:node myshape:AgeDiagnosisShape ;
         sh:minCount 1;
         sh:maxCount 1;
     ].
 
-schema:AgeDiagnosisShape
-    a sh:NodeShape ;
+myshape:AgeDiagnosisShape
+    a sh:NodeShape, sio:SIO_000915;
     sh:closed true;
     sh:targetClass schema:age_at_diagnosis;
     sh:property [
@@ -47,10 +51,11 @@ schema:AgeDiagnosisShape
         sh:hasValue schema:age_at_diagnosis;
     ];
     sh:property [
-        sh:path schema:has_unit;
-        sh:node schema:ageUnit;
+        sh:path sio:SIO_000221;
+        sh:node myshape:ageUnit;
     ].
-schema:ageUnit rdf:type sh:Nodeshape;
+myshape:ageUnit
+    a sh:NodeShape;
     sh:targetClass schema:years;
     sh:closed true;
     sh:property [
@@ -59,15 +64,15 @@ schema:ageUnit rdf:type sh:Nodeshape;
         sh:minCount 1;
     ];
     sh:property [
-        sh:path schema:has_value;
+        sh:path sio:SIO_000300;
         sh:datatype xsd:int ;
         sh:name "Age in years" ;
         sh:minCount 1;
         sh:maxCount 1;
     ].
 
-schema:GenderShape
-    a sh:NodeShape ;
+myshape:GenderShape
+    a sh:NodeShape, sio:SIO_000137;
     sh:closed true;
     sh:targetClass schema:gender;
     ## This method forces SHACL to mention that only two values are allowed (gender & male, or gender & female)

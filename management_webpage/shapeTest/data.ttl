@@ -3,6 +3,7 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix schema: <http://schema.org/> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix sio: <http://semanticscience.org/resource/>.
 
 ex:Johan
     rdf:type schema:Person, schema:nerd;
@@ -10,12 +11,12 @@ ex:Johan
     schema:familyName "van Soest" ;
     schema:birthDate "1987-30-10"^^xsd:date ;
     schema:has_gender [
-        rdf:type schema:gender, schema:female;
+        rdf:type schema:gender, schema:male;
     ];
     schema:has_age [
         rdf:type schema:age_at_diagnosis;
-        schema:has_unit [
+        sio:SIO_000221 [
             rdf:type schema:years;
-            schema:has_value "34"^^xsd:int;
+            sio:SIO_000300 "34"^^xsd:int;
         ];
     ].
