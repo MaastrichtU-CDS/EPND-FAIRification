@@ -1,0 +1,1 @@
+pyshacl -s shacl.ttl -m -a -f turtle data.ttl

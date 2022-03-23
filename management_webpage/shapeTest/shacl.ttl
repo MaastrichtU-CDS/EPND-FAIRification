@@ -1,0 +1,109 @@
+# pyshacl -s shapeTest/shacl.ttl -m -a -f human shapeTest/data.ttl
+@prefix dash: <http://datashapes.org/dash#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix schema: <http://schema.org/> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+schema:nerd rdfs:subClassOf schema:Person.
+schema:alpha rdfs:subClassOf schema:Person.
+
+schema:PersonShape
+    a sh:NodeShape ;
+    sh:targetClass schema:Person;
+    sh:property [
+        sh:path rdf:type ;
+        sh:in ( schema:nerd schema:alpha schema:Person) ;
+        sh:minCount 2;
+    ];
+    sh:property [
+        sh:path schema:givenName ;
+        sh:datatype xsd:string ;
+        sh:name "given name" ;
+    ] ;
+    sh:property [
+        sh:path schema:birthDate ;
+        sh:lessThan schema:deathDate ;
+        sh:maxCount 1 ;
+    ] ;
+    sh:property [
+        sh:path schema:has_gender ;
+        sh:node schema:GenderShape ;
+        sh:minCount 1;
+    ] ;
+    sh:property [
+        sh:path schema:has_age ;
+        sh:node schema:AgeDiagnosisShape ;
+        sh:minCount 1;
+        sh:maxCount 1;
+    ].
+
+schema:AgeDiagnosisShape
+    a sh:NodeShape ;
+    sh:closed true;
+    sh:targetClass schema:age_at_diagnosis;
+    sh:property [
+        sh:path rdf:type ;
+        sh:hasValue schema:age_at_diagnosis;
+    ];
+    sh:property [
+        sh:path schema:has_unit;
+        sh:node schema:ageUnit;
+    ].
+schema:ageUnit rdf:type sh:Nodeshape;
+    sh:targetClass schema:years;
+    sh:closed true;
+    sh:property [
+        sh:path rdf:type ;
+        sh:hasValue schema:years;
+        sh:minCount 1;
+    ];
+    sh:property [
+        sh:path schema:has_value;
+        sh:datatype xsd:int ;
+        sh:name "Age in years" ;
+        sh:minCount 1;
+        sh:maxCount 1;
+    ].
+
+schema:GenderShape
+    a sh:NodeShape ;
+    sh:closed true;
+    sh:targetClass schema:gender;
+    ## This method forces SHACL to mention that only two values are allowed (gender & male, or gender & female)
+    sh:xone (
+        [
+            sh:property [
+                sh:path rdf:type;
+                sh:hasValue schema:gender;
+                sh:minCount 2;
+                sh:maxCount 2;
+            ];
+            sh:property [
+                sh:path rdf:type;
+                sh:hasValue schema:male;
+                sh:minCount 2;
+                sh:maxCount 2;
+            ];
+        ] [
+            sh:property [
+                sh:path rdf:type;
+                sh:hasValue schema:gender;
+                sh:minCount 2;
+                sh:maxCount 2;
+            ];
+            sh:property [
+                sh:path rdf:type;
+                sh:hasValue schema:female;
+                sh:minCount 2;
+                sh:maxCount 2;
+            ];
+        ]
+    );
+    ## This method forces SHACL to include at minimum 2 out of 3 options for rdf:type
+    sh:property [
+        sh:path rdf:type ;
+        sh:in ( schema:male schema:female schema:gender) ;
+        sh:minCount 2;
+    ].
