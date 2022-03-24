@@ -118,3 +118,44 @@ _:GenderShape
         sh:in ( snomed:703117000 snomed:703118005 snomed:365873007) ;
         sh:minCount 2;
     ].
+
+################################################
+# Defining formal years of education
+################################################
+snomed:224288002 rdfs:label "Duration of formal education".
+_:educationShape
+    a sh:NodeShape, sio:SIO_000915;
+    sh:targetClass snomed:224288002;
+    sh:property [
+        sh:path rdf:type ;
+        sh:hasValue snomed:224288002;
+        sh:minCount 1;
+    ];
+    sh:property [
+        sh:path sio:SIO_000221;
+        sh:node _:educationYearsShape;
+    ].
+_:educationYearsShape
+    a sh:NodeShape;
+    sh:targetClass UO:UO_0000036;
+    sh:closed true;
+    sh:property [
+        sh:path rdf:type ;
+        sh:hasValue UO:UO_0000036;
+        sh:minCount 1;
+    ];
+    sh:property [
+        sh:path sio:SIO_000300;
+        sh:datatype xsd:int ;
+        sh:name "in years" ;
+        sh:minCount 1;
+        sh:maxCount 1;
+    ].
+
+_:APOEShape
+    a sh:NodeShape, sio:SIO_000137;
+    .
+
+_:MMSEShape
+    a sh:NodeShape, sio:SIO_000137;
+    .
