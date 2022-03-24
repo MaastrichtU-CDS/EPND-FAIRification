@@ -7,7 +7,7 @@ prefix sio: <http://semanticscience.org/resource/>
 SELECT ?nodeShape ?targetClass ?unit ?dataType ?minValue ?maxValue
 WHERE {
     ## Bind your requested variable to ?targetClass
-    BIND (<http://schema.org/age_at_diagnosis> AS ?targetClass).
+    BIND (<http://purl.bioontology.org/ontology/SNOMEDCT/423493009> AS ?targetClass).
     
     ?nodeShape rdf:type sh:NodeShape;
         sh:targetClass ?targetClass;

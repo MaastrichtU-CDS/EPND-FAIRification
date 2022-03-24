@@ -1,66 +1,66 @@
-@prefix myshape: <./shacl.ttl#> .
+@prefix _: <http://example/#> .
 @prefix dash: <http://datashapes.org/dash#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix schema: <http://schema.org/> .
 @prefix sh: <http://www.w3.org/ns/shacl#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix sio: <http://semanticscience.org/resource/>.
+@prefix snomed: <http://purl.bioontology.org/ontology/SNOMEDCT/>.
+@prefix UO: <http://purl.obolibrary.org/obo/>.
+@prefix sty: <http://purl.bioontology.org/ontology/STY/>.
 
 sio:SIO_000137 rdfs:label "category".
 sio:SIO_000915 rdfs:label "numeric scale".
 sio:SIO_000221 rdfs:label "has unit".
 sio:SIO_000300 rdfs:label "has value".
+sio:SIO_000223 rdfs:label "has property".
 
-myshape:PersonShape
+sty:T016 rdfs:label "Human".
+
+_:PersonShape
     a sh:NodeShape ;
-    sh:targetClass schema:Person;
+    sh:targetClass sty:T016;
     sh:property [
         sh:path rdf:type ;
-        sh:in ( schema:nerd schema:alpha schema:Person) ;
-        sh:minCount 2;
+        sh:hasValue sty:T016 ;
     ];
     sh:property [
-        sh:path schema:givenName ;
-        sh:datatype xsd:string ;
-        sh:name "given name" ;
-    ] ;
-    sh:property [
-        sh:path schema:birthDate ;
-        sh:lessThan schema:deathDate ;
-        sh:maxCount 1 ;
-    ] ;
-    sh:property [
-        sh:path schema:has_gender ;
-        sh:node myshape:GenderShape ;
+        sh:path sio:SIO_000223;
+        sh:node _:GenderShape ;
         sh:minCount 1;
     ] ;
     sh:property [
-        sh:path schema:has_age ;
-        sh:node myshape:AgeDiagnosisShape ;
+        sh:path sio:SIO_000223 ;
+        sh:node _:AgeDiagnosisShape ;
         sh:minCount 1;
         sh:maxCount 1;
     ].
 
-myshape:AgeDiagnosisShape
+################################################
+# Defining age at diagnosis
+################################################
+UO:UO_0000036 rdfs:label "year".
+snomed:423493009 rdfs:label "Age at diagnosis".
+
+_:AgeDiagnosisShape
     a sh:NodeShape, sio:SIO_000915;
     sh:closed true;
-    sh:targetClass schema:age_at_diagnosis;
+    sh:targetClass snomed:423493009;
     sh:property [
         sh:path rdf:type ;
-        sh:hasValue schema:age_at_diagnosis;
+        sh:hasValue snomed:423493009;
     ];
     sh:property [
         sh:path sio:SIO_000221;
-        sh:node myshape:ageUnit;
+        sh:node _:ageUnit;
     ].
-myshape:ageUnit
+_:ageUnit
     a sh:NodeShape;
-    sh:targetClass schema:years;
+    sh:targetClass UO:UO_0000036;
     sh:closed true;
     sh:property [
         sh:path rdf:type ;
-        sh:hasValue schema:years;
+        sh:hasValue UO:UO_0000036;
         sh:minCount 1;
     ];
     sh:property [
@@ -71,35 +71,42 @@ myshape:ageUnit
         sh:maxCount 1;
     ].
 
-myshape:GenderShape
+################################################
+# Defining gender
+################################################
+snomed:365873007 rdfs:label "Gender finding".
+snomed:703118005 rdfs:label "Feminine gender".
+snomed:703117000 rdfs:label "Masculine gender".
+
+_:GenderShape
     a sh:NodeShape, sio:SIO_000137;
     sh:closed true;
-    sh:targetClass schema:gender;
+    sh:targetClass snomed:365873007;
     ## This method forces SHACL to mention that only two values are allowed (gender & male, or gender & female)
     sh:xone (
         [
             sh:property [
                 sh:path rdf:type;
-                sh:hasValue schema:gender;
+                sh:hasValue snomed:365873007;
                 sh:minCount 2;
                 sh:maxCount 2;
             ];
             sh:property [
                 sh:path rdf:type;
-                sh:hasValue schema:male;
+                sh:hasValue snomed:703117000;
                 sh:minCount 2;
                 sh:maxCount 2;
             ];
         ] [
             sh:property [
                 sh:path rdf:type;
-                sh:hasValue schema:gender;
+                sh:hasValue snomed:365873007;
                 sh:minCount 2;
                 sh:maxCount 2;
             ];
             sh:property [
                 sh:path rdf:type;
-                sh:hasValue schema:female;
+                sh:hasValue snomed:703118005;
                 sh:minCount 2;
                 sh:maxCount 2;
             ];
@@ -108,6 +115,6 @@ myshape:GenderShape
     ## This method forces SHACL to include at minimum 2 out of 3 options for rdf:type
     sh:property [
         sh:path rdf:type ;
-        sh:in ( schema:male schema:female schema:gender) ;
+        sh:in ( snomed:703117000 snomed:703118005 snomed:365873007) ;
         sh:minCount 2;
     ].

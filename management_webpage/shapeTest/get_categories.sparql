@@ -7,7 +7,7 @@ prefix sio: <http://semanticscience.org/resource/>
 SELECT ?category ?categoryLabel
 WHERE {
     ## Bind your requested variable to ?targetClass
-    BIND (<http://schema.org/gender> AS ?targetClass).
+    BIND (<http://purl.bioontology.org/ontology/SNOMEDCT/365873007> AS ?targetClass).
     
     ?nodeShape rdf:type sh:NodeShape;
         sh:targetClass ?targetClass;
