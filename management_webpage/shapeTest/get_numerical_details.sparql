@@ -4,7 +4,7 @@ prefix sh: <http://www.w3.org/ns/shacl#>
 prefix xsd: <http://www.w3.org/2001/XMLSchema#>
 prefix sio: <http://semanticscience.org/resource/>
 
-SELECT ?nodeShape ?targetClass ?unit ?dataType ?minValue ?maxValue
+SELECT ?nodeShape ?targetClass ?unit ?unitLabel ?dataType ?minValue ?maxValue
 WHERE {
     ## Bind your requested variable to ?targetClass
     BIND (<http://purl.bioontology.org/ontology/SNOMEDCT/423493009> AS ?targetClass).
@@ -23,6 +23,7 @@ WHERE {
         ].
     ?numericalProperties sh:path sio:SIO_000300;
         sh:datatype ?dataType.
+    OPTIONAL {?unit rdfs:label ?unitLabel }.
     OPTIONAL {?numericalProperties sh:minInclusive ?minValue}.
     OPTIONAL {?numericalProperties sh:maxInclusive ?maxValue}.
 
