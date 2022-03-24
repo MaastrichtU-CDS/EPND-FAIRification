@@ -4,10 +4,14 @@ prefix sh: <http://www.w3.org/ns/shacl#>
 prefix xsd: <http://www.w3.org/2001/XMLSchema#>
 prefix sio: <http://semanticscience.org/resource/>
 
-SELECT ?nodeShape ?variableUri ?variableType ?variableTypeLabel
+SELECT ?nodeShape ?variableUri ?variableUriLabel ?variableType ?variableTypeLabel
 WHERE {
     ?nodeShape rdf:type sh:NodeShape;
         sh:targetClass ?variableUri.
+
+    OPTIONAL {
+        ?variableUri rdfs:label ?variableUriLabel.
+    }
     
     OPTIONAL {
         ?nodeShape rdf:type ?variableType.
