@@ -1,6 +1,6 @@
 from flaskr.db import get_db
 import pandas as pd
-import sparql_dataframe
+import sparql_dataframe as sd
 from flaskr import useDataset
 from SPARQLWrapper import SPARQLWrapper
 
@@ -38,7 +38,6 @@ def getDataframeTest():
 
 #Add a new link
 def addLink(value1, value2):
-    value1 = "http://"+value1
     value2 = "http://"+value2
 
     endpoint = SPARQLWrapper('https://graphdb.jvsoest.eu/repositories/epnd_dummy/statements')
@@ -57,8 +56,7 @@ insert {{
 
 #Delete a existing link
 def delLink(value1, value2):
-    value1 = "http://"+value1
-    value2 = "http://"+value2
+    print('start deletion')
     endpoint = SPARQLWrapper('https://graphdb.jvsoest.eu/repositories/epnd_dummy/statements')
     q = """
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
@@ -72,7 +70,29 @@ delete {{
     endpoint.setQuery(q)
     endpoint.method = 'POST'
     endpoint.query()
+    print('end deletion')
 
+def retrieveLinks():
+    endpoint = 'https://graphdb.jvsoest.eu/repositories/epnd_dummy'
+    q = """
+    PREFIX owl: <http://www.w3.org/2002/07/owl#>
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX dbo: <http://um-cds/ontologies/databaseontology/>
+
+    SELECT ?columnName ?columnUri ?targetUri
+    WHERE {
+        GRAPH <http://mapping.local/> {
+            ?columnUri owl:equivalentClass ?targetUri
+        }
+            ?columnUri rdfs:subClassOf dbo:ColumnCell;
+                dbo:column ?columnName;
+                dbo:table ?tableUri.
+            ?tableUri dbo:table ?tableName.
+        }
+
+    """
+    df = sd.get(endpoint, q)
+    return df
 def test():
     print('a')
 

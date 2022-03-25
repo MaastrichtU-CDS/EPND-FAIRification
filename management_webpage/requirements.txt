@@ -8,3 +8,10 @@ sparql_dataframe
 Dataset (maybe not necessary:
 sqlite3
 click
+
+Run:
+in management_webpage
+powershell:
+$env:FLASK_APP = "flaskr"
+$env:FLASK_ENV = "development"
+python -m flask run

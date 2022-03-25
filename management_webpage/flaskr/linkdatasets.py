@@ -7,25 +7,42 @@ import numpy as np
 
 bp = Blueprint("linkdatasets",__name__)
 
+#Code to load the needed values for the main page
 @bp.route('/', methods=('GET', 'POST'))
 def linker():
+    #if request.method == "POST":
+        #print('abc')
+        #post_url = request.form['delete']
+        #post_test = request.form['delete']
+        #print(post_url)
     links = useLinkdata.getDatabase()
     linksdf = useLinkdata.getDataframe()
     useLinkdata.test()
-    #print(links)
-    print(linksdf)
 
-    dataset = getDatasetNames()
-    dataset = dataset[~(dataset.isin(linksdf['datacolumn']))].reset_index(drop=True)
-    datacol = dataset
+    testLinksData = useLinkdata.retrieveLinks()
+    testLinksData = testLinksData.values.tolist()
+    x = 0
+    for listing in testLinksData:
+        temp = listing[2]
+        cdmName = temp.replace(temp[:7], '')
+        testLinksData[x].append(cdmName)
+        x = x + 1
 
+
+    #Gets the needed values for the dataset dropdown
+    datasetVariables = useDataset.getDatasetTry()
+    datasetVariablesList = datasetVariables.values.tolist()
+
+    #Gets the needed values for the CDM dropdown
     CDM = getCDM()
     CDM = CDM[~(CDM['variable'].isin(linksdf['cdmcolumn']))].reset_index(drop=True)
     cdmcol = list(CDM['variable'])
+
     
-    return render_template("linkdatasets/linkdatasets.html", links=links, linksdf=[linksdf.to_html(classes='data')], columns=datacol, cdmcolumns=cdmcol)
+    return render_template("linkdatasets/linkdatasets.html", linktry2=testLinksData, datasetVariablesList=datasetVariablesList, links=links, cdmcolumns=cdmcol)
     #return render_template("linkdatasets/linkdatasets.html", links=links, columns=datacol, cdmcolumns=cdmcol, CDMtables=[CDM.to_html(classes='data')], CDMtitles=CDM.columns.values, tables=[datadescribe.to_html(classes='data')], titles=datadescribe.columns.values)
 
+#Code for submitting new mappings
 @bp.route('/submit-form', methods = ['GET', 'POST'])
 def submitForm():
     selectValueData = request.form.get('columns')
@@ -36,10 +53,14 @@ def submitForm():
 
     return redirect(url_for("linkdatasets.linker"))
 
-@bp.route('/<string:value1>/<string:value2>deleteLink', methods=('POST',))
-def deleteLink(value1, value2):
-    useLinkdata.deleteLink(value1)
-    useLinkdata.delLink(value1, value2)
+#Code for deleting a mapping
+@bp.route('/deletelink', methods=('POST',))
+def deleteLink():
+    value = request.form['delete']
+    valueSplit = value.split(",")
+    useLinkdata.delLink(valueSplit[0], valueSplit[1])
+    #useLinkdata.deleteLink(value1)
+    #useLinkdata.delLink(value1, value2)
 
     return redirect(url_for("linkdatasets.linker"))
 
@@ -50,11 +71,3 @@ def getCDM():
     t1 = CDM['values'].notna()
     CDM['type'] = np.select([t1], ['cat'], CDM['type'])
     return CDM
-
-def getDataset():
-    dataset = useDataset.getDataframe()
-    return dataset
-
-def getDatasetNames():
-    dataset = useDataset.getDatasetNames()
-    return dataset
