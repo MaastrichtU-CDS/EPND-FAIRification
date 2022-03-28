@@ -1,4 +1,4 @@
-@prefix _: <http://example/#> .
+@prefix epnd: <http://example/#> .
 @prefix dash: <http://datashapes.org/dash#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
@@ -22,7 +22,7 @@ sio:SIO_000269 rdfs:label "false".
 
 sty:T016 rdfs:label "Human".
 
-_:PersonShape
+epnd:PersonShape
     a sh:NodeShape ;
     sh:targetClass sty:T016;
     sh:property [
@@ -31,30 +31,30 @@ _:PersonShape
     ];
     sh:property [
         sh:path sio:SIO_000223;
-        sh:node _:GenderShape ;
+        sh:node epnd:GenderShape ;
         sh:minCount 1;
     ] ;
     sh:property [
         sh:path sio:SIO_000223 ;
-        sh:node _:AgeDiagnosisShape ;
+        sh:node epnd:AgeDiagnosisShape ;
         sh:minCount 1;
         sh:maxCount 1;
     ];
     sh:property [
         sh:path sio:SIO_000223 ;
-        sh:node _:educationShape ;
+        sh:node epnd:educationShape ;
         sh:minCount 1;
         sh:maxCount 1;
     ];
     sh:property [
         sh:path sio:SIO_000223 ;
-        sh:node _:APOEShape ;
+        sh:node epnd:APOEShape ;
         sh:minCount 1;
         sh:maxCount 1;
     ];
     sh:property [
         sh:path sio:SIO_000223 ;
-        sh:node _:MMSEShape ;
+        sh:node epnd:MMSEShape ;
         sh:minCount 1;
         sh:maxCount 1;
     ].
@@ -65,7 +65,7 @@ _:PersonShape
 UO:UO_0000036 rdfs:label "year".
 snomed:423493009 rdfs:label "Age at diagnosis".
 
-_:AgeDiagnosisShape
+epnd:AgeDiagnosisShape
     a sh:NodeShape, sio:SIO_000915;
     sh:closed true;
     sh:targetClass snomed:423493009;
@@ -75,9 +75,9 @@ _:AgeDiagnosisShape
     ];
     sh:property [
         sh:path sio:SIO_000221;
-        sh:node _:ageUnit;
+        sh:node epnd:ageUnit;
     ].
-_:ageUnit
+epnd:ageUnit
     a sh:NodeShape;
     sh:targetClass UO:UO_0000036;
     sh:closed true;
@@ -103,7 +103,7 @@ snomed:365873007 rdfs:label "Gender finding".
 snomed:703118005 rdfs:label "Feminine gender".
 snomed:703117000 rdfs:label "Masculine gender".
 
-_:GenderShape
+epnd:GenderShape
     a sh:NodeShape, sio:SIO_000137;
     sh:closed true;
     sh:targetClass snomed:365873007;
@@ -148,7 +148,7 @@ _:GenderShape
 # Defining formal years of education
 ################################################
 snomed:224288002 rdfs:label "Duration of formal education".
-_:educationShape
+epnd:educationShape
     a sh:NodeShape, sio:SIO_000915;
     sh:targetClass snomed:224288002;
     sh:property [
@@ -158,9 +158,9 @@ _:educationShape
     ];
     sh:property [
         sh:path sio:SIO_000221;
-        sh:node _:educationYearsShape;
+        sh:node epnd:educationYearsShape;
     ].
-_:educationYearsShape
+epnd:educationYearsShape
     a sh:NodeShape;
     sh:targetClass UO:UO_0000036;
     sh:closed true;
@@ -182,7 +182,7 @@ _:educationYearsShape
 # Defining APOE
 ################################################
 loinc:LP15412-7 rdfs:label "Apolipoprotein E".
-_:APOEShape
+epnd:APOEShape
     a sh:NodeShape, sio:SIO_000914;
     sh:targetClass loinc:LP15412-7;
     sh:property [
@@ -202,7 +202,7 @@ _:APOEShape
 # Defining MMSE
 ################################################
 loinc:LP156471-7 rdfs:label "Mini-Mental Status Examination".
-_:MMSEShape
+epnd:MMSEShape
     a sh:NodeShape, sio:SIO_000915;
     sh:targetClass loinc:LP156471-7;
     sh:property [
@@ -212,9 +212,9 @@ _:MMSEShape
     ];
     sh:property [
         sh:path sio:SIO_000221;
-        sh:node _:MMSETotalShape;
+        sh:node epnd:MMSETotalShape;
     ].
-_:MMSETotalShape
+epnd:MMSETotalShape
     a sh:NodeShape;
     sh:targetClass sio:SIO_001112;
     sh:property [
