@@ -3,8 +3,8 @@
 @prefix sail: <http://www.openrdf.org/config/sail#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-<#userRepo> a rep:Repository;
-  rep:repositoryID "userRepo";
+<#fairifier> a rep:Repository;
+  rep:repositoryID "fairifier";
   rep:repositoryImpl [
       rep:repositoryType "graphdb:FreeSailRepository";
       <http://www.openrdf.org/config/repository/sail#sailImpl> [
@@ -29,4 +29,4 @@
           sail:sailType "graphdb:FreeSail"
         ]
     ];
-  rdfs:label "userRepo" .
+  rdfs:label "FAIRifier" .
