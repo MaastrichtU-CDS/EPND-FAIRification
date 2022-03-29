@@ -1,0 +1,22 @@
+@prefix ex: <http://example.org/ns#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix schema: <http://schema.org/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix sio: <http://semanticscience.org/resource/>.
+
+ex:Johan
+    rdf:type schema:Person, schema:nerd;
+    schema:givenName "Johan" ;
+    schema:familyName "van Soest" ;
+    schema:birthDate "1987-30-10"^^xsd:date ;
+    schema:has_gender [
+        rdf:type schema:gender, schema:male;
+    ];
+    schema:has_age [
+        rdf:type schema:age_at_diagnosis;
+        sio:SIO_000221 [
+            rdf:type schema:years;
+            sio:SIO_000300 "34"^^xsd:int;
+        ];
+    ].
