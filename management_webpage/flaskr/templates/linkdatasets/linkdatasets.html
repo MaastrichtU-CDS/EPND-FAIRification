@@ -101,8 +101,8 @@ Backup of links table
             {% endfor %}
         </select>
         <select name="cdmcolumns" smethod="GET" action="/">
-            {% for cdmcolumn in cdmcolumns %}
-                <option value="{{cdmcolumn}}" SELECTED>{{cdmcolumn}}</option>
+            {% for cdmcolumn in cdmlist %}
+                <option value="{{cdmcolumn[0]}}" SELECTED>{{cdmcolumn[1]}}</option>
             {% endfor %}
         </select>
         <button>Confirm</button>
@@ -118,18 +118,18 @@ Backup of links table
         <th>CDM URI</th>
         <th></th>
     </tr>
-    {% for link in linktry2 %}
+    {% for link in links %}
     <tr>
-        <td> {{link[0]}} </td>
-        <td> <a href="{{link[1]}}"> {{link[1]}} </a> </td>
-        <td> {{link[3]}} </td>
-        <td> <a href="{{link[2]}}"> {{link[2]}} </a> </td>
+        <td> {{link[2]}} </td>
+        <td> <a href="{{link[3]}}"> {{link[3]}} </a> </td>
+        <td> {{link[1]}} </td>
+        <td> <a href="{{link[0]}}"> {{link[0]}} </a> </td>
         <!--<td>   <form action="{{ url_for('linkdatasets.deleteLink', value1=link[0], value2=link[3]) }}" method="post">
             <input class="danger" type="submit" value="Delete">
           </form> </td>-->
         <td>
             <form action="/deletelink" method="POST">
-                <button class="btn btn-danger" type="submit" name="delete" value={{link[1]}},{{link[2]}}>Delete</button>
+                <button class="btn btn-danger" type="submit" name="delete" value={{link[3]}},{{link[0]}}>Delete</button>
             </form>
         </td>
     </tr>

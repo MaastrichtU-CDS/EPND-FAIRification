@@ -4,42 +4,8 @@ import sparql_dataframe as sd
 from flaskr import useDataset
 from SPARQLWrapper import SPARQLWrapper
 
-def getDatabase():
-    db = get_db()
-    information = db.execute('SELECT * FROM linkedTable').fetchall()
-    return information
-
-def getDataframe():
-    db = get_db()
-    df = pd.read_sql_query('SELECT * FROM linkedTable', db)
-    return df
-
-
-def queryDatabase(value):
-    db = get_db()
-    information = db.execute(value).fetchall()
-    return information
-
-def newLink(value1, value2):
-    db = get_db()
-    addLink(value1, value2)
-    db.execute("INSERT INTO linkedTable (datacolumn, cdmcolumn) VALUES (?, ?)", (value1, value2))
-    db.commit()
-    
-def deleteLink(value1):
-    db = get_db()
-    db.execute("DELETE FROM linkedTable WHERE datacolumn=?", (value1,))
-    db.commit()
-
-def getDataframeTest():
-    db = get_db
-    df = pd.read_sql_query('SELECT * FROM linkedTable, db')
-    df2 = useDataset.getDatasetVariables()
-
 #Add a new link
-def addLink(value1, value2):
-    value2 = "http://"+value2
-
+def createLink(value1, value2):
     endpoint = SPARQLWrapper('https://graphdb.jvsoest.eu/repositories/epnd_dummy/statements')
     q = """
     PREFIX owl: <http://www.w3.org/2002/07/owl#>
@@ -55,7 +21,7 @@ insert {{
     endpoint.query()
 
 #Delete a existing link
-def delLink(value1, value2):
+def deleteLink(value1, value2):
     print('start deletion')
     endpoint = SPARQLWrapper('https://graphdb.jvsoest.eu/repositories/epnd_dummy/statements')
     q = """
@@ -72,27 +38,40 @@ delete {{
     endpoint.query()
     print('end deletion')
 
-def retrieveLinks():
+def retrieveMappings():
     endpoint = 'https://graphdb.jvsoest.eu/repositories/epnd_dummy'
     q = """
+    prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+    prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    prefix sh: <http://www.w3.org/ns/shacl#>
+    prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+    prefix sio: <http://semanticscience.org/resource/>
     PREFIX owl: <http://www.w3.org/2002/07/owl#>
-    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
     PREFIX dbo: <http://um-cds/ontologies/databaseontology/>
 
-    SELECT ?columnName ?columnUri ?targetUri
+    SELECT ?cdmUri ?cdmUriLabel ?columnName ?columnUri
     WHERE {
-        GRAPH <http://mapping.local/> {
-            ?columnUri owl:equivalentClass ?targetUri
-        }
-            ?columnUri rdfs:subClassOf dbo:ColumnCell;
-                dbo:column ?columnName;
-                dbo:table ?tableUri.
-            ?tableUri dbo:table ?tableName.
+                GRAPH <http://mapping.local/> {
+                ?columnUri owl:equivalentClass ?cdmUri
+            }
+                ?columnUri rdfs:subClassOf dbo:ColumnCell;
+                    dbo:column ?columnName;
+                    dbo:table ?tableUri.
+                ?tableUri dbo:table ?tableName.
+        
+        ?nodeShape rdf:type sh:NodeShape;
+            sh:targetClass ?cdmUri.
+
+        OPTIONAL {
+            ?cdmUri rdfs:label ?cdmUriLabel.
         }
 
+        
+        ## Units are always their own instance (measurement -> unit -> literal), therefore filtering the unit instances.
+        FILTER (!(STRSTARTS(str(?cdmUri), "http://purl.obolibrary.org/obo/UO_"))).
+        FILTER (?cdmUri != sio:SIO_001112).
+    }
     """
     df = sd.get(endpoint, q)
     return df
-def test():
-    print('a')
 
