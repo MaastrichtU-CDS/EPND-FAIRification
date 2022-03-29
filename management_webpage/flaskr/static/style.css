@@ -1,5 +1,5 @@
 html { font-family: sans-serif; background: #eee; padding: 1rem; }
-body { max-width: 960px; margin: 0 auto; background: white; }
+body { max-width: 1440px; margin: 0 auto; background: white; }
 h1 { font-family: serif; color: #377ba8; margin: 1rem 0; }
 nav { background: lightgray; display: flex; align-items: center; padding: 0 0.5rem; }
 nav h1 { flex: auto; margin: 0; }
@@ -20,4 +20,6 @@ th {
 td {
   border: 1px solid #ddd;
   padding: 8px;
+  overflow-wrap: break-word;
+  max-width: 250px;
 }

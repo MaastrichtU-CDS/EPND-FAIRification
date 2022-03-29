@@ -1,23 +1,38 @@
-from flaskr.db import get_db
 import pandas as pd
-import sparql_dataframe
+import sparql_dataframe as sd
 
-def getDatabase():
-    db = get_db()
-    information = db.execute('SELECT * FROM destination_mapping').fetchall()
-    return information
+#Gets the Uri and names from the entries in the CDM
+def getCDMUri():
+    endpoint = 'https://graphdb.jvsoest.eu/repositories/epnd_dummy'
+    q = """
+    prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+    prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    prefix sh: <http://www.w3.org/ns/shacl#>
+    prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+    prefix sio: <http://semanticscience.org/resource/>
 
-def queryDatabase(value):
-    db = get_db()
-    information = db.execute(value).fetchall()
-    return information
+    SELECT ?variableUri ?variableUriLabel
+    WHERE {
+        ?nodeShape rdf:type sh:NodeShape;
+            sh:targetClass ?variableUri.
 
-def getCDMNames():
-    db = get_db()
-    df = pd.read_sql_query('SELECT variable FROM destination_mapping', db)
-    return df
+        OPTIONAL {
+            ?variableUri rdfs:label ?variableUriLabel.
+        }
+        
+        # If only binary/numeric/categoric variables are allowed, disable the optional here
+        OPTIONAL {
+            ?nodeShape rdf:type ?variableType.
+            ?variableType rdfs:label ?variableTypeLabel.
+            FILTER (?variableType IN (sio:SIO_000137, sio:SIO_000915, sio:SIO_000914)).
+        }
+        
+        ## Units are always their own instance (measurement -> unit -> literal), therefore filtering the unit instances.
+        FILTER (!(STRSTARTS(str(?variableUri), "http://purl.obolibrary.org/obo/UO_"))).
+        FILTER (?variableUri != sio:SIO_001112).
+        
+    }
+    """
 
-def getDataframe():
-    db = get_db()
-    df = pd.read_sql_query('SELECT * FROM destination_mapping', db)
+    df = sd.get(endpoint, q)
     return df

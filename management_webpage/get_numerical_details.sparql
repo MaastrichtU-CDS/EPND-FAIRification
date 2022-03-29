@@ -1,0 +1,30 @@
+prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+prefix sh: <http://www.w3.org/ns/shacl#>
+prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+prefix sio: <http://semanticscience.org/resource/>
+
+SELECT ?nodeShape ?targetClass ?unit ?unitLabel ?dataType ?minValue ?maxValue
+WHERE {
+    ## Bind your requested variable to ?targetClass
+    BIND (<http://purl.bioontology.org/ontology/SNOMEDCT/423493009> AS ?targetClass).
+    
+    ?nodeShape rdf:type sh:NodeShape;
+        sh:targetClass ?targetClass;
+        sh:property [
+            sh:path sio:SIO_000221;
+            sh:node [
+                sh:property [
+                    sh:path rdf:type;
+                    sh:hasValue ?unit;
+                ];
+                sh:property ?numericalProperties;
+            ];
+        ].
+    ?numericalProperties sh:path sio:SIO_000300;
+        sh:datatype ?dataType.
+    OPTIONAL {?unit rdfs:label ?unitLabel }.
+    OPTIONAL {?numericalProperties sh:minInclusive ?minValue}.
+    OPTIONAL {?numericalProperties sh:maxInclusive ?maxValue}.
+
+}
