@@ -136,4 +136,9 @@ Backup of links table
     
     {% endfor %}
 </table>
+<br>
+<h1>Statistical Metadata:</h1>
+{% for table in tables %}
+    {{ table|safe}}
+{% endfor %}
 {% endblock %}

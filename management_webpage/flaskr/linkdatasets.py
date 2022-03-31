@@ -1,3 +1,4 @@
+import statistics
 from flask import (
     Blueprint, render_template, request, redirect, url_for
 )
@@ -28,7 +29,20 @@ def linker():
     cdm = useCDM.getCDMUri()
     cdmlist = cdm.values.tolist()
 
-    return render_template("linkdatasets/linkdatasets.html", cdmlist=cdmlist, links=linksDataList, datasetVariablesList=datasetVariablesList)
+    for link in linksDataList:
+        tempDF = useDataset.getData(link[3])
+        tempDF.columns = {link[2]}
+        try:
+            rawData = pd.concat([rawData, tempDF], axis=1, join='inner')
+        except:
+            rawData = tempDF
+    
+    statisticsDataframe = rawData.describe(include='all')
+
+
+    #useDataset.othertry(linksDataList)
+
+    return render_template("linkdatasets/linkdatasets.html", cdmlist=cdmlist, links=linksDataList, datasetVariablesList=datasetVariablesList, tables=[statisticsDataframe.to_html(classes='data')], titles=statisticsDataframe.columns.values)
     #return render_template("linkdatasets/linkdatasets.html", links=links, columns=datacol, cdmcolumns=cdmcol, CDMtables=[CDM.to_html(classes='data')], CDMtitles=CDM.columns.values, tables=[datadescribe.to_html(classes='data')], titles=datadescribe.columns.values)
 
 #Code for submitting new mappings

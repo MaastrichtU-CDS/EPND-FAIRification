@@ -1,7 +1,5 @@
-from flaskr.db import get_db
 import pandas as pd
 import sparql_dataframe as sd
-from flaskr import useDataset
 from SPARQLWrapper import SPARQLWrapper
 
 #Add a new link
