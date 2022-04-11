@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<table>
+    <tr>
+        <th>Dataset Column</th>
+        <th>Dataset URI</th>
+        <th>CDM Column</th>
+        <th>CDM URI</th>
+        <th></th>
+    </tr>
+    {% for link in mappings %}
+    <tr>
+        <td> {{link[2]}} </td>
+        {% if link[3] is not defined%}
+        <td>aap</td>
+        {% else %}
+        <td> <a href="{{link[3]}}"> {{link[3]}} </a> </td>
+        {% endif %}
+        <td> {{link[1]}} </td>
+        {% if link[0]  == 'nan' %}
+        <td>aap</td>
+        {% else %}
+        <td> <a href="{{link[0]}}"> {{link[0]}} </a> </td>
+        {% endif %}
+        <td>
+            <form action="/detailedMapping" method="POST">
+                <button class="btn btn-danger" type="submit" name="delete" value={{link[3]}}>Edit</button>
+            </form>
+        </td>
+    </tr>
+    
+    {% endfor %}
+</table>
+
+{% endblock %}

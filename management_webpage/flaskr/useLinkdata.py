@@ -73,3 +73,45 @@ def retrieveMappings():
     df = sd.get(endpoint, q)
     return df
 
+def retrieveDatasetMapped():
+    endpoint = 'https://graphdb.jvsoest.eu/repositories/epnd_dummy'
+    q = """    
+    prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+    prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    prefix sh: <http://www.w3.org/ns/shacl#>
+    prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+    prefix sio: <http://semanticscience.org/resource/>
+    PREFIX owl: <http://www.w3.org/2002/07/owl#>
+    PREFIX dbo: <http://um-cds/ontologies/databaseontology/>
+
+    SELECT ?cdmUri ?cdmUriLabel ?columnName ?columnUri
+    WHERE {
+    
+    	    ?columnUri rdfs:subClassOf dbo:ColumnCell;
+            dbo:column ?columnName;
+            dbo:table ?tableUri.
+   	    ?tableUri dbo:table ?tableName.
+    optional{
+                GRAPH <http://mapping.local/> {
+                ?columnUri owl:equivalentClass ?cdmUri
+            }
+                ?columnUri rdfs:subClassOf dbo:ColumnCell;
+                    dbo:column ?columnName;
+                    dbo:table ?tableUri.
+                ?tableUri dbo:table ?tableName.
+        
+        ?nodeShape rdf:type sh:NodeShape;
+            sh:targetClass ?cdmUri.
+
+        OPTIONAL {
+            ?cdmUri rdfs:label ?cdmUriLabel.
+        }
+
+        
+        ## Units are always their own instance (measurement -> unit -> literal), therefore filtering the unit instances.
+        FILTER (!(STRSTARTS(str(?cdmUri), "http://purl.obolibrary.org/obo/UO_"))).
+        FILTER (?cdmUri != sio:SIO_001112).}
+    }"""
+    df = sd.get(endpoint, q)
+    return df
+

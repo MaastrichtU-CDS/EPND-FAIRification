@@ -39,6 +39,10 @@ def create_app(test_config=None):
      app.register_blueprint(linkdatasets.bp)
      app.add_url_rule('/', endpoint='linker')
 
+     from . import mapDatasets
+     app.register_blueprint(mapDatasets.bp)
+     app.add_url_rule('/', endpoint='mapper')
+
 
      
      return app
