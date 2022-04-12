@@ -27,6 +27,11 @@ def mapper():
 
 @bp.route('/detailedMapping', methods=('GET', 'POST'))
 def detailedMapper():
-    value = request.form['delete']
-    print(value)
-    return render_template("mapdatasets/detailedMapping.html")
+    value = request.form['chosen']
+
+    linkedDatasets = useLinkdata.retrieveDatasetMapped()
+
+    linkedInformationDataframe = linkedDatasets[linkedDatasets['columnUri'].str.contains(value)]
+    linkedInformationList=linkedInformationDataframe.values.tolist()
+    print(linkedInformationList)
+    return render_template("mapdatasets/detailedMapping.html", chosenMapping=linkedInformationList)

@@ -1,5 +1,15 @@
 {% extends 'base.html' %}
 
 {% block content %}
-Hello World
+Dataset Name: {{chosenMapping[0][2]}}
+<br>
+Dataset Uri: <a href="{{chosenMapping[0][3]}}">{{chosenMapping[0][3]}}</a>
+<br>
+Statistische Metadata
+<br>
+CDM Name: {{chosenMapping[0][0]}}
+<br>
+CDM Uri: <a href="{{chosenMapping[0][1]}}">{{chosenMapping[0][1]}}</a>
+<br>
+Nieuwe mapping kiezen
 {% endblock %}
