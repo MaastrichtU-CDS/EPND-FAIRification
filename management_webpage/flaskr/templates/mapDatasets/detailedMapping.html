@@ -5,11 +5,28 @@ Dataset Name: {{chosenMapping[0][2]}}
 <br>
 Dataset Uri: <a href="{{chosenMapping[0][3]}}">{{chosenMapping[0][3]}}</a>
 <br>
-Statistische Metadata
+Statistical Metadata
+{% if chosenMapping[0][1] is sameas chosenMapping[0][0] %}
+    <br>
+{% else %}
+    <br>
+    CDM Name: {{chosenMapping[0][1]}}
+    <br>
+    CDM Uri: <a href="{{chosenMapping[0][0]}}">{{chosenMapping[0][0]}}</a>
+{% endif %}
 <br>
-CDM Name: {{chosenMapping[0][0]}}
-<br>
-CDM Uri: <a href="{{chosenMapping[0][1]}}">{{chosenMapping[0][1]}}</a>
-<br>
-Nieuwe mapping kiezen
+
+Nieuwe mapping kiezen:
+<form class = "linkColumns" method="POST" action="{{ url_for('mapDatasets.submitForm') }}">
+    <div>
+        <select name="cdmValues" smethod="GET" action="/">
+            {% for cdmValue in cdmValues %}
+                <option value="{{chosenMapping[0][3]}},{{chosenMapping[0][0]}},{{cdmValue[0]}}" SELECTED>{{cdmValue[1]}}</option>
+            {% endfor %}
+        </select>
+        <button>Confirm</button>
+    </div>
+</form>
+
+
 {% endblock %}

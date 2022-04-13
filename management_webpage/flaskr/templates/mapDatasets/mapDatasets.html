@@ -12,23 +12,28 @@
     </tr>
     {% for link in mappings %}
     <tr>
-        <td> {{link[2]}} </td>
-        {% if link[3] is not defined%}
-        <td>aap</td>
-        {% else %}
-        <td> <a href="{{link[3]}}"> {{link[3]}} </a> </td>
-        {% endif %}
-        <td> {{link[1]}} </td>
-        {% if link[0]  == 'nan' %}
-        <td>aap</td>
-        {% else %}
-        <td> <a href="{{link[0]}}"> {{link[0]}} </a> </td>
-        {% endif %}
-        <td>
+        {% if link[0] is sameas link[1] %}
+        <td id="red"> {{link[2]}} </td>
+        <td id="red"> <a href="{{link[3]}}"> {{link[3]}} </a> </td>
+        <td id="red"></td>
+        <td id="red"></td>
+        <td id="red">
             <form action="/detailedMapping" method="POST">
                 <button class="btn btn-danger" type="submit" name="chosen" value={{link[3]}}>Edit</button>
             </form>
         </td>
+    {% else %}
+        <td id="green"> {{link[2]}} </td>
+        <td id="green"> <a href="{{link[3]}}"> {{link[3]}} </a> </td>
+        <td id="green"> {{link[1]}} </td>
+        <td id="green"> <a href="{{link[0]}}"> {{link[0]}} </a> </td>
+        <td id="green">
+            <form action="/detailedMapping" method="POST">
+                <button class="btn btn-danger" type="submit" name="chosen" value={{link[3]}}>Edit</button>
+            </form>
+        </td>
+    {% endif %}
+
     </tr>
     
     {% endfor %}

@@ -23,3 +23,11 @@ td {
   overflow-wrap: break-word;
   max-width: 250px;
 }
+
+#red {
+    background-color: lightcoral;
+}
+
+#green {
+    background-color: lightgreen;
+}

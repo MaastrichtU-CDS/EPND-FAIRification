@@ -17,10 +17,10 @@ def mapper():
 
     linkedDatasets = useLinkdata.retrieveDatasetMapped()
     linkedDatasetsList = linkedDatasets.values.tolist()
-    print(linkedDatasetsList)
-    print(linkedDatasetsList[0][0])
-    if linkedDatasetsList[2][0]:
-        print('happy chicken')
+    #print(linkedDatasetsList)
+    #print(linkedDatasetsList[0][0])
+    #if linkedDatasetsList[2][0]:
+        #print('happy chicken')
     return render_template("mapdatasets/mapdatasets.html", mappings=linkedDatasetsList)
 
 
@@ -31,7 +31,29 @@ def detailedMapper():
 
     linkedDatasets = useLinkdata.retrieveDatasetMapped()
 
+    cdmColumns= useCDM.getCDMUri()
+    cdmColumnsList = cdmColumns.values.tolist()
+
     linkedInformationDataframe = linkedDatasets[linkedDatasets['columnUri'].str.contains(value)]
     linkedInformationList=linkedInformationDataframe.values.tolist()
-    print(linkedInformationList)
-    return render_template("mapdatasets/detailedMapping.html", chosenMapping=linkedInformationList)
+    return render_template("mapdatasets/detailedMapping.html", chosenMapping=linkedInformationList, cdmValues = cdmColumnsList)
+
+@bp.route('/commit', methods = ['GET', 'POST'])
+def submitForm():
+    selectedValue = request.form.get('cdmValues')    
+    print('Values:')
+    print(selectedValue)
+    valueSplit = selectedValue.split(",")
+    print('Split:')
+    print(valueSplit)
+    if valueSplit[1] == 'nan':
+        print('Ja')
+        useLinkdata.createLink(valueSplit[0], valueSplit[2])
+    else:
+        print('nee')
+        useLinkdata.deleteLink(valueSplit[0], valueSplit[1])
+        useLinkdata.createLink(valueSplit[0], valueSplit[2])
+
+    #useLinkdata.createLink(selectValueData, selectValueCDM)
+    return redirect(url_for("mapDatasets.mapper"))
+    #return redirect(url_for("linkdatasets.linker"))

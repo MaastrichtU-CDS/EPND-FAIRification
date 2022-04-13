@@ -21,6 +21,8 @@ insert {{
 #Delete a existing link
 def deleteLink(value1, value2):
     print('start deletion')
+    print(value1)
+    print(value2)
     endpoint = SPARQLWrapper('https://graphdb.jvsoest.eu/repositories/epnd_dummy/statements')
     q = """
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
