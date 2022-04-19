@@ -5,7 +5,8 @@ Dataset Name: {{chosenMapping[0][2]}}
 <br>
 Dataset Uri: <a href="{{chosenMapping[0][3]}}">{{chosenMapping[0][3]}}</a>
 <br>
-Statistical Metadata
+Statistical Metadata:
+{{ metadata | safe }}
 {% if chosenMapping[0][1] is sameas chosenMapping[0][0] %}
     <br>
 {% else %}
@@ -15,18 +16,34 @@ Statistical Metadata
     CDM Uri: <a href="{{chosenMapping[0][0]}}">{{chosenMapping[0][0]}}</a>
 {% endif %}
 <br>
+<br>
+<br>
 
-Nieuwe mapping kiezen:
+
 <form class = "linkColumns" method="POST" action="{{ url_for('mapDatasets.submitForm') }}">
     <div>
+        Nieuwe mapping kiezen:
         <select name="cdmValues" smethod="GET" action="/">
             {% for cdmValue in cdmValues %}
                 <option value="{{chosenMapping[0][3]}},{{chosenMapping[0][0]}},{{cdmValue[0]}}" SELECTED>{{cdmValue[1]}}</option>
             {% endfor %}
         </select>
-        <button>Confirm</button>
+        {% if chosenMapping[0][1] is sameas chosenMapping[0][0] %}
+            <button>Add</button>
+        {% else %}
+            <button>Change</button>
+        {% endif %}
     </div>
 </form>
 
+{% if chosenMapping[0][1] is sameas chosenMapping[0][0] %}
+    <div></div>
+{% else %}
+    <form action="/deletemapping" method="POST">
+        <div>
+        <button class="btn btn-danger" type="submit" name="delete" value={{chosenMapping[0][3]}},{{chosenMapping[0][0]}}>Delete Mapping</button>
+        </div>
+    </form>
+{% endif %}
 
 {% endblock %}

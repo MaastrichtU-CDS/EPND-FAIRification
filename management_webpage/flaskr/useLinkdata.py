@@ -38,6 +38,7 @@ delete {{
     endpoint.query()
     print('end deletion')
 
+#Retrieves all mapped values
 def retrieveMappings():
     endpoint = 'https://graphdb.jvsoest.eu/repositories/epnd_dummy'
     q = """
@@ -75,6 +76,7 @@ def retrieveMappings():
     df = sd.get(endpoint, q)
     return df
 
+#Retrieves the dataset columns both mapped and not mapped
 def retrieveDatasetMapped():
     endpoint = 'https://graphdb.jvsoest.eu/repositories/epnd_dummy'
     q = """    
