@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<table>
+    <tr>
+        <th>Dataset Column</th>
+        <th>Dataset URI</th>
+        <th>CDM Column</th>
+        <th>CDM URI</th>
+        <th></th>
+    </tr>
+    {% for link in mappings %}
+    <tr>
+        {% if link[0] is sameas link[1] %}
+        <td id="red"> {{link[2]}} </td>
+        <td id="red"> <a href="{{link[3]}}"> {{link[3]}} </a> </td>
+        <td id="red"></td>
+        <td id="red"></td>
+        <td id="red">
+            <form action="/detailedMapping" method="POST">
+                <button class="btn btn-danger" type="submit" name="chosen" value={{link[3]}}>Edit</button>
+            </form>
+        </td>
+    {% else %}
+        <td id="green"> {{link[2]}} </td>
+        <td id="green"> <a href="{{link[3]}}"> {{link[3]}} </a> </td>
+        <td id="green"> {{link[1]}} </td>
+        <td id="green"> <a href="{{link[0]}}"> {{link[0]}} </a> </td>
+        <td id="green">
+            <form action="/detailedMapping" method="POST">
+                <button class="btn btn-danger" type="submit" name="chosen" value={{link[3]}}>Edit</button>
+            </form>
+        </td>
+    {% endif %}
+
+    </tr>
+    
+    {% endfor %}
+</table>
+
+{% endblock %}

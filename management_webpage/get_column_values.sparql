@@ -1,0 +1,13 @@
+PREFIX dbo: <http://um-cds/ontologies/databaseontology/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+select ?cellValue
+where {
+    ?rowObj dbo:has_column [
+        rdf:type <http://umbp-johan.fritz.box/rdf/ontology/data.APOE>;
+          dbo:has_cell [
+            dbo:has_value ?cellValue;
+        ];
+	].
+}

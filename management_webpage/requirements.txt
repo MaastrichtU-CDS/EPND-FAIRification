@@ -1,1 +1,8 @@
 Flask
+Pandas
+Numpy
+SPARQLWrapper
+sparql_dataframe
+sqlite3
+click
+

@@ -1,0 +1,33 @@
+html { font-family: sans-serif; background: #eee; padding: 1rem; }
+body { max-width: 1440px; margin: 0 auto; background: white; }
+h1 { font-family: serif; color: #377ba8; margin: 1rem 0; }
+nav { background: lightgray; display: flex; align-items: center; padding: 0 0.5rem; }
+nav h1 { flex: auto; margin: 0; }
+nav ul  { display: flex; list-style: none; margin: 0; padding: 0; }
+nav ul li a, nav ul li span, header .action { display: block; padding: 0.5rem; }
+.content { padding: 0 1rem 1rem; }
+.content > header { border-bottom: 1px solid lightgray; display: flex; align-items: flex-end; }
+.content > header h1 { flex: auto; margin: 1rem 0 0.25rem 0; }
+.content form { margin: 1em 0; display: flex; flex-direction: column; }
+.content label { font-weight: bold; margin-bottom: 0.5em; }
+th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #bbb;
+}
+
+td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  overflow-wrap: break-word;
+  max-width: 250px;
+}
+
+#red {
+    background-color: lightcoral;
+}
+
+#green {
+    background-color: lightgreen;
+}

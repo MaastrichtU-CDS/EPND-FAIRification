@@ -1,0 +1,233 @@
+@prefix epnd: <http://example/#> .
+@prefix dash: <http://datashapes.org/dash#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix sio: <http://semanticscience.org/resource/>.
+@prefix snomed: <http://purl.bioontology.org/ontology/SNOMEDCT/>.
+@prefix UO: <http://purl.obolibrary.org/obo/>.
+@prefix sty: <http://purl.bioontology.org/ontology/STY/>.
+@prefix loinc: <http://purl.bioontology.org/ontology/LNC/>.
+
+sio:SIO_000137 rdfs:label "category".
+sio:SIO_000915 rdfs:label "numeric scale".
+sio:SIO_000914 rdfs:label "binary scale".
+sio:SIO_000221 rdfs:label "has unit".
+sio:SIO_000300 rdfs:label "has value".
+sio:SIO_000223 rdfs:label "has property".
+
+sio:SIO_000269 rdfs:label "true".
+sio:SIO_000269 rdfs:label "false".
+
+sty:T016 rdfs:label "Human".
+
+epnd:PersonShape
+    a sh:NodeShape ;
+    sh:targetClass sty:T016;
+    sh:property [
+        sh:path rdf:type ;
+        sh:hasValue sty:T016 ;
+    ];
+    sh:property [
+        sh:path sio:SIO_000223;
+        sh:node epnd:GenderShape ;
+        sh:minCount 1;
+    ] ;
+    sh:property [
+        sh:path sio:SIO_000223 ;
+        sh:node epnd:AgeDiagnosisShape ;
+        sh:minCount 1;
+        sh:maxCount 1;
+    ];
+    sh:property [
+        sh:path sio:SIO_000223 ;
+        sh:node epnd:educationShape ;
+        sh:minCount 1;
+        sh:maxCount 1;
+    ];
+    sh:property [
+        sh:path sio:SIO_000223 ;
+        sh:node epnd:APOEShape ;
+        sh:minCount 1;
+        sh:maxCount 1;
+    ];
+    sh:property [
+        sh:path sio:SIO_000223 ;
+        sh:node epnd:MMSEShape ;
+        sh:minCount 1;
+        sh:maxCount 1;
+    ].
+
+################################################
+# Defining age at diagnosis
+################################################
+UO:UO_0000036 rdfs:label "year".
+snomed:423493009 rdfs:label "Age at diagnosis".
+
+epnd:AgeDiagnosisShape
+    a sh:NodeShape, sio:SIO_000915;
+    sh:closed true;
+    sh:targetClass snomed:423493009;
+    sh:property [
+        sh:path rdf:type ;
+        sh:hasValue snomed:423493009;
+    ];
+    sh:property [
+        sh:path sio:SIO_000221;
+        sh:node epnd:ageUnit;
+    ].
+epnd:ageUnit
+    a sh:NodeShape;
+    sh:targetClass UO:UO_0000036;
+    sh:closed true;
+    sh:property [
+        sh:path rdf:type ;
+        sh:hasValue UO:UO_0000036;
+        sh:minCount 1;
+    ];
+    sh:property [
+        sh:path sio:SIO_000300;
+        sh:datatype xsd:int ;
+        sh:name "Age in years" ;
+        sh:minCount 1;
+        sh:maxCount 1;
+        sh:minInclusive 0;
+        sh:maxInclusive 130;
+    ].
+
+################################################
+# Defining gender
+################################################
+snomed:365873007 rdfs:label "Gender finding".
+snomed:703118005 rdfs:label "Feminine gender".
+snomed:703117000 rdfs:label "Masculine gender".
+
+epnd:GenderShape
+    a sh:NodeShape, sio:SIO_000137;
+    sh:closed true;
+    sh:targetClass snomed:365873007;
+    ## This method forces SHACL to mention that only two values are allowed (gender & male, or gender & female)
+    sh:xone (
+        [
+            sh:property [
+                sh:path rdf:type;
+                sh:hasValue snomed:365873007;
+                sh:minCount 2;
+                sh:maxCount 2;
+            ];
+            sh:property [
+                sh:path rdf:type;
+                sh:hasValue snomed:703117000;
+                sh:minCount 2;
+                sh:maxCount 2;
+            ];
+        ] [
+            sh:property [
+                sh:path rdf:type;
+                sh:hasValue snomed:365873007;
+                sh:minCount 2;
+                sh:maxCount 2;
+            ];
+            sh:property [
+                sh:path rdf:type;
+                sh:hasValue snomed:703118005;
+                sh:minCount 2;
+                sh:maxCount 2;
+            ];
+        ]
+    );
+    ## This method forces SHACL to include at minimum 2 out of 3 options for rdf:type
+    sh:property [
+        sh:path rdf:type ;
+        sh:in ( snomed:703117000 snomed:703118005 snomed:365873007) ;
+        sh:minCount 2;
+    ].
+
+################################################
+# Defining formal years of education
+################################################
+snomed:224288002 rdfs:label "Duration of formal education".
+epnd:educationShape
+    a sh:NodeShape, sio:SIO_000915;
+    sh:targetClass snomed:224288002;
+    sh:property [
+        sh:path rdf:type ;
+        sh:hasValue snomed:224288002;
+        sh:minCount 1;
+    ];
+    sh:property [
+        sh:path sio:SIO_000221;
+        sh:node epnd:educationYearsShape;
+    ].
+epnd:educationYearsShape
+    a sh:NodeShape;
+    sh:targetClass UO:UO_0000036;
+    sh:closed true;
+    sh:property [
+        sh:path rdf:type ;
+        sh:hasValue UO:UO_0000036;
+        sh:minCount 1;
+    ];
+    sh:property [
+        sh:path sio:SIO_000300;
+        sh:datatype xsd:int ;
+        sh:name "in years" ;
+        sh:minCount 1;
+        sh:maxCount 1;
+        sh:minInclusive 0;
+    ].
+
+################################################
+# Defining APOE
+################################################
+loinc:LP15412-7 rdfs:label "Apolipoprotein E".
+epnd:APOEShape
+    a sh:NodeShape, sio:SIO_000914;
+    sh:targetClass loinc:LP15412-7;
+    sh:property [
+        sh:path rdf:type ;
+        sh:hasValue loinc:LP15412-7;
+        sh:minCount 1;
+    ];
+    sh:property [
+        sh:path sio:SIO_000300;
+        sh:datatype xsd:boolean ;
+        sh:name "ApoE" ;
+        sh:minCount 1;
+        sh:maxCount 1;
+    ].
+
+################################################
+# Defining MMSE
+################################################
+loinc:LP156471-7 rdfs:label "Mini-Mental Status Examination".
+epnd:MMSEShape
+    a sh:NodeShape, sio:SIO_000915;
+    sh:targetClass loinc:LP156471-7;
+    sh:property [
+        sh:path rdf:type ;
+        sh:hasValue loinc:LP156471-7;
+        sh:minCount 1;
+    ];
+    sh:property [
+        sh:path sio:SIO_000221;
+        sh:node epnd:MMSETotalShape;
+    ].
+epnd:MMSETotalShape
+    a sh:NodeShape;
+    sh:targetClass sio:SIO_001112;
+    sh:property [
+        sh:path rdf:type ;
+        sh:hasValue sio:SIO_001112;
+        sh:minCount 1;
+    ];
+    sh:property [
+        sh:path sio:SIO_000300;
+        sh:datatype xsd:int ;
+        sh:name "MMSE score" ;
+        sh:minCount 1;
+        sh:maxCount 1;
+        sh:minInclusive 0;
+        sh:maxInclusive 30;
+    ].

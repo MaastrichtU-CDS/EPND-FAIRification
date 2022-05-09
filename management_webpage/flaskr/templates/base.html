@@ -1,0 +1,18 @@
+<!doctype html>
+<title>{% block title %}{% endblock %} - Flaskr</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<nav>
+  <h1>Flaskr</h1>
+  <ul>
+      <li><a href="{{ url_for('linkdatasets.linker') }}">Link Datasets</a>
+  </ul>
+  <ul>
+    <li><a href="{{ url_for('mapDatasets.mapper') }}">Map Datasets</a>
+</ul>
+</nav>
+<section class="content">
+  <header>
+    {% block header %}{% endblock %}
+  </header>
+  {% block content %}{% endblock %}
+</section>
