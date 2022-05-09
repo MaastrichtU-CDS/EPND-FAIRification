@@ -1,10 +1,15 @@
 import pandas as pd
 import sparql_dataframe as sd
 from SPARQLWrapper import JSON, SPARQLWrapper
+import json
+
+config = { }
+with open("config.json") as f:
+    config = json.load(f)
 
 #Get all variable names and URI's from the dataset.
 def getDatasetUri():
-    endpoint = 'https://graphdb.jvsoest.eu/repositories/epnd_dummy'
+    endpoint = config["rdf_endpoint"]
     q = """
     PREFIX dbo: <http://um-cds/ontologies/databaseontology/>
     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -22,7 +27,7 @@ def getDatasetUri():
 
 #Gets the data of a specific dataset URI
 def getData(value):
-    endpoint = 'https://graphdb.jvsoest.eu/repositories/epnd_dummy'
+    endpoint = config["rdf_endpoint"]
     q = """ 
     PREFIX dbo: <http://um-cds/ontologies/databaseontology/>
     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
