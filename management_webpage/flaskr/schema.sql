@@ -1,7 +1,0 @@
-DROP TABLE IF EXISTS linkedTable;
-
-CREATE TABLE linkedTable (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    datacolumn TEXT UNIQUE NOT NULL,
-    cdmcolumn TEXT UNIQUE NOT NULL
-);
