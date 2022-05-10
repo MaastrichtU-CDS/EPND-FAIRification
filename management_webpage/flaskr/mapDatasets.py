@@ -2,7 +2,7 @@ import statistics
 from flask import (
     Blueprint, render_template, request, redirect, url_for
 )
-from flaskr import useDataset, useCDM, statisticalMetadata
+from flaskr import useDataset, useCDM, useLinkdata, statisticalMetadata
 import pandas as pd
 import numpy as np
 import math
@@ -27,7 +27,7 @@ def mapper():
                 row[1] = None
 
     #Renders the default template
-    return render_template("mapdatasets/mapdatasets.html", mappings=linkedDatasetsList)
+    return render_template("mapDatasets/mapDatasets.html", mappings=linkedDatasetsList)
 
 
 #Loads the template containing more information
@@ -65,7 +65,7 @@ def detailedMapper():
         
 
     #Renders the detailedMapping template
-    return render_template("mapdatasets/detailedMapping.html", metadata=metadata.to_html(), chosenMapping=linkedInformationList, cdmValues = cdmColumnsList)
+    return render_template("mapDatasets/detailedMapping.html", metadata=metadata.to_html(), chosenMapping=linkedInformationList, cdmValues = cdmColumnsList)
 
 #Adds a new mapping, or changes a existing mapping to a new one
 @bp.route('/commit', methods = ['GET', 'POST'])
