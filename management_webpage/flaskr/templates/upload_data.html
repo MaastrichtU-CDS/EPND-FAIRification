@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container">
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="mb-3">
+                <label for="formFile" class="form-label">Upload data (*.csv)</label>
+                <input class="form-control" type="file" id="formFile" accept=".csv,.png">
+            </div>
+        </div>
+        <div class="col-12">
+            <div id="upload-status" class="alert collapse" data-bs-toggle="collapse" role="alert">
+        </div>
+</div>
+<script>
+    function setUploadSuccess(message){
+        document.getElementById("upload-status").classList.add("alert-success");
+        setUploadMessage(message);
+    }
+
+    function setUploadError(message){
+        document.getElementById("upload-status").classList.add("alert-danger");
+        setUploadMessage(message);
+    }
+
+    function setUploadMessage(message){
+        const el = document.getElementById("upload-status");
+        el.innerText = message;
+        new bootstrap.Collapse(el, {
+            toggle: true
+        });
+    }
+
+    const input = document.getElementById('formFile');
+    input.addEventListener('change', event => {
+
+        let files = event.target.files
+        let fileName = files[0].name
+
+        const data = new FormData()
+        data.append('files', files[0])
+        data.append('name', fileName)
+        console.log(data.get('files'))
+
+        let url = "/uploader";
+        fetch(url,{
+            method:"POST",
+            body: data,
+        }).then(function(response){
+                return response.json()
+        }).then(function(data){
+            setUploadSuccess(data['message'])
+        }).catch(function (data){
+            console.log('error');
+            setUploadError(data)
+        });
+
+    })
+</script>
+
+{% endblock %}

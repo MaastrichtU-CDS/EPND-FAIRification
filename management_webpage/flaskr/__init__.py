@@ -2,6 +2,7 @@ import os
 
 from flask import Flask
 
+
 #app = Flask(__name__)
 
 #@app.route('/')
@@ -10,7 +11,7 @@ from flask import Flask
 
 #if (__name__ == "__main__"):
 #     app.run(host='0.0.0.0', port=5000)
-
+from management_webpage.flaskr.blueprints import linkdatasets, mapDatasets, upload_data
 
 
 def create_app(test_config=None):
@@ -35,18 +36,19 @@ def create_app(test_config=None):
      except OSError:
           pass
 
-     from . import linkdatasets
      app.register_blueprint(linkdatasets.bp)
      app.add_url_rule('/', endpoint='linker')
 
-     from . import mapDatasets
      app.register_blueprint(mapDatasets.bp)
      app.add_url_rule('/', endpoint='mapper')
 
+     app.register_blueprint(upload_data.bp)
+     app.add_url_rule('/', endpoint='upload')
 
-     
      return app
 
 #@app.route('/')
 #def hello():
 #    return redirect("/linkdatasets/linkdatasets/")
+
+
