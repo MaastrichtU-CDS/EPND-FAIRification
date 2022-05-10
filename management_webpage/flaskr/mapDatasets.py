@@ -5,6 +5,7 @@ from flask import (
 from flaskr import useDataset, useCDM, useLinkdata, statisticalMetadata
 import pandas as pd
 import numpy as np
+import math
 
 bp = Blueprint("mapDatasets",__name__)
 
@@ -18,6 +19,12 @@ def mapper():
     #Gets all information of the linked data
     linkedDatasets = useLinkdata.retrieveDatasetMapped()
     linkedDatasetsList = linkedDatasets.values.tolist()
+    for row in linkedDatasetsList:
+        print(row[0])
+        if type(row[0]) != str:
+            if math.isnan(row[0]):
+                row[0] = None
+                row[1] = None
 
     #Renders the default template
     return render_template("mapdatasets/mapdatasets.html", mappings=linkedDatasetsList)

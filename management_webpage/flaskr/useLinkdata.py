@@ -43,7 +43,6 @@ delete {{
 
 #Retrieves all mapped values
 def retrieveMappings():
-    print(current_app.config)
     endpoint = current_app.config.get("rdf_endpoint")
     q = """
     prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
