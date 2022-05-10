@@ -28,9 +28,9 @@ def create_app(test_config=None):
      with open("config.json") as f:
           app.config.update(json.load(f))
 
-     from . import linkdatasets
-     app.register_blueprint(linkdatasets.bp)
-     app.add_url_rule('/', endpoint='linker')
+     # from . import linkdatasets
+     # app.register_blueprint(linkdatasets.bp)
+     # app.add_url_rule('/', endpoint='linker')
 
      from . import mapDatasets
      app.register_blueprint(mapDatasets.bp)

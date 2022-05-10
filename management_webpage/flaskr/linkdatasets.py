@@ -9,7 +9,7 @@ import numpy as np
 bp = Blueprint("linkdatasets",__name__)
 
 #Code to load the needed values for the main page
-@bp.route('/', methods=('GET', 'POST'))
+@bp.route('/link', methods=('GET', 'POST'))
 def linker():
     #Gets Mapping Links
     linksData = useLinkdata.retrieveMappings()
@@ -37,7 +37,10 @@ def linker():
         except:
             rawData = tempDF
     
-    statisticsDataframe = rawData.describe(include='all')
+    if "rawData" in locals():
+        statisticsDataframe = rawData.describe(include='all')
+    else:
+        print(rawData)
 
 
     #useDataset.othertry(linksDataList)
