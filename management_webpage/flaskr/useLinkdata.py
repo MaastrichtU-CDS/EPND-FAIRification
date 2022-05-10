@@ -1,10 +1,12 @@
 import pandas as pd
 import sparql_dataframe as sd
 from SPARQLWrapper import SPARQLWrapper
+from flask import current_app
 
 #Add a new link
 def createLink(value1, value2):
-    endpoint = SPARQLWrapper('https://graphdb.jvsoest.eu/repositories/epnd_dummy/statements')
+    endpointUrl = current_app.config.get("rdf_endpoint")
+    endpoint = SPARQLWrapper(endpointUrl + '/statements')
     q = """
     PREFIX owl: <http://www.w3.org/2002/07/owl#>
 insert {{
@@ -23,7 +25,8 @@ def deleteLink(value1, value2):
     print('start deletion')
     print(value1)
     print(value2)
-    endpoint = SPARQLWrapper('https://graphdb.jvsoest.eu/repositories/epnd_dummy/statements')
+    endpointUrl = current_app.config.get("rdf_endpoint")
+    endpoint = SPARQLWrapper(endpointUrl + '/statements')
     q = """
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 delete {{
@@ -40,7 +43,8 @@ delete {{
 
 #Retrieves all mapped values
 def retrieveMappings():
-    endpoint = 'https://graphdb.jvsoest.eu/repositories/epnd_dummy'
+    print(current_app.config)
+    endpoint = current_app.config.get("rdf_endpoint")
     q = """
     prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
     prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -78,7 +82,8 @@ def retrieveMappings():
 
 #Retrieves the dataset columns both mapped and not mapped
 def retrieveDatasetMapped():
-    endpoint = 'https://graphdb.jvsoest.eu/repositories/epnd_dummy'
+    print(current_app.config)
+    endpoint = current_app.config.get("rdf_endpoint")
     q = """    
     prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
     prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>

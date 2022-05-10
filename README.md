@@ -1,43 +1,13 @@
-# FLYOVER
+# EPND FAIRifier / FAIRnotator
 
 ## Introduction
 
-We have build a dockerized Data FAIR-ification tool that takes clinical datasets and converts them into Resource Descriptor Format (RDF). This conversion is done by an application which parses an entire structured table as a simple flattened RDF object. This so-called "Triplifier" tool works with PostGreSQL and CSV tables.
+This repository contains the FAIRifier/FAIRnotator developed for the [European Platform for Neurodegenerative Diseases (EPND)](https://epnd.org). The tool available in this repository aims to interpret the FAIR implementation profile (FIP) definition, its referenced implementation profile files (in this case CEDAR templates to describe cohort metadata; and SHACL files to describe the information elements requested in the cohort), and present the end-user a web-based user interface to make their data FAIR and available to use within the EPND platform.
 
-For user data, a new module (data_descriptor) is created where the user can describe their own data and provide us with the metadata, which can then be used to create annotations.
+## How to run this software?
 
-## Components
+Instructions to run this software package will be included soon.
 
-1. Data_descriptor (For user data)
+## How to build this software?
 
-### 1. Data Descriptor Module
-A simple graphical interface tool for helping a local user to describe their own data (in the form of CSV or PostGreSQL). On uploading the data, Triplifier runs and converts this data into RDF triples which is then uploaded to the RDF store, along with an OWL file. The next page displays the list of columns and prompts the user to give some basic information about their data which is then added back to the OWL file in the RDF store.  
-
-#### How to run?
-To execute the complete workflow, please execute the following commands from the project folder:
-```
-docker-compose up -d
-```
-
-The user interface will then be available at [http://localhost:5000/](http://localhost:5000/).
-
-The end result of going through the entire process is:
-
-1) An ontology in the RDF repository (under graph `http://ontology.local/`) that describes the schema of the structured data but does not contain any data elements in itself, along with the selections and annotations entered by the user through the simple graphical user interface.
-
-2) A triples database in the RDF repository (under graph `http://data.local/`) that contains the data elements in term subject-predicate-object sentences.
-
-You can find the following systems:
-* Postgres web admin: http://localhost/
-* RDF repository: http://localhost:7200
-
-#### Publishing anonyous METADATA
-The user can publish their OWL files to a private cloud repository, which can then be used to create a customised annotation graph for their data. The usage of metadata for the creation of annotations ensures the privacy of user data.
-
-## Developers
-
-- Varsha Gouthamchand
-- Leonard Wee
-- Johan van Soest
-
-
+The build procedure for this repository is described in a GitHub Actions pipeline.
