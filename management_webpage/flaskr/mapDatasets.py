@@ -2,7 +2,7 @@ import statistics
 from flask import (
     Blueprint, render_template, request, redirect, url_for
 )
-from flaskr import useDataset, useCDM, useLinkdata, statisticalMetadata
+from flaskr import useDataset, useCDM, statisticalMetadata
 import pandas as pd
 import numpy as np
 import math
