@@ -39,21 +39,21 @@
         let fileName = files[0].name
 
         const data = new FormData()
-        data.append('files', files[0])
+        data.append('file', files[0])
         data.append('name', fileName)
         console.log(data.get('files'))
 
-        let url = "/uploader";
+        let url = "http://localhost:8080/api/binary";
         fetch(url,{
             method:"POST",
             body: data,
         }).then(function(response){
-                return response.json()
-        }).then(function(data){
-            setUploadSuccess(data['message'])
-        }).catch(function (data){
+                return response.text();
+        }).then(function(text){
+            setUploadSuccess(text)
+        }).catch(function (text){
             console.log('error');
-            setUploadError(data)
+            setUploadError(text)
         });
 
     })
