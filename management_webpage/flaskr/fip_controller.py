@@ -1,9 +1,18 @@
 from flask import (
-    Blueprint, render_template, request, redirect, url_for
+    Blueprint, render_template, request, redirect, url_for, current_app
 )
 import validators
+from flaskr.services import fip_service, triplestore
+import rdflib
 
 bp = Blueprint("fip_controller",__name__)
+rdfStore = None
+fipService = None
+
+def __get_fip_service():
+    if fipService is None:
+        fipService = fip_service.FipService(rdfStore)
+    return fipService
 
 @bp.route('/', methods=['GET'])
 def index():
@@ -14,4 +23,12 @@ def post_fip():
     fip_uri = request.form.get("fip-uri")
     if not validators.url(fip_uri):
         return render_template("fip/index.html", warning="Not a valid URI")
+    
+    g = rdflib.Graph()
+    g.parse(fip_uri, format="turtle")
+    triples = g.serialize(format="nt")
+
+    fService = __get_fip_service()
+    fService.load_fip(fip_uri, triples)
+
     return render_template("fip/index.html")
