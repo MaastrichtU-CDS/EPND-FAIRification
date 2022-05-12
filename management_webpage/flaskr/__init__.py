@@ -34,8 +34,10 @@ def create_app(test_config=None):
 
      from . import mapDatasets
      app.register_blueprint(mapDatasets.bp)
-     app.add_url_rule('/', endpoint='mapper')
+     # app.add_url_rule('/', endpoint='mapper')
 
+     from . import fip_controller
+     app.register_blueprint(fip_controller.bp)
 
      
      return app

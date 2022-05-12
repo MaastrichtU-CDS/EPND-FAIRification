@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2>Select FIP</h2>
+<p>Enter the URL for the FAIR implementation profile you want to use below.</p>
+
+<form method="POST">
+    <div class="form-group">
+        <input type="text" class="form-control input-lg" id="fip-uri" name="fip-uri" placeholder="Enter FIP URL">
+        <small id="fip-uri-help" class="form-text text-muted">This URL is given by the project consortium</small>
+        <button type="submit" class="btn btn-primary float-right">Submit</button>
+    </div>
+</form>
+
+{% endblock %}
