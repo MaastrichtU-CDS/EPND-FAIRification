@@ -17,4 +17,4 @@ def index():
     print(instances)
     # for idx, val in enumerate(instances):
     #     instances[idx]["instance"]["short"] = instances[idx]["instance"]["value"].replace(config["template"]["instance_base_url"] + "/", "")
-    render_template("cedar/index.html", instances=instances)
+    return render_template("cedar/index.html", instances=instances)

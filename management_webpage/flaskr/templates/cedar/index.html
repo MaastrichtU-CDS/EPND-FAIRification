@@ -2,9 +2,9 @@
 
 {% block content %}
 
-<h1>Filled Templates</h1>
-<p>Please see below for all filled templates, or press the "add" button to fill in the template.</p>
-<div class="container-fluid"><a href="./add" role="button" class="btn btn-primary float-right mb-1">Add</a></div>
+<h1>Cohorts and dataset metadata</h1>
+<p>Please see below for all filled cohort (metadata) entries, or press the "add" button to create a new cohort/dataset.</p>
+<div class="container-fluid"><a href="./metadata/add" role="button" class="btn btn-primary float-right mb-1">Add</a></div>
 <table class="table table-striped mt-2">
     <thead>
         <tr>
@@ -15,7 +15,7 @@
     <tbody>
         {%for instance in instances %}
         <tr>
-            <td><a href="./instance?uri={{instance['instance']['value']}}">{{instance["instance"]["short"]}}</a></td>
+            <td><a href="./metadata/instance?uri={{instance['instance']['value']}}">{{instance["instance"]["short"]}}</a></td>
             <td>{{instance["time"]["value"]}}</td>
         </tr>
         {%endfor%}
