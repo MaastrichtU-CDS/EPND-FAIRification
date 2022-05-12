@@ -7,12 +7,9 @@ import rdflib
 
 bp = Blueprint("fip_controller",__name__)
 rdfStore = None
-fipService = None
 
 def __get_fip_service():
-    if fipService is None:
-        fipService = fip_service.FipService(rdfStore)
-    return fipService
+    return fip_service.FipService(rdfStore)
 
 @bp.route('/', methods=['GET'])
 def index():
@@ -24,11 +21,15 @@ def post_fip():
     if not validators.url(fip_uri):
         return render_template("fip/index.html", warning="Not a valid URI")
     
-    g = rdflib.Graph()
-    g.parse(fip_uri, format="turtle")
+    try:
+        g = rdflib.Graph()
+        g.parse(fip_uri, format="turtle")
+    except:
+        return render_template("fip/index.html", warning="Could not load the FIP file at %s - Is the URL correct?" % fip_uri)
+    
     triples = g.serialize(format="nt")
 
     fService = __get_fip_service()
     fService.load_fip(fip_uri, triples)
 
-    return render_template("fip/index.html")
+    return redirect(url_for("fip_controller.index"))
