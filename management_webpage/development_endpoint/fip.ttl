@@ -1,4 +1,4 @@
-@prefix : <#> .
+@prefix : <http://example.org#> .
 @prefix epnd: <http://example/#> .
 @prefix fip: <https://w3id.org/fair/fip/terms/> .
 @prefix dash: <http://datashapes.org/dash#> .
