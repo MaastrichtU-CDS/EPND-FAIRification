@@ -19,7 +19,7 @@ The software is actually built when executing docker-compose (see above). To for
     ```
     cd management_webpage
     python -m venv ./venv
-    source ./venv/bin/activate
+    source ./venv/Scripts/activate
     pip install -r requirements.txt
     sh run.sh
     ```
