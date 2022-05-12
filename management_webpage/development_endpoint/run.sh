@@ -14,7 +14,7 @@
 # curl -X POST -F config=@config.ttl --header 'Content-Type: multipart/form-data' --header 'Accept: */*' 'http://localhost:7200/rest/repositories'
 
 # Upload SHACL file
-sed "s/#.*$//g" ../shapeTest/shacl.ttl > shacl.ttl
+sed "s/^\s*#.*$//g" ../shapeTest/shacl.ttl > shacl.ttl
 curl -d @shacl.ttl --header "Content-Type: application/x-turtle" http://localhost:7200/repositories/epnd_dummy/statements?context=%3Chttp://shacl.local/%3E
 rm shacl.ttl
 
