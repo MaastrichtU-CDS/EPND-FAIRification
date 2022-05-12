@@ -42,6 +42,10 @@ def create_app(test_config=None):
      app.register_blueprint(fip_controller.bp)
      fip_controller.rdfStore = rdfStore
 
+     from . import cedar_controller
+     app.register_blueprint(cedar_controller.bp)
+     cedar_controller.rdfStore = rdfStore
+
      
      return app
 
