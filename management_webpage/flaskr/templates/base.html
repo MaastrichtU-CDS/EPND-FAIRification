@@ -8,23 +8,22 @@
 </head>
 
 <body>
-  <nav class="navbar bg-light">
-    <div class="container-fluid">
-      <a href="/" class="navbar-brand">
-        <h1>Flaskr</h1>
-      </a>
-      <!-- <ul class="navbar-nav">
-        <li class="nav-item">
-          <a href="{{ url_for('mapDatasets.mapper') }}">Map Datasets</a>
-        </li>
-      </ul> -->
-    </div>
-  </nav>
+  <header>
+    <nav class="navbar bg-light">
+      <div class="container-fluid">
+        <a href="/" class="navbar-brand">
+          <h1>Flaskr</h1>
+        </a>
+        <!-- <ul class="navbar-nav">
+          <li class="nav-item">
+            <a href="{{ url_for('mapDatasets.mapper') }}">Map Datasets</a>
+          </li>
+        </ul> -->
+      </div>
+    </nav>
+  </header>
   <div class="container-fluid">
     <section class="content">
-      <header>
-        {% block header %}{% endblock %}
-      </header>
       {% block content %}{% endblock %}
     </section>
   </div>
