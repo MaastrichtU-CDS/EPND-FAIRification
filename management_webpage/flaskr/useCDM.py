@@ -1,9 +1,10 @@
 import pandas as pd
 import sparql_dataframe as sd
+from flask import current_app
 
 #Gets the Uri and names from the entries in the CDM
 def getCDMUri():
-    endpoint = 'https://graphdb.jvsoest.eu/repositories/epnd_dummy'
+    endpoint = current_app.config.get("rdf_endpoint")
     q = """
     prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
     prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -39,7 +40,7 @@ def getCDMUri():
 
 #Gets all information included in the CDM
 def getCDMFull():
-    endpoint = 'https://graphdb.jvsoest.eu/repositories/epnd_dummy'
+    endpoint = current_app.config.get("rdf_endpoint")
     q = """
     prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
     prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>

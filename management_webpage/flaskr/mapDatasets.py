@@ -5,11 +5,12 @@ from flask import (
 from flaskr import useDataset, useCDM, useLinkdata, statisticalMetadata
 import pandas as pd
 import numpy as np
+import math
 
 bp = Blueprint("mapDatasets",__name__)
 
 #Default homepage for the program
-@bp.route('/mapping', methods=('GET', 'POST'))
+@bp.route('/', methods=('GET', 'POST'))
 def mapper():
 
     datasetColumns = useDataset.getDatasetUri()
@@ -18,9 +19,15 @@ def mapper():
     #Gets all information of the linked data
     linkedDatasets = useLinkdata.retrieveDatasetMapped()
     linkedDatasetsList = linkedDatasets.values.tolist()
+    for row in linkedDatasetsList:
+        print(row[0])
+        if type(row[0]) != str:
+            if math.isnan(row[0]):
+                row[0] = None
+                row[1] = None
 
     #Renders the default template
-    return render_template("mapdatasets/mapdatasets.html", mappings=linkedDatasetsList)
+    return render_template("mapDatasets/mapDatasets.html", mappings=linkedDatasetsList)
 
 
 #Loads the template containing more information
@@ -58,7 +65,7 @@ def detailedMapper():
         
 
     #Renders the detailedMapping template
-    return render_template("mapdatasets/detailedMapping.html", metadata=metadata.to_html(), chosenMapping=linkedInformationList, cdmValues = cdmColumnsList)
+    return render_template("mapDatasets/detailedMapping.html", metadata=metadata.to_html(), chosenMapping=linkedInformationList, cdmValues = cdmColumnsList)
 
 #Adds a new mapping, or changes a existing mapping to a new one
 @bp.route('/commit', methods = ['GET', 'POST'])
