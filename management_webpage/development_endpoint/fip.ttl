@@ -1,4 +1,4 @@
-@prefix : <http://example.org#> .
+@prefix myPath: <http://example.org#> .
 @prefix epnd: <http://example/#> .
 @prefix fip: <https://w3id.org/fair/fip/terms/> .
 @prefix dash: <http://datashapes.org/dash#> .
@@ -12,7 +12,8 @@
 @prefix sty: <http://purl.bioontology.org/ontology/STY/>.
 @prefix loinc: <http://purl.bioontology.org/ontology/LNC/>.
 
-:myFip rdf:type fip:FIP-Declaration;
+myPath:myFip rdf:type fip:FIP-Declaration;
+    rdfs:label "EPND common data model";
     fip:declares-current-use-of [
         rdf:type <https://schema.metadatacenter.org/core/Template>;
         sio:SIO_000628 <https://raw.githubusercontent.com/MaastrichtU-BISS/SemanticForms/main/src/template.json>;

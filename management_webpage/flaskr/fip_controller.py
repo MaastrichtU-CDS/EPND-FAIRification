@@ -11,8 +11,17 @@ rdfStore = None
 def __get_fip_service():
     return fip_service.FipService(rdfStore)
 
+def __visualizeFip(foundFips):
+    return render_template("fip/inform.html", foundFips=foundFips)
+
 @bp.route('/', methods=['GET'])
 def index():
+
+    fService = __get_fip_service()
+    foundFips = fService.get_fip()
+    if len(foundFips) > 0:
+        return __visualizeFip(foundFips)
+
     return render_template("fip/index.html")
 
 @bp.route('/', methods=['POST'])
