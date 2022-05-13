@@ -28,6 +28,19 @@ def index():
 def cee():
     return render_template("cedar/add.html")
 
+@bp.route("/metadata/instance")
+def showInstance():
+    identifier = request.args.get("uri")
+    properties = __get_cedar_service().describe_instance(identifier)
+    references = __get_cedar_service().get_instance_links(identifier)
+    return render_template("cedar/instance.html", properties=properties, references=references, instance_uri=identifier)
+
+@bp.route("/metadata/delete")
+def delete_instance():
+    identifier = request.args.get("uri")
+    __get_cedar_service().drop_instance(identifier)
+    return redirect(url_for("cedar_controller.index"))
+
 def get_template():
     cedar_location = __get_cedar_service().get_template_location()
     print(cedar_location)
@@ -54,9 +67,6 @@ def store():
     session_id = uuid.uuid4()
     if request.method == "PUT":
         session_id = request.args.get("id")
-    
-    # fileNameJson = os.path.join(config['server']['storageFolder'], f"{session_id}.jsonld")
-    # fileNameTurtle = os.path.join(config['server']['storageFolder'], f"{session_id}.ttl")
 
     local_tz = get_localzone()
 
@@ -65,14 +75,9 @@ def store():
     data_to_store["schema:isBasedOn"] = template['@id']
     data_to_store["pav:createdOn"] = datetime.datetime.now(local_tz).isoformat()
     data_to_store["@id"] = f"{cedar_instance_base_url}/{session_id}"
-
-    # with open(fileNameJson, "w") as f:
-    #     json.dump(data_to_store, f, indent=4)
     
     g = Graph()
     g.parse(data=json.dumps(data_to_store), format='json-ld')
-    # g.serialize(destination=fileNameTurtle)
-    
     turtleData = g.serialize(format='nt')
     __get_cedar_service().store_instance(turtleData, data_to_store["@id"])
 
