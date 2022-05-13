@@ -15,11 +15,13 @@
 </div>
 <script>
     function setUploadSuccess(message){
+        document.getElementById("upload-status").classList.remove("alert-danger");
         document.getElementById("upload-status").classList.add("alert-success");
         setUploadMessage(message);
     }
 
     function setUploadError(message){
+        document.getElementById("upload-status").classList.remove("alert-success");
         document.getElementById("upload-status").classList.add("alert-danger");
         setUploadMessage(message);
     }
@@ -41,22 +43,31 @@
         const data = new FormData()
         data.append('file', files[0])
         data.append('name', fileName)
-        console.log(data.get('files'))
 
         let url = "http://localhost:8080/api/binary";
         fetch(url,{
             method:"POST",
             body: data,
-        }).then(function(response){
+        }).then((response) => {
+            if (response.ok) {
                 return response.text();
-        }).then(function(text){
+            }
+            return Promise.reject(response);
+        }).then((text) => {
             setUploadSuccess(text)
-        }).catch(function (text){
-            console.log('error');
-            setUploadError(text)
+        }).catch((response) => {
+            response.text().then((text) => {
+                setUploadError(text)
+            })
         });
-
     })
+
+    function status(res) {
+        if (!res.ok) {
+            throw new Error(res.statusText);
+        }
+        return res;
+    }
 </script>
 
 {% endblock %}
