@@ -72,7 +72,7 @@ class CedarEndpoint:
         logging.debug(query)
 
         results = self.__triplestore.update_sparql(query)
-        logging.debug(results.response.read())
+        logging.debug(results)
 
     def store_instance(self, rdf_string, graph_uri=None):
         """
@@ -87,4 +87,4 @@ class CedarEndpoint:
         logging.debug(queryData)
 
         results = self.__triplestore.update_sparql(queryData)
-        logging.debug(results.response.read())
+        logging.debug(results)

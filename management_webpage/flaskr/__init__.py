@@ -45,6 +45,8 @@ def create_app(test_config=None):
      from . import cedar_controller
      app.register_blueprint(cedar_controller.bp)
      cedar_controller.rdfStore = rdfStore
+     if "cedar_instance_base_url" in app.config:
+          cedar_controller.cedar_instance_base_url = app.config.get("cedar_instance_base_url")
 
      
      return app
