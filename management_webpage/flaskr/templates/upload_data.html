@@ -12,7 +12,10 @@
         <div class="col-12">
             <div id="upload-status" class="alert collapse" data-bs-toggle="collapse" role="alert">
         </div>
+        </div>
+    </div>
 </div>
+
 <script>
     function setUploadSuccess(message){
         document.getElementById("upload-status").classList.remove("alert-danger");
@@ -62,12 +65,6 @@
         });
     })
 
-    function status(res) {
-        if (!res.ok) {
-            throw new Error(res.statusText);
-        }
-        return res;
-    }
 </script>
 
 {% endblock %}
