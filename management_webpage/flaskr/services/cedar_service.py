@@ -9,6 +9,21 @@ class CedarEndpoint:
         """
         self.__triplestore = triplestore
     
+    def get_template_location(self):
+        """
+        Retrieve the cedar template location (JSON file location)
+        """
+        query = """
+            prefix sio: <http://semanticscience.org/resource/>
+            
+            SELECT DISTINCT ?cedar_template
+            WHERE {
+                ?template_obj_uri rdf:type <https://schema.metadatacenter.org/core/Template>;
+                    sio:SIO_000628 ?cedar_template;
+            }
+        """
+        return self.__triplestore.select_sparql(query)[0]["cedar_template"]["value"]
+
     def list_instances(self):
         """
         Retrieve all instances stored in the SPARQL endpoint

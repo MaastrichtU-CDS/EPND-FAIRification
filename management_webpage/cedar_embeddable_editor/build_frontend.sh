@@ -22,9 +22,9 @@ cp app.module.ts cedar-embeddable-editor-release-$version/src/app/app.module.ts
 
 # Build project
 cd cedar-embeddable-editor-release-$version
-$sed -i "/this.messageHandlerService.traceObject/ a window.location.href = '\\/';" src/app/modules/shared/components/cedar-data-saver/cedar-data-saver.component.ts
+$sed -i "/this.messageHandlerService.traceObject/ a window.location.href = '\\/metadata';" src/app/modules/shared/components/cedar-data-saver/cedar-data-saver.component.ts
 npm install
-node_modules/@angular/cli/bin/ng build --configuration production --baseHref="./static/cee/"
+node_modules/@angular/cli/bin/ng build --configuration production --baseHref="/static/cee/"
 
 # # Copy to flaskr
 rm -R ../../flaskr/static/cee
