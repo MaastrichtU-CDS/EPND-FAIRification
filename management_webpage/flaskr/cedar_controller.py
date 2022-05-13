@@ -19,7 +19,7 @@ def __get_cedar_service():
 @bp.route('/metadata', methods=['GET'])
 def index():
     instances = __get_cedar_service().list_instances()
-    print(instances)
+    # TODO: show the title of the template instance
     for idx, val in enumerate(instances):
         instances[idx]["instance"]["short"] = instances[idx]["instance"]["value"].replace(cedar_instance_base_url + "/", "")
     return render_template("cedar/index.html", instances=instances)
