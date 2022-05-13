@@ -2,6 +2,11 @@
 {% block content %}
 
 <div class="container">
+    <div class="row pt-3">
+        <div class="col-12">
+            <p class="h2">Triplifier</p>
+        </div>
+    </div>
     <div class="row mt-5">
         <div class="col-12">
             <div class="mb-3">
@@ -10,8 +15,38 @@
             </div>
         </div>
         <div class="col-12">
-            <div id="upload-status" class="alert collapse" data-bs-toggle="collapse" role="alert">
+            <div id="upload-status" class="alert collapse" data-bs-toggle="collapse" role="alert"></div>
         </div>
+
+        <div class="col-6">
+            <div class="card w-100">
+                <div class="card-body">
+                    <h5 class="card-title">Output</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                    <div id="button-download-spinner" class="d-flex justify-content-center mt-3 mb-3">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                    <a href="#" class="btn btn-primary" id="button-output-download">Download</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="card w-100" >
+                <div class="card-body">
+                    <h5 class="card-title">Ontology</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                    <div id="button-ontology-spinner" class="d-flex justify-content-center mt-3 mb-3">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                    <a href="#" class="btn btn-primary" id="button-ontology-download">Download</a>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -37,8 +72,43 @@
         });
     }
 
+    function clearUploadMessage(){
+        const el = document.getElementById("upload-status");
+        if(!el.classList.contains("show"))
+            return;
+        new bootstrap.Collapse(el, {
+            toggle: true
+        });
+    }
+
+
+    let outputFileInterval = null;
+    function startShowingMessage(elem, interval, urlExists, urlDownload){
+        interval = setInterval(async function(){
+            console.log('fetch', urlExists);
+            const response = await fetch(urlExists);
+            const text = await response.text();
+            elem.textContent = text;
+            if(text == "true") {
+                console.log(text);
+                clearInterval(interval);
+                elem.setAttribute("href", urlDownload);
+            }
+        }, 1000);
+    }
+
+    function setOutputIntervals(identifier){
+        const elemOutputDownload = document.getElementById("button-output-download");
+        const urlOutputExists = 'http://localhost:8080/api/task/'+identifier+'/output-file/exists';
+        const urlOutputDownload = 'http://localhost:8080/api/task/'+identifier+'/output-file';
+        startShowingMessage(elemOutputDownload, outputFileInterval, urlOutputExists, urlOutputDownload);
+    }
+
+
     const input = document.getElementById('formFile');
     input.addEventListener('change', event => {
+
+        clearUploadMessage();
 
         let files = event.target.files
         let fileName = files[0].name
@@ -53,11 +123,12 @@
             body: data,
         }).then((response) => {
             if (response.ok) {
-                return response.text();
+                return response.json();
             }
             return Promise.reject(response);
-        }).then((text) => {
-            setUploadSuccess(text)
+        }).then((json) => {
+            setUploadSuccess(json);
+            setOutputIntervals(json.identifier);
         }).catch((response) => {
             response.text().then((text) => {
                 setUploadError(text)
