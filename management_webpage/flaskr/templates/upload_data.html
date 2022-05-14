@@ -17,12 +17,10 @@
 
         <div class="col-12">
             <div class="alert collapse" id="task-status-wrapper" data-bs-toggle="collapse" role="alert">
-                <span class="col-3">
-                    <span class="spinner-border" role="status" id="spinner" style="display: none">
-                        <span class="visually-hidden">Loading...</span>
-                    </span>
-                </span>
-                <span class="col-9" id="task-text"></span>
+                <div class="d-flex align-items-center">
+                    <strong id="task-text">Loading...</strong>
+                    <div id="spinner" style="display: none" class="spinner-border ms-auto" role="status" aria-hidden="true"></div>
+                </div>
             </div>
         </div>
 
@@ -116,7 +114,8 @@
         });
     }
 
-    function collapseStatus(el){
+    function collapseStatus(){
+        const el = document.getElementById("task-status-wrapper");
         if(!el.classList.contains("show"))
             return;
         new bootstrap.Collapse(el, {
@@ -155,7 +154,6 @@
     }
 
     function taskComplete(identifier){
-        hideElement("spinner");
         const urlDownloadExists = HOST_TRIPFLIFIER + '/api/task/'+identifier+'/output-file/exists'
         console.log('fetch', urlDownloadExists);
         fetch(urlDownloadExists).then((response) => response.text()).then(function(text){
@@ -174,6 +172,7 @@
                 showElement("ontology-card")
             }
         });
+        setTimeout(function(){collapseStatus()}, 5000);
     }
 
     function taskError(identifier, response){
@@ -191,8 +190,8 @@
 
     const input = document.getElementById('formFile');
     input.addEventListener('change', event => {
+        showElement("task-status-wrapper");
         showElement("spinner");
-        collapseStatus(document.getElementById("task-status-wrapper"));
 
         let files = event.target.files
         let fileName = files[0].name
