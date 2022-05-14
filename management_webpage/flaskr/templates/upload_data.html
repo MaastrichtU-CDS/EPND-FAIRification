@@ -14,66 +14,93 @@
                 <input class="form-control" type="file" id="formFile" accept=".csv,.png">
             </div>
         </div>
+
         <div class="col-12">
-            <div id="upload-status" class="alert collapse" data-bs-toggle="collapse" role="alert"></div>
+            <div class="alert collapse" id="task-status-wrapper" data-bs-toggle="collapse" role="alert">
+                <span class="col-3">
+                    <span class="spinner-border" role="status" id="spinner" style="display: none">
+                        <span class="visually-hidden">Loading...</span>
+                    </span>
+                </span>
+                <span class="col-9" id="task-text"></span>
+            </div>
         </div>
 
-        <div class="col-6">
+        <div class="col-6" id="output-card"  style="display: none">
             <div class="card w-100">
                 <div class="card-body">
                     <h5 class="card-title">Output</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
-                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                    <div id="button-download-spinner" class="d-flex justify-content-center mt-3 mb-3">
-                        <div class="spinner-border" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                        </div>
-                    </div>
+                    <h6 class="card-subtitle mb-2 text-muted">Output.ttl</h6>
+                    <p class="card-text">The output ttl file</p>
                     <a href="#" class="btn btn-primary" id="button-output-download">Download</a>
                 </div>
             </div>
         </div>
-        <div class="col-6">
+        <div class="col-6" id="ontology-card" style="display: none">
             <div class="card w-100" >
                 <div class="card-body">
                     <h5 class="card-title">Ontology</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
-                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                    <div id="button-ontology-spinner" class="d-flex justify-content-center mt-3 mb-3">
-                        <div class="spinner-border" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                        </div>
-                    </div>
+                    <h6 class="card-subtitle mb-2 text-muted">Ontology.owl</h6>
+                    <p class="card-text">The ontology owl file</p>
                     <a href="#" class="btn btn-primary" id="button-ontology-download">Download</a>
                 </div>
             </div>
         </div>
     </div>
+    <div class="row mt-3">
+    <div class="col-12">
+        <div class="card w-100">
+        <div class="card-body">
+        <button class="btn btn-danger btn-sm float-end" onclick="deleteTasks()">delete tasks</button>
+        </div>
+        </div>
+    </div>
+    </div>
 </div>
 
 <script>
-    function setUploadSuccess(message){
-        document.getElementById("upload-status").classList.remove("alert-danger");
-        document.getElementById("upload-status").classList.add("alert-success");
-        setUploadMessage(message);
+    HOST_TRIPFLIFIER = "http://localhost:8080";
+
+    function deleteTasks(){
+        fetch(HOST_TRIPFLIFIER + "/task/", {
+            method: 'DELETE',
+        })
+            .then(res => res.text()) // or res.json()
+            .then(res => console.log(res))
+    }
+
+    function showElement(id){
+        document.getElementById(id).style.display = "block";
+    }
+
+    function hideElement(id){
+        document.getElementById(id).style.display = "none";
+    }
+
+    function setSuccessMessage(message){
+        showStatus(message, true);
     }
 
     function setUploadError(message){
-        document.getElementById("upload-status").classList.remove("alert-success");
-        document.getElementById("upload-status").classList.add("alert-danger");
-        setUploadMessage(message);
+        showStatus(message, false);
     }
 
-    function setUploadMessage(message){
-        const el = document.getElementById("upload-status");
-        el.innerText = message;
+    function showStatus(message, success){
+        const el = document.getElementById("task-status-wrapper");
+        if(success) {
+            el.classList.remove("alert-danger");
+            el.classList.add("alert-success");
+        } else {
+            el.classList.add("alert-danger");
+            el.classList.remove("alert-success");
+        }
+        document.getElementById("task-text").innerText = message;
         new bootstrap.Collapse(el, {
             toggle: true
         });
     }
 
-    function clearUploadMessage(){
-        const el = document.getElementById("upload-status");
+    function collapseStatus(el){
         if(!el.classList.contains("show"))
             return;
         new bootstrap.Collapse(el, {
@@ -82,33 +109,74 @@
     }
 
 
-    let outputFileInterval = null;
-    function startShowingMessage(elem, interval, urlExists, urlDownload){
+    let statusInterval = null;
+    function pollTaskStatus(urlStatus, interval, identifier){
+        showElement("spinner");
+        const taskStatusEl = document.getElementById("task-text");
         interval = setInterval(async function(){
-            console.log('fetch', urlExists);
-            const response = await fetch(urlExists);
+            console.log('fetch', urlStatus);
+            const response = await fetch(urlStatus);
             const text = await response.text();
-            elem.textContent = text;
-            if(text == "true") {
-                console.log(text);
+            taskStatusEl.textContent = text;
+            if(text.indexOf("ERROR")!=-1) {
+                console.log("stoppoll", text);
+                hideElement("spinner");
                 clearInterval(interval);
-                elem.setAttribute("href", urlDownload);
+                taskError(identifier);
+            }
+            if(text.indexOf("COMPLETE")!=-1){
+                console.log("stoppoll", text);
+                hideElement("spinner");
+                clearInterval(interval);
+                taskComplete(identifier);
             }
         }, 1000);
     }
 
     function setOutputIntervals(identifier){
-        const elemOutputDownload = document.getElementById("button-output-download");
-        const urlOutputExists = 'http://localhost:8080/api/task/'+identifier+'/output-file/exists';
-        const urlOutputDownload = 'http://localhost:8080/api/task/'+identifier+'/output-file';
-        startShowingMessage(elemOutputDownload, outputFileInterval, urlOutputExists, urlOutputDownload);
+        const urlStatus = HOST_TRIPFLIFIER + '/api/task/'+identifier+'/status';
+        pollTaskStatus(urlStatus, statusInterval, identifier);
     }
 
+    function taskComplete(identifier){
+        hideElement("spinner");
+        const urlDownloadExists = HOST_TRIPFLIFIER + '/api/task/'+identifier+'/output-file/exists'
+        console.log('fetch', urlDownloadExists);
+        fetch(urlDownloadExists).then((response) => response.text()).then(function(text){
+            if(text == "true") {
+                const elemOutputDownload = document.getElementById("button-output-download");
+                elemOutputDownload.href = HOST_TRIPFLIFIER + '/api/task/' + identifier + '/output-file';
+                showElement("output-card")
+            }
+        });
+        const urlOntologyExists = HOST_TRIPFLIFIER + '/api/task/'+identifier+'/ontology-file/exists'
+        console.log('fetch', urlOntologyExists);
+        fetch(urlOntologyExists).then((response) => response.text()).then(function(text){
+            if(text == "true") {
+                const elemOutputDownload = document.getElementById("button-ontology-download");
+                elemOutputDownload.href = HOST_TRIPFLIFIER + '/api/task/' + identifier + '/ontology-file';
+                showElement("ontology-card")
+            }
+        });
+    }
+
+    function taskError(identifier, response){
+        const contentType = response.headers.get("content-type");
+        if (contentType && contentType.indexOf("application/json") !== -1) {
+            return response.json().then(json => {
+                setUploadError(json);
+            });
+        } else {
+            return response.text().then(text => {
+                setUploadError(text);
+            });
+        }
+    }
 
     const input = document.getElementById('formFile');
     input.addEventListener('change', event => {
-
-        clearUploadMessage();
+        showElement("spinner");
+        collapseStatus(document.getElementById("task-status-wrapper"));
 
         let files = event.target.files
         let fileName = files[0].name
@@ -117,7 +185,7 @@
         data.append('file', files[0])
         data.append('name', fileName)
 
-        let url = "http://localhost:8080/api/binary";
+        let url = HOST_TRIPFLIFIER + "/api/binary";
         fetch(url,{
             method:"POST",
             body: data,
@@ -127,12 +195,19 @@
             }
             return Promise.reject(response);
         }).then((json) => {
-            setUploadSuccess(json);
-            setOutputIntervals(json.identifier);
+            setSuccessMessage('upload success, taskId=' + json['id']);
+            setOutputIntervals(json.id);
         }).catch((response) => {
-            response.text().then((text) => {
-                setUploadError(text)
-            })
+                const contentType = response.headers.get("content-type");
+                if (contentType && contentType.indexOf("application/json") !== -1) {
+                    return response.json().then(json => {
+                        setUploadError(json);
+                    });
+                } else {
+                    return response.text().then(text => {
+                        setUploadError(text);
+                    });
+                }
         });
     })
 
