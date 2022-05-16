@@ -20,11 +20,9 @@ def mapper():
     linkedDatasets = useLinkdata.retrieveDatasetMapped()
     linkedDatasetsList = linkedDatasets.values.tolist()
     for row in linkedDatasetsList:
-        print(row[0])
-        if type(row[0]) != str:
-            if math.isnan(row[0]):
-                row[0] = None
-                row[1] = None
+        if type(row[0]) != str and math.isnan(row[0]):
+            row[0] = None
+            row[1] = None
 
     #Renders the default template
     return render_template("mapDatasets/mapDatasets.html", mappings=linkedDatasetsList)
