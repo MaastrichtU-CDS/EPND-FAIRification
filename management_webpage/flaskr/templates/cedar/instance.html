@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Instance details</h1>
+<button type="button" class="btn btn-danger float-right mb-1" data-toggle="modal"
+  data-target="#deleteModal">Delete</button>
+
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModal"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Are you sure?</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-footer">
+        <a href="./delete?uri={{ instance_uri }}">
+          <button type="button" class="btn btn-danger">Yes, I'm sure</button>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<table class="table table-sm table-striped mt-2">
+  <thead>
+    <tr>
+      <th scope="col">Property</th>
+      <th scope="col">Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    {%for property in properties %}
+    <tr>
+      <td>{{ property["predicate"]["value"] }}</td>
+      <td>{{ property["object"]["value"] }}</td>
+    </tr>
+    {%endfor%}
+  </tbody>
+</table>
+{% endblock %}
