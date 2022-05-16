@@ -5,7 +5,32 @@
   <p class="mb-0"><strong>Dataset Name:</strong> {{chosenMapping[0][2]}}</p>
   <p class="mb-0"><strong>Dataset Uri:</strong> <a href="{{chosenMapping[0][3]}}">{{chosenMapping[0][3]}}</a></p>
   <p class="mb-0"><strong>Statistical Metadata:</strong></p>
+  {% if categoricalCheck == true %}
+  <table>
+      <tr>
+          <th> Categorical Value </th>
+          <th> Cell values normalised </th>
+          <th> Cell value mapping </th>
+      </tr>
+      {% for index, row in metadata.iterrows() %}
+      <tr>
+          <th> {{ row[0] | safe }} </th>
+          <th> {{ row[1] | safe }} </th>
+          <th>
+              <select name="targetValues" smethod="GET"
+                                          action="/getTargetValues">
+                  {% for value in targetValues %}
+                  <option value="{{ value }}" SELECTED> {{ value }}</option>
+                  {% endfor %}
+              </select>
+          </th>
+      </tr>
+      {% endfor %}
+  </table>
+  {% else %}
   {{ metadata | safe }}
+  {% endif %}
+  <!--{{ metadata | safe }}-->
   {% if chosenMapping[0][1] is not sameas chosenMapping[0][0] %}
   <div class="mt-3">
     <p class="mb-0"><strong>CDM Name:</strong> {{chosenMapping[0][1]}}</p>
