@@ -31,10 +31,10 @@ def mapper():
 
 
 #Loads the template containing more information
-@bp.route('/detailedMapping', methods=('GET', 'POST'))
+@bp.route('/detailedMapping', methods=['GET'])
 def detailedMapper():
     #Gets the chosen mapping
-    value = request.form['chosen']
+    value = request.args.get('columnUri')
 
     #Gets all mapped values
     linkedDatasets = useLinkdata.retrieveDatasetMapped()
