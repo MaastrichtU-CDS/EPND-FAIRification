@@ -81,7 +81,7 @@ def detailedMapper():
         
 
     #Renders the detailedMapping template
-    return render_template("mapDatasets/detailedMapping.html", metadata=metadata.to_html(), chosenMapping=linkedInformationList, cdmValues = cdmColumnsList)
+    return render_template("mapDatasets/detailedMapping.html", metadata=metadata.to_html(justify='left', border=0), chosenMapping=linkedInformationList, cdmValues = cdmColumnsList)
 
 #Adds a new mapping, or changes a existing mapping to a new one
 @bp.route('/commit', methods = ['GET', 'POST'])
