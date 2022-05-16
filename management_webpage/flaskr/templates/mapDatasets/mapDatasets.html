@@ -88,8 +88,17 @@
     },
 
     methods: {
-      removeMapping(entry) {
+      async removeMapping(entry) {
         entry.deleting = true
+        const response = await fetch('/api/deletemapping', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ datasetUri: entry.columnUri, cdmUri: entry.cdmUri })
+        }).then(response => response.json())
+        entry.cdmUriLabel = ''
+        entry.deleting = false
       }
     }
   });
