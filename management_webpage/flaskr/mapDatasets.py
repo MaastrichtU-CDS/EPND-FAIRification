@@ -108,3 +108,14 @@ def deleteMapping():
 
     #Renders the default template
     return redirect(url_for("mapDatasets.mapper"))
+
+    #Deletes a current mapping
+@bp.route('/api/deletemapping', methods=['POST'])
+def deleteMappingAPI():
+    #Gets the mapping that needs to be deleted, and deletes it
+    datasetUri = request.json['datasetUri']
+    cdmUri = request.json['cdmUri']
+    useLinkdata.deleteLink(datasetUri, cdmUri)
+
+    #Renders the default template
+    return jsonify(status="succes")
