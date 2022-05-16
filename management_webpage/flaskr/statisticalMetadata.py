@@ -2,7 +2,6 @@ import pandas as pd
 
 #Create Numeric/Unknown Metadata
 def numericMetadata(df):
-    dfMetadata = pd.DataFrame()
     dfMetadata = df.describe()
     return dfMetadata
 
