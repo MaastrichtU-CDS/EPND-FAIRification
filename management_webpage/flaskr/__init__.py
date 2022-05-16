@@ -49,6 +49,7 @@ def create_app(test_config=None):
 
      from . import data_controller
      app.register_blueprint(data_controller.bp)
+     data_controller.rdfStore = rdfStore
      
      return app
 

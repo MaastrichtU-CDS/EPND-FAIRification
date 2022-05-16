@@ -39,4 +39,21 @@
     {%endfor%}
   </tbody>
 </table>
+<br/>
+<h2>Associated dataset(s)</h2>
+<div class="container-fluid"><a href="/upload?metadataUri={{ instance_uri }}" role="button" class="btn btn-primary float-right mb-1">Add</a></div>
+<table class="table table-striped mt-2">
+  <thead>
+      <tr>
+          <th scope="col">ID</th>
+          <th scope="col">Creation Date</th>
+      </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>12345</td>
+      <td>Now</td>
+    </tr>
+  </tbody>
+</table>
 {% endblock %}

@@ -4,7 +4,7 @@
 <div class="container">
     <div class="row pt-3">
         <div class="col-12">
-            <p class="h2">Triplifier</p>
+            <p class="h2">Upload data</p>
         </div>
     </div>
     <div class="row mt-5">
@@ -70,6 +70,8 @@
 
 <script>
     HOST_TRIPFLIFIER = "http://localhost:8080";
+    HOST_BACKEND = "http://localhost:5000";
+    METADATA_URI = "{{ metadataUri }}"
 
     function deleteTasks(){
         fetch(HOST_TRIPFLIFIER + "/api/task/", {
@@ -188,6 +190,25 @@
         }
     }
 
+    function storeDataLink(metadataUri, taskUri) {
+        let url = HOST_BACKEND + "/upload/link";
+        const data = new FormData()
+        data.append("metadataUri", metadataUri)
+        data.append("taskId", taskUri)
+
+        fetch(url, {
+            method:"POST",
+            body:data
+        }).then((response) => {
+            if (response.ok) {
+                window.location.href = "/metadata/instance?uri=" + METADATA_URI
+                return true
+            } else {
+                return false
+            }
+        })
+    }
+
     const input = document.getElementById('formFile');
     input.addEventListener('change', event => {
         showElement("task-status-wrapper");
@@ -211,7 +232,8 @@
             return Promise.reject(response);
         }).then((json) => {
             setSuccessMessage('upload success, taskId=' + json['id']);
-            setOutputIntervals(json.id);
+            storeDataLink(METADATA_URI, json['id'])
+            //setOutputIntervals(json.id);
         }).catch((response) => {
                 const contentType = response.headers.get("content-type");
                 if (contentType && contentType.indexOf("application/json") !== -1) {
