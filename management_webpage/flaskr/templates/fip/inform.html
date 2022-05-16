@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2>Selected FIP</h2>
+<p>The details of the current FIP are displayed below</p>
+
+<table>
+    {% for fip in foundFips %}
+    <tr>
+        <td>FIP:</td>
+        <td>{{ fip.fip_label.value }}</td>
+    </tr>
+    <tr>
+        <td>Cedar template:</td>
+        <td>{{ fip.cedar_template.value }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<a href="/metadata" class="btn btn-primary float-right">Next</a>
+
+{% endblock %}

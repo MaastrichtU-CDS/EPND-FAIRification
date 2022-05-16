@@ -2,6 +2,7 @@ import os
 
 from flask import Flask
 import json
+from flaskr.services import triplestore
 
 #app = Flask(__name__)
 
@@ -12,7 +13,7 @@ import json
 #if (__name__ == "__main__"):
 #     app.run(host='0.0.0.0', port=5000)
 
-from management_webpage.flaskr.blueprints import upload_data
+from management_webpage.flaskr import data_controller
 
 
 def create_app(test_config=None):
@@ -32,14 +33,23 @@ def create_app(test_config=None):
      # from . import linkdatasets
      # app.register_blueprint(linkdatasets.bp)
      # app.add_url_rule('/', endpoint='linker')
+     rdfStore = triplestore.GraphDBTripleStore(app.config.get("rdf_endpoint"))
 
      from . import mapDatasets
      app.register_blueprint(mapDatasets.bp)
-     app.add_url_rule('/', endpoint='mapper')
+     # app.add_url_rule('/', endpoint='mapper')
 
-     app.register_blueprint(upload_data.bp)
-     app.add_url_rule('/', endpoint='upload')
+     from . import fip_controller
+     app.register_blueprint(fip_controller.bp)
+     fip_controller.rdfStore = rdfStore
 
+     from . import cedar_controller
+     app.register_blueprint(cedar_controller.bp)
+     cedar_controller.rdfStore = rdfStore
+     if "cedar_instance_base_url" in app.config:
+          cedar_controller.cedar_instance_base_url = app.config.get("cedar_instance_base_url")
+
+     app.register_blueprint(data_controller.bp)
      
      return app
 
