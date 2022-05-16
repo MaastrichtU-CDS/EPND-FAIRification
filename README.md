@@ -11,3 +11,15 @@ Please execute the [docker-compose.yml](docker-compose.yml) file using `docker-c
 ## How to build this software?
 
 The software is actually built when executing docker-compose (see above). To force a re-build, use `docker-compose up -d --build`.
+
+## How to develop on the frond-end?
+
+1. Stop the web-ui service container (`docker-compose stop webui && docker-compose rm webui`)
+2. Go to the management_webpage folder, and execute run.sh after all python dependencies are installed
+    ```
+    cd management_webpage
+    python -m venv ./venv
+    source ./venv/bin/activate
+    pip install -r requirements.txt
+    sh run.sh
+    ```

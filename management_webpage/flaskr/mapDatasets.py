@@ -10,7 +10,7 @@ import math
 bp = Blueprint("mapDatasets",__name__)
 
 #Default homepage for the program
-@bp.route('/', methods=('GET', 'POST'))
+@bp.route('/column_mappings', methods=('GET', 'POST'))
 def mapper():
 
     datasetColumns = useDataset.getDatasetUri()
