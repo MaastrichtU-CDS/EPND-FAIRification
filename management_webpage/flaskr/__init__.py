@@ -2,6 +2,7 @@ import os
 
 from flask import Flask
 import json
+from flaskr.services import triplestore
 
 #app = Flask(__name__)
 
@@ -31,11 +32,15 @@ def create_app(test_config=None):
      # from . import linkdatasets
      # app.register_blueprint(linkdatasets.bp)
      # app.add_url_rule('/', endpoint='linker')
+     rdfStore = triplestore.GraphDBTripleStore(app.config.get("rdf_endpoint"))
 
      from . import mapDatasets
      app.register_blueprint(mapDatasets.bp)
-     app.add_url_rule('/', endpoint='mapper')
+     # app.add_url_rule('/', endpoint='mapper')
 
+     from . import fip_controller
+     app.register_blueprint(fip_controller.bp)
+     fip_controller.rdfStore = rdfStore
 
      
      return app
