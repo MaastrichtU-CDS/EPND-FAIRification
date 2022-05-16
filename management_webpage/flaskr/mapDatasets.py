@@ -2,7 +2,7 @@ import statistics
 from flask import (
     Blueprint, render_template, request, redirect, url_for, jsonify
 )
-from flaskr import useDataset, useCDM, useLinkdata, statisticalMetadata
+from flaskr import useDataset, useCDM, useLinkdata, statisticalMetadata, getCategories
 import pandas as pd
 import numpy as np
 import math
@@ -68,21 +68,26 @@ def detailedMapper():
     if linkedInformationDataframe['cdmUri'][0] == True:
         data = useDataset.getData(value)
         metadata = statisticalMetadata.numericMetadata(data)
+        categoricalData = False
     else:
         cdmTotal = useCDM.getCDMFull()
         cdmTotal = cdmTotal.loc[cdmTotal['variableUri'] == linkedInformationList[0][0]]
         cdmTotal = cdmTotal.reset_index(drop=True)
         data = useDataset.getData(value)
+        categoricalData = True
+        targetValues=getCategories.getClassCategories(str(linkedInformationList[0][0]))
         if cdmTotal['variableType'][0] == 'http://semanticscience.org/resource/SIO_000914' or cdmTotal['variableType'][0] == 'http://semanticscience.org/resource/SIO_000137':
             metadata = statisticalMetadata.categoricalMetadata(data)
-            metadata = metadata.to_frame()
+            #metadata = metadata.to_frame()
         else:
             metadata = statisticalMetadata.numericMetadata(data)
-        
-
-    #Renders the detailedMapping template
-    return render_template("mapDatasets/detailedMapping.html", metadata=metadata.to_html(justify='left', border=0), chosenMapping=linkedInformationList, cdmValues = cdmColumnsList)
-
+    if categoricalData: 
+        #Renders the detailedMapping template
+        return render_template("mapDatasets/detailedMapping.html", metadata=metadata, titles=metadata.columns.values, chosenMapping=linkedInformationList, cdmValues = cdmColumnsList, categoricalCheck=bool(categoricalData), targetValues=targetValues['categoryLabel'].values)
+    else:
+        return render_template("mapDatasets/detailedMapping.html",
+                metadata=metadata.to_html(),
+                chosenMapping=linkedInformationList, cdmValues=cdmColumnsList)
 #Adds a new mapping, or changes a existing mapping to a new one
 @bp.route('/commit', methods = ['GET', 'POST'])
 def submitForm():
