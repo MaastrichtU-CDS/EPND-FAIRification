@@ -1,6 +1,6 @@
 import statistics
 from flask import (
-    Blueprint, render_template, request, redirect, url_for
+    Blueprint, render_template, request, redirect, url_for, jsonify
 )
 from flaskr import useDataset, useCDM, useLinkdata, statisticalMetadata
 import pandas as pd
@@ -29,6 +29,24 @@ def mapper():
     #Renders the default template
     return render_template("mapDatasets/mapDatasets.html", mappings=linkedDatasetsList)
 
+
+@bp.route('/api/mappings', methods=['GET'])
+def jsonMapper():
+
+    datasetColumns = useDataset.getDatasetUri()
+
+    cdmColumns = useCDM.getCDMUri()
+    #Gets all information of the linked data
+    linkedDatasets = useLinkdata.retrieveDatasetMapped()
+    linkedDatasetsList = linkedDatasets.values.tolist()
+    mappings = []
+    for row in linkedDatasetsList:
+        if type(row[0]) != str and math.isnan(row[0]):
+                row[0] = None
+                row[1] = None
+        mappings.append({ "columnName": row[2], "columnUri": row[3], "cdmUri": row[0], "cdmUriLabel": row[1] })
+
+    return jsonify(mappings)
 
 #Loads the template containing more information
 @bp.route('/detailedMapping', methods=['GET'])
