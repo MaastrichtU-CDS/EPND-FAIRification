@@ -21,6 +21,7 @@
         <td> {{ row[1] | safe }} </td>
         <td>
           <form class="text-end" action="/cellMapping" method="POST">
+		  <!-- temp workaround to read values-->
 		  <input type="hidden" name="sourceValue" value="{{ row[0] | safe }}"/>
 		  <select class="form-select" name="targetValues" smethod="GET" action="/getTargetValues">
 			  {% for value in targetValues %}
@@ -43,7 +44,8 @@
   {% if chosenMapping[0][1] is not sameas chosenMapping[0][0] %}
   <div class="mt-3">
     <p class="mb-0"><strong>CDM Name:</strong> {{chosenMapping[0][1]}}</p>
-    <p class="mb-0"><strong>CDM Uri:</strong> <a href="{{chosenMapping[0][0]}}">{{chosenMapping[0][0]}}</a></p>
+    <!--temp workaround to read values-->
+    <p class="mb-0"><input type="hidden" name="getCdmValue" value="{{ chosenMapping[0][0] }}"/><strong>CDM Uri:</strong> <a href="{{chosenMapping[0][0]}}">{{chosenMapping[0][0]}}</a></p>
   </div>
   {% endif %}
 
