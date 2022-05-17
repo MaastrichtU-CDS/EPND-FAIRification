@@ -6,7 +6,11 @@ This repository contains the FAIRifier/FAIRnotator developed for the [European P
 
 ## How to run this software?
 
-Please execute the [docker-compose.yml](docker-compose.yml) file using `docker-compose up -d`.
+Please execute the [docker-compose.yml](docker-compose.yml) file using `docker-compose up -d`. Populate the graphdb next:
+    ```
+    cd management_webpage/development_endpoint
+    sh run.sh
+    ```
 
 ## How to build this software?
 
