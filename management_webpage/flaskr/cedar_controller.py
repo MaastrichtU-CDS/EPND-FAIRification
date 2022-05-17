@@ -1,7 +1,7 @@
 from flask import (
     Blueprint, render_template, request, redirect, url_for, current_app, Response
 )
-from flaskr.services import cedar_service, triplestore
+from flaskr.services import cedar_service, data_service, triplestore
 import json
 import requests
 import uuid
@@ -15,6 +15,9 @@ cedar_instance_base_url = "http://cedar.local/instances"
 
 def __get_cedar_service():
     return cedar_service.CedarEndpoint(rdfStore)
+
+def __get_data_service():
+    return data_service.DataEndpoint(rdfStore)
 
 @bp.route('/metadata', methods=['GET'])
 def index():
@@ -33,7 +36,13 @@ def showInstance():
     identifier = request.args.get("uri")
     properties = __get_cedar_service().describe_instance(identifier)
     references = __get_cedar_service().get_instance_links(identifier)
-    return render_template("cedar/instance.html", properties=properties, references=references, instance_uri=identifier)
+
+    distributionList = __get_data_service().get_distributions_for_metadata(identifier)
+    for distribution in distributionList:
+        distribution["tableNames"] = __get_data_service().get_tables_for_distribution(distribution["ontologyUri"]['value'])
+    print(distributionList)
+
+    return render_template("cedar/instance.html", properties=properties, references=references, instance_uri=identifier, distributionList=distributionList)
 
 @bp.route("/metadata/delete")
 def delete_instance():

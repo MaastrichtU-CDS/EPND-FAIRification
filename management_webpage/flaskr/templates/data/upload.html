@@ -1,0 +1,253 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container">
+    <div class="row pt-3">
+        <div class="col-12">
+            <p class="h2">Upload data</p>
+        </div>
+    </div>
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="mb-3">
+                <label for="formFile" class="form-label">Upload data (*.csv)</label>
+                <input class="form-control" type="file" id="formFile" accept=".csv,.png">
+            </div>
+        </div>
+
+        <div class="col-12">
+            <div class="alert collapse" id="task-status-wrapper" data-bs-toggle="collapse" role="alert">
+                <div class="d-flex align-items-center">
+                    <strong id="task-text">Loading...</strong>
+                    <div id="spinner" style="display: none" class="spinner-border ms-auto" role="status" aria-hidden="true"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-6" id="output-card"  style="display: none">
+            <div class="card w-100">
+                <div class="card-body">
+                    <h5 class="card-title">Output</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">Output.ttl</h6>
+                    <p class="card-text">The output ttl file</p>
+                    <a href="#" class="btn btn-primary" id="button-output-download">Download</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-6" id="ontology-card" style="display: none">
+            <div class="card w-100" >
+                <div class="card-body">
+                    <h5 class="card-title">Ontology</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">Ontology.owl</h6>
+                    <p class="card-text">The ontology owl file</p>
+                    <a href="#" class="btn btn-primary" id="button-ontology-download">Download</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-3">
+    <div class="col-12">
+        <div class="card w-100">
+        <div class="card-body">
+            <span id="delete-msg"></span>
+        <button class="btn btn-danger btn-sm float-end" onclick="deleteTasks()">delete tasks</button>
+        </div>
+        </div>
+    </div>
+    </div>
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div id="deleteToast" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true">
+            <div class="toast-header">
+                <strong class="me-auto">Delete</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                Tasks deleted.
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    HOST_TRIPFLIFIER = "http://localhost:8080";
+    HOST_BACKEND = "http://localhost:5000";
+    METADATA_URI = "{{ metadataUri }}"
+
+    function deleteTasks(){
+        fetch(HOST_TRIPFLIFIER + "/api/task/", {
+            method: 'DELETE',
+        })
+            .then(res => res.text()) // or res.json()
+            .then((res) => {
+                console.log(res);
+                const toastEl = document.getElementById('deleteToast');
+                new bootstrap.Toast(toastEl).show();
+            })
+    }
+
+    function showElement(id){
+        document.getElementById(id).style.display = "block";
+    }
+
+    function hideElement(id){
+        document.getElementById(id).style.display = "none";
+    }
+
+    function setSuccessMessage(message){
+        showStatus(message, true);
+    }
+
+    function setUploadError(message){
+        showStatus(message, false);
+    }
+
+    function showStatus(message, success){
+        const el = document.getElementById("task-status-wrapper");
+        if(success) {
+            el.classList.remove("alert-danger");
+            el.classList.add("alert-success");
+        } else {
+            el.classList.add("alert-danger");
+            el.classList.remove("alert-success");
+        }
+        document.getElementById("task-text").innerText = message;
+        new bootstrap.Collapse(el, {
+            toggle: true
+        });
+    }
+
+    function collapseStatus(){
+        const el = document.getElementById("task-status-wrapper");
+        if(!el.classList.contains("show"))
+            return;
+        new bootstrap.Collapse(el, {
+            toggle: true
+        });
+    }
+
+
+    let statusInterval = null;
+    function pollTaskStatus(urlStatus, interval, identifier){
+        showElement("spinner");
+        const taskStatusEl = document.getElementById("task-text");
+        interval = setInterval(async function(){
+            console.log('fetch', urlStatus);
+            const response = await fetch(urlStatus);
+            const text = await response.text();
+            taskStatusEl.textContent = text;
+            if(text.indexOf("ERROR")!=-1) {
+                console.log("stoppoll", text);
+                hideElement("spinner");
+                clearInterval(interval);
+                taskError(identifier);
+            }
+            if(text.indexOf("COMPLETE")!=-1){
+                console.log("stoppoll", text);
+                hideElement("spinner");
+                clearInterval(interval);
+                taskComplete(identifier);
+            }
+        }, 1000);
+    }
+
+    function setOutputIntervals(identifier){
+        const urlStatus = HOST_TRIPFLIFIER + '/api/task/'+identifier+'/status';
+        pollTaskStatus(urlStatus, statusInterval, identifier);
+    }
+
+    function taskComplete(identifier){
+        const urlDownloadExists = HOST_TRIPFLIFIER + '/api/task/'+identifier+'/output-file/exists'
+        console.log('fetch', urlDownloadExists);
+        fetch(urlDownloadExists).then((response) => response.text()).then(function(text){
+            if(text == "true") {
+                const elemOutputDownload = document.getElementById("button-output-download");
+                elemOutputDownload.href = HOST_TRIPFLIFIER + '/api/task/' + identifier + '/output-file';
+                showElement("output-card")
+            }
+        });
+        const urlOntologyExists = HOST_TRIPFLIFIER + '/api/task/'+identifier+'/ontology-file/exists'
+        console.log('fetch', urlOntologyExists);
+        fetch(urlOntologyExists).then((response) => response.text()).then(function(text){
+            if(text == "true") {
+                const elemOutputDownload = document.getElementById("button-ontology-download");
+                elemOutputDownload.href = HOST_TRIPFLIFIER + '/api/task/' + identifier + '/ontology-file';
+                showElement("ontology-card")
+            }
+        });
+        setTimeout(function(){collapseStatus()}, 5000);
+    }
+
+    function taskError(identifier, response){
+        const contentType = response.headers.get("content-type");
+        if (contentType && contentType.indexOf("application/json") !== -1) {
+            return response.json().then(json => {
+                setUploadError(json.error);
+            });
+        } else {
+            return response.text().then(text => {
+                setUploadError(text);
+            });
+        }
+    }
+
+    function storeDataLink(metadataUri, taskUri) {
+        let url = HOST_BACKEND + "/upload/link";
+        const data = new FormData()
+        data.append("metadataUri", metadataUri)
+        data.append("taskId", taskUri)
+
+        fetch(url, {
+            method:"POST",
+            body:data
+        }).then((response) => {
+            if (response.ok) {
+                window.location.href = "/metadata/instance?uri=" + METADATA_URI
+                return true
+            } else {
+                return false
+            }
+        })
+    }
+
+    const input = document.getElementById('formFile');
+    input.addEventListener('change', event => {
+        showElement("task-status-wrapper");
+        showElement("spinner");
+
+        let files = event.target.files
+        let fileName = files[0].name
+
+        const data = new FormData()
+        data.append('file', files[0])
+        data.append('name', fileName)
+
+        let url = HOST_TRIPFLIFIER + "/api/binary";
+        fetch(url,{
+            method:"POST",
+            body: data,
+        }).then((response) => {
+            if (response.ok) {
+                return response.json();
+            }
+            return Promise.reject(response);
+        }).then((json) => {
+            setSuccessMessage('upload success, taskId=' + json['id']);
+            storeDataLink(METADATA_URI, json['id'])
+            //setOutputIntervals(json.id);
+        }).catch((response) => {
+                const contentType = response.headers.get("content-type");
+                if (contentType && contentType.indexOf("application/json") !== -1) {
+                    return response.json().then(json => {
+                        setUploadError(json.error);
+                    });
+                } else {
+                    return response.text().then(text => {
+                        setUploadError(text);
+                    });
+                }
+        });
+    })
+
+</script>
+
+{% endblock %}

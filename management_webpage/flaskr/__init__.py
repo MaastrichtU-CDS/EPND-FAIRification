@@ -14,7 +14,6 @@ from flaskr.services import triplestore
 #     app.run(host='0.0.0.0', port=5000)
 
 
-
 def create_app(test_config=None):
      app = ...
     # Create and configure the app
@@ -48,6 +47,9 @@ def create_app(test_config=None):
      if "cedar_instance_base_url" in app.config:
           cedar_controller.cedar_instance_base_url = app.config.get("cedar_instance_base_url")
 
+     from . import data_controller
+     app.register_blueprint(data_controller.bp)
+     data_controller.rdfStore = rdfStore
      
      return app
 

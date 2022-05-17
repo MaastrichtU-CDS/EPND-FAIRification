@@ -18,3 +18,17 @@ services:
       - 5000:5000
     volumes:
       - ./ui_config.json:/app/config.json
+  
+  triplifier:
+    image: registry.gitlab.com/um-cds/fair/tools/triplifier-boot:latest
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=default
+      - TASK_WORKDIR=/triplifier-workdir
+      - TASK_SPARQLURL=http://rdf-store:7200
+    volumes:
+      - triplifier_workdir:/triplifier-workdir
+
+volumes:
+  triplifier_workdir:

@@ -1,3 +1,4 @@
 {
-    "rdf_endpoint": "http://rdf-store:7200/repositories/epnd_dummy"
+    "rdf_endpoint": "http://rdf-store:7200/repositories/epnd_dummy",
+    "triplifier_service": "http://triplifier:8080"
 }
