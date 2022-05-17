@@ -1,36 +1,39 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container">
+<div class="container mb-5">
   <p class="mb-0"><strong>Dataset Name:</strong> {{chosenMapping[0][2]}}</p>
   <p class="mb-0"><strong>Dataset Uri:</strong> <a href="{{chosenMapping[0][3]}}">{{chosenMapping[0][3]}}</a></p>
   <p class="mb-0"><strong>Statistical Metadata:</strong></p>
   {% if categoricalCheck == true %}
-  <table>
+  <table class="table table-striped w-50">
+    <thead>
       <tr>
-          <th> Categorical Value </th>
-          <th> Cell values normalised </th>
-          <th> Cell value mapping </th>
+        <th> Categorical Value </th>
+        <th> Cell values normalised </th>
+        <th> Cell value mapping </th>
       </tr>
+    </thead>
+    <tbody>
       {% for index, row in metadata.iterrows() %}
       <tr>
-          <th> {{ row[0] | safe }} </th>
-          <th> {{ row[1] | safe }} </th>
-          <th>
-              <select name="targetValues" smethod="GET"
-                                          action="/getTargetValues">
-                  {% for value in targetValues %}
-                  <option value="{{ value }}" SELECTED> {{ value }}</option>
-                  {% endfor %}
-              </select>
-	      <form action="" method="POST">
-		      <button class="btn btn-primary" type="submit">
-			      Change
-		      </button>
-	      </form>
-          </th>
+        <td> {{ row[0] | safe }} </td>
+        <td> {{ row[1] | safe }} </td>
+        <td>
+          <select class="form-select" name="targetValues" smethod="GET" action="/getTargetValues">
+            {% for value in targetValues %}
+            <option value="{{ value }}" SELECTED> {{ value }}</option>
+            {% endfor %}
+          </select>
+          <form class="text-end" action="" method="POST">
+            <button class="btn btn-primary" type="submit">
+              Change
+            </button>
+          </form>
+        </td>
       </tr>
       {% endfor %}
+    </tbody>
   </table>
   {% else %}
   {{ metadata | safe }}
