@@ -5,7 +5,7 @@
 <h2>Selected FIP</h2>
 <p>The details of the current FIP are displayed below</p>
 
-<table>
+<table class="table table-striped mt-2">
     {% for fip in foundFips %}
     <tr>
         <td>FIP:</td>
@@ -14,6 +14,10 @@
     <tr>
         <td>Cedar template:</td>
         <td>{{ fip.cedar_template.value }}</td>
+    </tr>
+    <tr>
+        <td>SHACL template:</td>
+        <td>{{ fip.shacl_location.value }}</td>
     </tr>
     {% endfor %}
 </table>
