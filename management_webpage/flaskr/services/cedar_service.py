@@ -45,9 +45,11 @@ class CedarEndpoint:
         Retrieve the direct properties of the given instance
         """
         query = """
+        prefix dcat: <http://www.w3.org/ns/dcat#>
         SELECT ?predicate ?object
         WHERE {
             <%s> ?predicate ?object.
+            FILTER (?predicate NOT IN (dcat:distribution))
         }
         """ % instance_uri
         return self.__triplestore.select_sparql(query)

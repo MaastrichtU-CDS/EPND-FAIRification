@@ -1,3 +1,4 @@
+from importlib.metadata import metadata
 from flask import (
     Blueprint, render_template, request
 )
@@ -19,6 +20,7 @@ def upload():
 def makeLink():
     cedarUri = request.form.get("metadataUri")
     taskId = request.form.get("taskId")
-    taskUri = "http://data.local/dataset/" + taskId
-    __get_data_service().store_cedar_task_link(cedarUri, taskUri)
+    dataUri = "http://data.local/" + taskId + "/"
+    ontologyUri = "http://ontology.local/" + taskId + "/"
+    __get_data_service().store_cedar_task_link(cedarUri, dataUri, ontologyUri, taskId)
     return "ok"

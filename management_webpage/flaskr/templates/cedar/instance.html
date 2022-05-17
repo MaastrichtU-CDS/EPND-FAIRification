@@ -46,14 +46,20 @@
   <thead>
       <tr>
           <th scope="col">ID</th>
-          <th scope="col">Creation Date</th>
+          <th scope="col">Table(s)</th>
       </tr>
   </thead>
   <tbody>
+    {% for distribution in distributionList %}
     <tr>
-      <td>12345</td>
-      <td>Now</td>
+      <td><a href="/column_mappings?identifier={{ distribution['identifier']['value'] }}&ontology={{ distribution['ontologyUri']['value'] }}">{{ distribution['identifier']['value'] }}</a></td>
+      <td>
+      {% for tableName in distribution["tableNames"] %}
+      {{ tableName['table']['value'] }}
+      {% endfor %}
+      </td>
     </tr>
+    {% endfor %}
   </tbody>
 </table>
 {% endblock %}
