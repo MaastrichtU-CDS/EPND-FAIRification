@@ -24,6 +24,19 @@ def index():
 
     return render_template("fip/index.html")
 
+def __parse_fip(fip_uri):
+    try:
+        g = rdflib.Graph()
+        g.parse(fip_uri, format="turtle")
+    except Exception as e:
+        raise Exception("Could not load the FIP file at %s - Is the URL correct?" % fip_uri)
+    
+    triples = g.serialize(format="turtle")
+
+    fService = __get_fip_service()
+    fService.load_fip(fip_uri, triples)
+    fService.cache_shacl()
+
 @bp.route('/', methods=['POST'])
 def post_fip():
     fip_uri = request.form.get("fip-uri")
@@ -31,14 +44,8 @@ def post_fip():
         return render_template("fip/index.html", warning="Not a valid URI")
     
     try:
-        g = rdflib.Graph()
-        g.parse(fip_uri, format="turtle")
-    except:
-        return render_template("fip/index.html", warning="Could not load the FIP file at %s - Is the URL correct?" % fip_uri)
-    
-    triples = g.serialize(format="nt")
-
-    fService = __get_fip_service()
-    fService.load_fip(fip_uri, triples)
+        __parse_fip(fip_uri)
+    except Exception as e:
+        return render_template("fip/index.html", warning=e)
 
     return redirect(url_for("fip_controller.index"))
