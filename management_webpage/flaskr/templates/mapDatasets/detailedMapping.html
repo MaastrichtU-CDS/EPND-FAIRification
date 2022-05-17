@@ -20,15 +20,16 @@
         <td> {{ row[0] | safe }} </td>
         <td> {{ row[1] | safe }} </td>
         <td>
-          <select class="form-select" name="targetValues" smethod="GET" action="/getTargetValues">
-            {% for value in targetValues %}
-            <option value="{{ value }}" SELECTED> {{ value }}</option>
-            {% endfor %}
-          </select>
           <form class="text-end" action="" method="POST">
-            <button class="btn btn-primary" type="submit">
-              Change
-            </button>
+		  <input type="hidden" name="sourceValue" value="{{ row[0] | safe }}"/>
+		  <select class="form-select" name="targetValues" smethod="GET" action="/getTargetValues">
+			  {% for value in targetValues %}
+			  <option value="{{ value }}" SELECTED> {{ value }}</option>
+			  {% endfor %}
+		  </select>
+            	<button class="btn btn-primary" type="submit">
+			Change
+            	</button>
           </form>
         </td>
       </tr>
