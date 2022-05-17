@@ -18,6 +18,10 @@ class AbstractTripleStore(ABC):
     def upload_turtle(turtleString, namedGraph):
         pass
 
+    @abstractmethod
+    def fetch_namespaces():
+        pass
+
 
 class GraphDBTripleStore(AbstractTripleStore):
 
@@ -27,6 +31,13 @@ class GraphDBTripleStore(AbstractTripleStore):
 
         super().__init__()
     
+    def fetch_namespaces(self):
+        url = self.endpoint + "/namespaces"
+        response = requests.get(url, headers={"Accept": "application/sparql-results+json"})
+
+        responseDict = response.json()
+        return responseDict["results"]["bindings"]
+
     def upload_turtle(self, turtleString, namedGraph):
         url = self.endpoint + "/rdf-graphs/service?graph=" + namedGraph
         response = requests.post(url, data=turtleString, headers={"Content-Type": "text/turtle"})
