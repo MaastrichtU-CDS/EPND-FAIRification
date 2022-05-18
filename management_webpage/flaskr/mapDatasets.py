@@ -101,7 +101,8 @@ def submitForm():
         useLinkdata.createLink(valueSplit[0], valueSplit[2])
 
     #Renders the default template
-    return redirect(url_for("mapDatasets.mapper"))
+    # return redirect(url_for("mapDatasets.mapper"))
+    return redirect(request.referrer)
 
 #Deletes a current mapping
 @bp.route('/deletemapping', methods=('POST',))

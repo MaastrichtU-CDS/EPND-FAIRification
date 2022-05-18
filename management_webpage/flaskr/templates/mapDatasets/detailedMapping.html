@@ -2,6 +2,9 @@
 
 {% block content %}
 <div class="container mb-5">
+  <div class="mt-1 mb-3">
+    <a href="/">&larr; back</a>
+  </div>
   <p class="mb-0"><strong>Dataset Name:</strong> {{chosenMapping[0][2]}}</p>
   <p class="mb-0"><strong>Dataset Uri:</strong> <a href="{{chosenMapping[0][3]}}">{{chosenMapping[0][3]}}</a></p>
   <p class="mb-0"><strong>Statistical Metadata:</strong></p>
@@ -21,17 +24,17 @@
         <td> {{ row[1] | safe }} </td>
         <td>
           <form class="text-end" action="/cellMapping" method="POST">
-		  <!-- temp workaround to read values-->
-		  <input type="hidden" name="sourceValue" value="{{ row[0] | safe }}"/>
-		  <input type="hidden" name="getCdmValue" value="{{ chosenMapping[0][0] }}"/>
-		  <select class="form-select" name="targetValues" smethod="GET" action="/getTargetValues">
-			  {% for value in targetValues %}
-			  <option value="{{ value }}" SELECTED> {{ value }}</option>
-			  {% endfor %}
-		  </select>
-            	<button class="btn btn-primary" type="submit">
-			Change
-            	</button>
+            <!-- temp workaround to read values-->
+            <input type="hidden" name="sourceValue" value="{{ row[0] | safe }}" />
+            <input type="hidden" name="getCdmValue" value="{{ chosenMapping[0][0] }}" />
+            <select class="form-select" name="targetValues" smethod="GET" action="/getTargetValues">
+              {% for value in targetValues %}
+              <option value="{{ value }}" SELECTED> {{ value }}</option>
+              {% endfor %}
+            </select>
+            <button class="btn btn-primary" type="submit">
+              Change
+            </button>
           </form>
         </td>
       </tr>
@@ -56,7 +59,7 @@
       <div class="d-flex w-50">
         <select class="form-select me-1" name="cdmValues" aria-label="Default select example">
           {% for cdmValue in cdmValues %}
-          <option value="{{chosenMapping[0][3]}},{{chosenMapping[0][0]}},{{cdmValue[0]}}" {% if chosenMapping[0][1] == cdmValue[1] %} SELECTED {% endif %}>{{cdmValue[1]}}</option>
+          <option value="{{chosenMapping[0][3]}},{{chosenMapping[0][0]}},{{cdmValue[0]}}" {% if chosenMapping[0][1]==cdmValue[1] %} SELECTED {% endif %}>{{cdmValue[1]}}</option>
           {% endfor %}
         </select>
         <button class="btn btn-primary" type="submit">
