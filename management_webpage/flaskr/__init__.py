@@ -31,7 +31,7 @@ def create_app(test_config=None):
      # from . import linkdatasets
      # app.register_blueprint(linkdatasets.bp)
      # app.add_url_rule('/', endpoint='linker')
-     rdfStore = triplestore.GraphDBTripleStore(app.config.get("rdf_endpoint"))
+     rdfStore = triplestore.GraphDBTripleStore(app.config.get("graphdb_server"), app.config.get("repository"), create_if_not_exists=True)
 
      from . import mapDatasets
      app.register_blueprint(mapDatasets.bp)

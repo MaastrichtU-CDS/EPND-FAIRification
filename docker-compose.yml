@@ -2,14 +2,20 @@ version: '3.8'
 
 services:
   rdf-store:
-    build:
-      context: ./graphdb
+    image: registry.gitlab.com/um-cds/fair/tools/docker-graphdb:latest
+    # build:
+    #   context: ./graphdb
     ports: 
       - "7200:7200"
     environment:
       - GDB_HEAP_SIZE=2g
       - GDB_MIN_MEM=1g
       - GDB_MAX_MEM=2g
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7200/repositories"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
 
   webui:
     build:
@@ -18,6 +24,9 @@ services:
       - 5000:5000
     volumes:
       - ./ui_config.json:/app/config.json
+    depends_on:
+      rdf-store:
+        condition: service_healthy
   
   triplifier:
     image: registry.gitlab.com/um-cds/fair/tools/triplifier-boot:latest
