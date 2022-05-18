@@ -1,8 +1,9 @@
 import statistics
 from flask import (
-    Blueprint, render_template, request, redirect, url_for, jsonify
+    current_app, Blueprint, render_template, request, redirect, url_for, jsonify
 )
 from flaskr import useDataset, useCDM, useLinkdata, statisticalMetadata, getCategories
+from flaskr.services.triplestore import GraphDBTripleStore
 import pandas as pd
 import numpy as np
 import math
@@ -86,7 +87,7 @@ def detailedMapper():
         return render_template("mapDatasets/detailedMapping.html", metadata=metadata, titles=metadata.columns.values, chosenMapping=linkedInformationList, cdmValues = cdmColumnsList, categoricalCheck=bool(categoricalData), targetValues=targetValues['categoryLabel'].values)
     else:
         return render_template("mapDatasets/detailedMapping.html",
-                metadata=metadata.to_html(justify='left', border=0),
+                metadata=metadata.to_html(),
                 chosenMapping=linkedInformationList, cdmValues=cdmColumnsList)
 #Adds a new mapping, or changes a existing mapping to a new one
 @bp.route('/commit', methods = ['GET', 'POST'])
@@ -101,8 +102,23 @@ def submitForm():
         useLinkdata.createLink(valueSplit[0], valueSplit[2])
 
     #Renders the default template
-    # return redirect(url_for("mapDatasets.mapper"))
-    return redirect(request.referrer)
+    return redirect(url_for("mapDatasets.mapper"))
+
+@bp.route('/cellMapping', methods= ['GET', 'POST'])
+#This is just a temporary method for dealing with cell value mapping on the
+#front end and needs to be reworked. All sparql results are in dataframe form
+#and the code is agnostic. It's primarily for dealing with this use case.
+def submitCellMapping():
+    selectedValue = request.form.get('targetValues')
+    superClass = request.form.get('getCdmValue')
+    sourceValue = request.form.get('sourceValue')
+    endpoint = current_app.config.get("rdf_endpoint")
+    obj = GraphDBTripleStore(endpoint)
+    print(obj.fetch_namespaces())
+    selectedValue = getCategories.getSnomedCode(superClass, selectedValue)
+    print(selectedValue['category'].loc[selectedValue.index[0]], superClass, sourceValue)
+    #useLinkdata.createCellLink(selectedValue, superClass, sourceValue)
+    return redirect(url_for("mapDatasets.mapper"))
 
 #Deletes a current mapping
 @bp.route('/deletemapping', methods=('POST',))
@@ -124,4 +140,4 @@ def deleteMappingAPI():
     useLinkdata.deleteLink(datasetUri, cdmUri)
 
     #Renders the default template
-    return jsonify(status="succes")
+    return jsonify(status="success")

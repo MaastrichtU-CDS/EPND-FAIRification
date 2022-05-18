@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
+from turtle import turtles
 
 from SPARQLWrapper import SPARQLWrapper, JSON, GET, POST, POSTDIRECTLY
+import requests
 
 class AbstractTripleStore(ABC):
     
@@ -12,6 +14,14 @@ class AbstractTripleStore(ABC):
     def select_sparql(query):
         pass
 
+    @abstractmethod
+    def upload_turtle(turtleString, namedGraph):
+        pass
+
+    @abstractmethod
+    def fetch_namespaces():
+        pass
+
 
 class GraphDBTripleStore(AbstractTripleStore):
 
@@ -20,6 +30,23 @@ class GraphDBTripleStore(AbstractTripleStore):
         self.sparql = SPARQLWrapper(endpoint, updateEndpoint=endpoint + '/statements')
 
         super().__init__()
+    
+    def fetch_namespaces(self):
+        url = self.endpoint + "/namespaces"
+        response = requests.get(url, headers={"Accept": "application/sparql-results+json"})
+
+        responseDict = response.json()
+        return responseDict["results"]["bindings"]
+
+    def upload_turtle(self, turtleString, namedGraph):
+        url = self.endpoint + "/rdf-graphs/service?graph=" + namedGraph
+        response = requests.post(url, data=turtleString, headers={"Content-Type": "text/turtle"})
+        
+        if response.status_code > 299 | response.status_code < 200:
+            print("url: " + url)
+            print("data: " + turtleString)
+            print(response.text)
+            raise Exception("Could not upload turtle to RDF endpoint")
 
     def update_sparql(self, query):
         self.sparql.setQuery(query)
