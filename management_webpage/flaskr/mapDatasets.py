@@ -3,7 +3,7 @@ from flask import (
     current_app, Blueprint, render_template, request, redirect, url_for, jsonify
 )
 from flaskr import useDataset, useCDM, useLinkdata, statisticalMetadata, getCategories
-from flaskr.services.triplestore import GraphDBTripleStore
+#from flaskr.services.triplestore import GraphDBTripleStore
 import pandas as pd
 import numpy as np
 import math
@@ -113,8 +113,6 @@ def submitCellMapping():
     superClass = request.form.get('getCdmValue')
     sourceValue = request.form.get('sourceValue')
     endpoint = current_app.config.get("rdf_endpoint")
-    obj = GraphDBTripleStore(endpoint)
-    print(obj.fetch_namespaces())
     selectedValue = getCategories.getSnomedCode(superClass, selectedValue)
     print(selectedValue['category'].loc[selectedValue.index[0]], superClass, sourceValue)
     #useLinkdata.createCellLink(selectedValue, superClass, sourceValue)
