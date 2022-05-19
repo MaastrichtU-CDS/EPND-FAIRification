@@ -1,6 +1,11 @@
 name: Build WebUI
 
-on: [push]
+on:
+  push:
+    # Sequence of patterns matched against refs/heads
+    branches:    
+      - main
+      - 'release/**'
 
 env:
   REGISTRY: ghcr.io
