@@ -19,8 +19,6 @@ services:
 
   webui:
     image: ghcr.io/maastrichtu-cds/epnd-fairification:latest
-    # build:
-    #   context: ./management_webpage
     ports:
       - 5000:5000
     volumes:
