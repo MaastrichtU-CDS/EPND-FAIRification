@@ -3,7 +3,7 @@ from flask import (
     current_app, Blueprint, render_template, request, redirect, url_for, jsonify
 )
 from flaskr import useDataset, useCDM, useLinkdata, statisticalMetadata, getCategories
-#from flaskr.services.triplestore import GraphDBTripleStore
+from flaskr.services.triplestore import GraphDBTripleStore
 import pandas as pd
 import numpy as np
 import math
@@ -108,14 +108,27 @@ def submitForm():
 #This is just a temporary method for dealing with cell value mapping on the
 #front end and needs to be reworked. All sparql results are in dataframe form
 #and the code is agnostic. It's primarily for dealing with this use case.
+#Big TODO is there is only insertion at the moment, not checking if it's
+#already mapped. If it is already mapped, deletion also is required.
 def submitCellMapping():
     selectedValue = request.form.get('targetValues')
     superClass = request.form.get('getCdmValue')
     sourceValue = request.form.get('sourceValue')
     endpoint = current_app.config.get("rdf_endpoint")
-    selectedValue = getCategories.getSnomedCode(superClass, selectedValue)
-    print(selectedValue['category'].loc[selectedValue.index[0]], superClass, sourceValue)
-    #useLinkdata.createCellLink(selectedValue, superClass, sourceValue)
+    ns = GraphDBTripleStore(endpoint).fetch_namespaces()
+
+    #need to find the baseUri for a given column mapping
+    #doing that using fetched_namespaces which is list of dictionaries
+    for i in ns:
+        for key, val in i.items():
+            if key == 'namespace':
+                for key1, val1 in val.items():
+                    if key1 == 'value' and (val1 in superClass):
+                        baseUri = val1
+    #The UI only displays the human readable category and not the code
+    #to fetch the code for the mapped category
+    selectedValue = getCategories.getCategoryCode(superClass, baseUri, selectedValue)
+    useLinkdata.createCellLink(baseUri, selectedValue['category'].loc[0], superClass, sourceValue)
     return redirect(url_for("mapDatasets.mapper"))
 
 #Deletes a current mapping
