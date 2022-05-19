@@ -32,11 +32,13 @@ jobs:
           context: ./management_webpage
           push: true
           tags: ghcr.io/${{ env.REPO }}:${{ steps.extract_branch.outputs.branch }}
-      - name: Build container Release (latest)
-        id: docker_build_release
-        uses: docker/build-push-action@v2
+      - name: Retag to latest
+        uses: koraykoska/retag-docker-image@0.2.4
         if: steps.extract_branch.outputs.branch == 'main'
         with:
-          context: ./management_webpage
-          push: true
-          tags: ghcr.io/${{ env.REPO }}:latest
+          registry: ${{ env.REGISTRY }}
+          name: ghcr.io/${{ env.REPO }}
+          old_tag: ${{ steps.extract_branch.outputs.branch }}
+          new_tag: latest
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
