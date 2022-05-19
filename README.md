@@ -9,6 +9,7 @@ This repository contains the FAIRifier/FAIRnotator developed for the [European P
 1. Checkout the git repository: `git clone https://github.com/MaastrichtU-CDS/EPND-FAIRification.git`
 2. Open the folder: `cd EPND-FAIRification`
 3. Execute the [docker-compose.yml](docker-compose.yml) file using `docker-compose up -d`.
+4. Open [http://localhost:5000](http://localhost:5000) and follow the steps
 
 To use a sample FAIR implementation profile (FIP) use the URL: `https://www.jvsoest.eu/fip.ttl`
 
