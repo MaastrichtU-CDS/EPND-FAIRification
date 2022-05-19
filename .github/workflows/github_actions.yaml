@@ -35,7 +35,7 @@ jobs:
       - name: Build container Release (latest)
         id: docker_build_release
         uses: docker/build-push-action@v2
-        if: steps.extract_branch.outputs.branch == 'master'
+        if: steps.extract_branch.outputs.branch == 'main'
         with:
           context: .
           push: true
