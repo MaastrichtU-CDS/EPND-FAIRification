@@ -37,6 +37,6 @@ jobs:
         uses: docker/build-push-action@v2
         if: steps.extract_branch.outputs.branch == 'main'
         with:
-          context: .
+          context: ./management_webpage
           push: true
           tags: ghcr.io/${{ env.REPO }}:latest
