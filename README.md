@@ -6,7 +6,9 @@ This repository contains the FAIRifier/FAIRnotator developed for the [European P
 
 ## How to run this software?
 
-Please execute the [docker-compose.yml](docker-compose.yml) file using `docker-compose up -d`.
+1. Checkout the git repository: `git clone https://github.com/MaastrichtU-CDS/EPND-FAIRification.git`
+2. Open the folder: `cd EPND-FAIRification`
+3. Execute the [docker-compose.yml](docker-compose.yml) file using `docker-compose up -d`.
 
 ## How to build this software?
 
