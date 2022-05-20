@@ -69,8 +69,8 @@
 </div>
 
 <script>
-    HOST_TRIPFLIFIER = "http://localhost:8080";
-    HOST_BACKEND = "http://localhost:5000";
+    HOST_TRIPFLIFIER = "{{ triplifierRestUri }}";
+    HOST_BACKEND = window.location.protocol + "//" + window.location.host;
     METADATA_URI = "{{ metadataUri }}"
 
     function deleteTasks(){
