@@ -7,5 +7,7 @@ def numericMetadata(df):
 
 #Create Categorical Metadata
 def categoricalMetadata(df):
-    dfMetadata = df['cellValue'].value_counts(normalize=True)
+    dfMetadata = pd.DataFrame()
+    dfMetadata['categoricalValue'] = df['cellValue'].unique()
+    dfMetadata['cellValue'] = df['cellValue'].value_counts(normalize=True)
     return dfMetadata

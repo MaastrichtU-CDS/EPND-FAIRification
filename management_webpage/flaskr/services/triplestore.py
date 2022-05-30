@@ -1,6 +1,9 @@
 from abc import ABC, abstractmethod
 from turtle import turtles
+<<<<<<< HEAD
 from urllib import response
+=======
+>>>>>>> sprint
 
 from SPARQLWrapper import SPARQLWrapper, JSON, GET, POST, POSTDIRECTLY
 import requests
@@ -26,6 +29,7 @@ class AbstractTripleStore(ABC):
 
 class GraphDBTripleStore(AbstractTripleStore):
 
+<<<<<<< HEAD
     def __init__(self, server_url, repository_name, create_if_not_exists=False) -> None:
         self.endpoint = server_url + "/repositories/" + repository_name
 
@@ -88,6 +92,14 @@ class GraphDBTripleStore(AbstractTripleStore):
             response = requests.post(url, files=data)#, headers=header)
             print(response.text)
 
+=======
+    def __init__(self, endpoint) -> None:
+        self.endpoint = endpoint
+        self.sparql = SPARQLWrapper(endpoint, updateEndpoint=endpoint + '/statements')
+
+        super().__init__()
+    
+>>>>>>> sprint
     def fetch_namespaces(self):
         url = self.endpoint + "/namespaces"
         response = requests.get(url, headers={"Accept": "application/sparql-results+json"})
