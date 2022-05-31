@@ -1,0 +1,15 @@
+Flask==2.0.3
+Pandas==1.4.1
+Numpy==1.22.3
+SPARQLWrapper==2.0.0
+sparql_dataframe==0.4
+click==8.0.4
+<<<<<<< HEAD
+validators==0.19.0
+requests==2.27.1
+tzlocal==4.2
+=======
+requests==2.27.1
+# Tkinter was a big issue on macOS. brew install python-tk solution worked
+# https://localcoder.org/tkinter-python-may-not-be-configured-for-tk
+>>>>>>> sprint

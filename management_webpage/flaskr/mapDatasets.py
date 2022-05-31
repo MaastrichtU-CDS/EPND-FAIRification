@@ -62,7 +62,6 @@ def detailedMapper():
     #Searches for the mapping that includes the chosen value
     linkedInformationDataframe = linkedDatasets[linkedDatasets['columnUri'].str.contains(value)]
     linkedInformationList=linkedInformationDataframe.values.tolist()
-
     linkedInformationDataframe['cdmUri'] = linkedInformationDataframe['cdmUri'].isnull()
     linkedInformationDataframe = linkedInformationDataframe.reset_index(drop=True)
     if linkedInformationDataframe['cdmUri'][0] == True:
@@ -74,12 +73,18 @@ def detailedMapper():
         cdmTotal = cdmTotal.loc[cdmTotal['variableUri'] == linkedInformationList[0][0]]
         cdmTotal = cdmTotal.reset_index(drop=True)
         data = useDataset.getData(value)
-        categoricalData = True
         targetValues=getCategories.getClassCategories(str(linkedInformationList[0][0]))
-        if cdmTotal['variableType'][0] == 'http://semanticscience.org/resource/SIO_000914' or cdmTotal['variableType'][0] == 'http://semanticscience.org/resource/SIO_000137':
+        if cdmTotal['variableTypeLabel'][0] == 'category':
+            # The condition used below previously seemed to be causing issues based on
+            # initial analysis and hence using a new condition which seem to
+            # work for most of the test cases. Further proofing required. Might
+            # break sometime in the future.
+            #if cdmTotal['variableType'][0] == 'http://semanticscience.org/resource/SIO_000914' or cdmTotal['variableType'][0] == 'http://semanticscience.org/resource/SIO_000137':
             metadata = statisticalMetadata.categoricalMetadata(data)
             #metadata = metadata.to_frame()
+            categoricalData = True
         else:
+            categoricalData = False
             metadata = statisticalMetadata.numericMetadata(data)
     if categoricalData: 
         #Renders the detailedMapping template
@@ -113,8 +118,9 @@ def submitCellMapping():
     selectedValue = request.form.get('targetValues')
     superClass = request.form.get('getCdmValue')
     sourceValue = request.form.get('sourceValue')
-    endpoint = current_app.config.get("rdf_endpoint")
-    ns = GraphDBTripleStore(endpoint).fetch_namespaces()
+    ns = GraphDBTripleStore(current_app.config.get("graphdb_server"),
+            current_app.config.get("repository"),
+            create_if_not_exists=True).fetch_namespaces()
 
     #need to find the baseUri for a given column mapping
     #doing that using fetched_namespaces which is list of dictionaries
