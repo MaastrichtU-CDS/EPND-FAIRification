@@ -30,6 +30,8 @@ def createCellLink(baseUri, target, superClass, value):
     PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
     INSERT {
         GRAPH <http://data.local/mapping> {
+            dbo:cell_of rdf:type owl:ObjectProperty;
+                 owl:inverseOf dbo:has_cell.
             <%s%s> owl:equivalentClass [
                     rdf:type owl:Class;
                     owl:intersectionOf [
