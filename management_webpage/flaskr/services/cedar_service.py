@@ -24,7 +24,7 @@ class CedarEndpoint:
         """
         return self.__triplestore.select_sparql(query)[0]["cedar_template"]["value"]
 
-    def list_instances(self):
+    def list_instances(self, titlePredicate=None):
         """
         Retrieve all instances stored in the SPARQL endpoint
         """
@@ -37,6 +37,17 @@ class CedarEndpoint:
             ?instance pav:createdOn ?time.
         }
         """
+
+        if titlePredicate is not None:
+            query = f"""
+            prefix pav: <http://purl.org/pav/>
+
+            select distinct ?instance ?time ?label
+            where {{ 
+                ?instance pav:createdOn ?time;
+                    <{titlePredicate}> ?label.
+            }}
+            """
 
         return self.__triplestore.select_sparql(query)
     

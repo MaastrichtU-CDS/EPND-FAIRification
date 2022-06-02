@@ -21,10 +21,14 @@ def __get_data_service():
 
 @bp.route('/metadata', methods=['GET'])
 def index():
-    instances = __get_cedar_service().list_instances()
+    instances = __get_cedar_service().list_instances(titlePredicate="http://purl.org/dc/terms/title")
     # TODO: show the title of the template instance
     for idx, val in enumerate(instances):
+        print(instances[idx])
         instances[idx]["instance"]["short"] = instances[idx]["instance"]["value"].replace(cedar_instance_base_url + "/", "")
+        if "label" in instances[idx]:
+            if instances[idx]["label"]["value"] is not None:
+                instances[idx]["instance"]["short"] = instances[idx]["label"]["value"]
     return render_template("cedar/index.html", instances=instances)
 
 @bp.route("/metadata/add")
