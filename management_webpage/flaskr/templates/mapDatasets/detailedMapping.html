@@ -8,7 +8,7 @@
   <h3>General column information</h3>
   <p class="mb-0"><strong>Column Name:</strong> {{chosenMapping[0][2]}}</p>
   {% if chosenMapping[0][1] is not sameas chosenMapping[0][0] %}
-    <p class="mb-0"><strong>CDM variable:</strong> {{chosenMapping[0][1]}} (<a href="{{chosenMapping[0][0]}}">{{chosenMapping[0][0]}}</a>)</p>
+    <p class="mb-0"><strong>CDM variable:</strong> {{chosenMapping[0][1]}} (<a href="{{chosenMapping[0][0]}}" target="_new">{{chosenMapping[0][0]}}</a>)</p>
   {% endif %}
   <form class="mt-4" method="POST" action="{{ url_for('mapDatasets.submitForm') }}">
     <div>
