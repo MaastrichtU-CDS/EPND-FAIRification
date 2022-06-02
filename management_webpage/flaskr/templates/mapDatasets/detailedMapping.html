@@ -70,26 +70,6 @@
   {{ metadata | safe }}
   {% endif %}
 
-  <form class="mt-4" method="POST" action="{{ url_for('mapDatasets.submitForm') }}">
-    <div>
-      Nieuwe mapping kiezen:
-      <div class="d-flex w-50">
-        <select class="form-select me-1" name="cdmValues" aria-label="Default select example">
-          {% for cdmValue in cdmValues %}
-          <option value="{{chosenMapping[0][3]}},{{chosenMapping[0][0]}},{{cdmValue[0]}}" {% if chosenMapping[0][1]==cdmValue[1] %} SELECTED {% endif %}>{{cdmValue[1]}}</option>
-          {% endfor %}
-        </select>
-        <button class="btn btn-primary" type="submit">
-          {% if chosenMapping[0][1] is sameas chosenMapping[0][0] %}
-          Add
-          {% else %}
-          Change
-          {% endif %}
-        </button>
-      </div>
-    </div>
-  </form>
-
   <!-- {% if chosenMapping[0][1] is not sameas chosenMapping[0][0] %}
   <form action="/deletemapping" method="POST">
     <div>
