@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 <h1>Instance details</h1>
-<button type="button" class="btn btn-danger float-right mb-1" data-toggle="modal"
+<button type="button" class="btn btn-danger float-end mb-1" data-toggle="modal"
   data-target="#deleteModal">Delete</button>
 
 <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModal"
@@ -41,7 +41,7 @@
 </table>
 <br/>
 <h2>Associated dataset(s)</h2>
-<div class="container-fluid"><a href="/upload?metadataUri={{ instance_uri }}" role="button" class="btn btn-primary float-right mb-1">Add</a></div>
+<div class="container-fluid"><a href="/upload?metadataUri={{ instance_uri }}" role="button" class="btn btn-primary float-end mb-1">Add</a></div>
 <table class="table table-striped mt-2">
   <thead>
       <tr>
