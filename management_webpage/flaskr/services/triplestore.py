@@ -87,7 +87,13 @@ class GraphDBTripleStore(AbstractTripleStore):
             # header = { "Content-Type": "multipart/form-data" }
             response = requests.post(url, files=data)#, headers=header)
             print(response.text)
+    '''
+    def __init__(self, endpoint) -> None:
+        self.endpoint = endpoint
+        self.sparql = SPARQLWrapper(endpoint, updateEndpoint=endpoint + '/statements')
 
+        super().__init__()
+    '''
     def fetch_namespaces(self):
         url = self.endpoint + "/namespaces"
         response = requests.get(url, headers={"Accept": "application/sparql-results+json"})
