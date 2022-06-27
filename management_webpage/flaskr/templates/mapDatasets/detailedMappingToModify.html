@@ -2,13 +2,13 @@
 
 {% block content %}
 <div class="mt-1 mb-3">
-  <a href="/column_mappings">&larr; back</a>
+	<a href="/detailedMapping?columnUri={{ chosenMapping[0][3] }}">&larr; back</a>
 </div>
 <div class="container mb-5">
   <h3>General column information</h3>
   <p class="mb-0"><strong>Column Name:</strong> {{chosenMapping[0][2]}}</p>
   {% if chosenMapping[0][1] is not sameas chosenMapping[0][0] %}
-  <!--<p class="mb-0"><strong>CDM variable:</strong> {{chosenMapping[0][1]}} (<a href="{{chosenMapping[0][0]}}" target="_new">{{chosenMapping[0][0]}}</a>)</p>-->
+  <p class="mb-0" name="oldCdmValue" value="{{chosenMapping[0][0]}}"><strong>CDM variable:</strong> {{chosenMapping[0][1]}} (<a href="{{chosenMapping[0][0]}}" target="_new">{{chosenMapping[0][0]}}</a>)</p>
 	    {% endif %}
   <form class="mt-4" method="POST" action="{{ url_for('mapDatasets.submitForm') }}">
     <div>
@@ -68,14 +68,6 @@
 		 Save 
 	  </button>
   </form>
-  <!-- {% if chosenMapping[0][1] is not sameas chosenMapping[0][0] %}
-  <form action="/deletemapping" method="POST">
-    <div>
-      <button class="btn btn-danger" type="submit" name="delete"
-        value={{chosenMapping[0][3]}},{{chosenMapping[0][0]}}>Delete Mapping</button>
-    </div>
-  </form>
-  {% endif %} -->
 </div>
 {% endblock %}
 
