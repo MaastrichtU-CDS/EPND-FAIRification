@@ -64,9 +64,9 @@
   {% endif %}
 
   {% if chosenMapping[0][0] is none or chosenMapping[0][1] is not number %}
-  	<form action="" method="POST">
+  	<form action="/detailedMapping" method="POST">
 		<div>
-			<button class="btn btn-primary" type="submit" name="modify">Modify</button>
+			<button class="btn btn-primary" type="submit" name="modify" value="modify">Modify</button>
 		</div>
 	</form>
   {% endif %}
