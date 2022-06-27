@@ -44,3 +44,49 @@ def getData(value):
     """.format(value)
     df = sd.get(endpoint, q)
     return df
+
+#Get all mapped cell values for a given URI
+def getMappedCell(cdmUri):
+    endpoint = current_app.config.get("rdf_endpoint")
+    graph = "http://data.local/mapping"
+    print(cdmUri)
+    q = """
+    PREFIX dbo: <http://um-cds/ontologies/databaseontology/>
+    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+    PREFIX owl: <http://www.w3.org/2002/07/owl#>
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    SELECT ?categoricalValue ?cellMapping
+    WHERE{
+        {
+            SELECT ?node ?categoricalValue
+            WHERE {
+                GRAPH <%s>{
+                    ?node owl:equivalentClass[
+                          rdf:type owl:Class;
+                          owl:intersectionOf[
+                                rdf:first <%s>;
+                                rdf:rest[
+                                    rdf:first[
+                                        rdf:type owl:Class;
+                                        owl:unionOf[
+                                            rdf:first[
+                                                rdf:type owl:Restriction;
+                                                owl:hasValue ?categoricalValue;
+                                                owl:onProperty dbo:has_value;
+                                            ];
+                                        rdf:rest rdf:nil;
+                                        ]
+                                    ];
+                                    rdf:rest rdf:nil;
+                                ]
+                        ]
+                    ].
+                }
+            }
+        }
+        ?node rdfs:label ?cellMapping
+
+    }"""%(graph, cdmUri)
+    df = sd.get(endpoint, q)
+    return df
