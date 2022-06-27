@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="mt-1 mb-3">
+  <a href="/column_mappings">&larr; back</a>
+</div>
+<div class="container mb-5">
+  <h3>General column information</h3>
+  <p class="mb-0"><strong>Column Name:</strong> {{chosenMapping[0][2]}}</p>
+  {% if chosenMapping[0][1] is not sameas chosenMapping[0][0] %}
+  <!--<p class="mb-0"><strong>CDM variable:</strong> {{chosenMapping[0][1]}} (<a href="{{chosenMapping[0][0]}}" target="_new">{{chosenMapping[0][0]}}</a>)</p>-->
+	    {% endif %}
+  <form class="mt-4" method="POST" action="{{ url_for('mapDatasets.submitForm') }}">
+    <div>
+      Choose / edit CDM variable:
+      <div class="d-flex w-50">
+        <select class="form-select me-1" name="cdmValues" aria-label="Default select example">
+          {% for cdmValue in cdmValues %}
+          <option value="{{chosenMapping[0][3]}},{{chosenMapping[0][0]}},{{cdmValue[0]}}" {% if chosenMapping[0][1]==cdmValue[1] %} SELECTED {% endif %}>{{cdmValue[1]}}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+  </form>
+</div>
+
+<div class="container mb-5">
+  <h3>Detailed information:</h3>
+  {% if categoricalCheck == true %}
+  <table class="table table-striped w-50">
+    <thead>
+      <tr>
+        <th> Categorical Value </th>
+        <th> Current Mapping </th>
+        <th> New Mapping  </th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for index, row in metadata.iterrows() %}
+      <tr>
+        <td> {{ row[0] | safe }} </td>
+        <td> 
+		{% if row[1] is not number %}
+		{{ row[1] | safe }}
+		{% else %}
+		Unmapped
+		{% endif %}
+	</td>
+        <td>
+            <!-- temp workaround to read values-->
+            <input type="hidden" name="sourceValue" value="{{ row[0] | safe }}" />
+            <input type="hidden" name="getCdmValue" value="{{ chosenMapping[0][0] }}" />
+            <select class="form-select" name="targetValues" smethod="GET" action="/getTargetValues">
+              {% for value in targetValues %}
+              <option value="{{ value }}" SELECTED> {{ value }}</option>
+              {% endfor %}
+            </select>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  {{ metadata | safe }}
+  {% endif %}
+  <form class="text-end" action="/cellMapping" method="POST">
+	  <button class="btn btn-primary" type="submit">
+		 Save 
+	  </button>
+  </form>
+  <!-- {% if chosenMapping[0][1] is not sameas chosenMapping[0][0] %}
+  <form action="/deletemapping" method="POST">
+    <div>
+      <button class="btn btn-danger" type="submit" name="delete"
+        value={{chosenMapping[0][3]}},{{chosenMapping[0][0]}}>Delete Mapping</button>
+    </div>
+  </form>
+  {% endif %} -->
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const table = document.getElementsByClassName('dataframe')[0]
+  console.log(table)
+  table.classList.add('table', 'table-striped', 'w-25')
+</script>
+{% endblock %}
