@@ -51,10 +51,8 @@ def jsonMapper():
 def detailedMapper():
     #Gets the chosen mapping
     value = request.args.get('columnUri')
-
     #Gets all mapped values
     linkedDatasets = useLinkdata.retrieveDatasetMapped()
-
     #Gets all CDM definitions
     cdmColumns= useCDM.getCDMUri()
     cdmColumnsList = cdmColumns.values.tolist()
@@ -69,6 +67,10 @@ def detailedMapper():
         metadata = statisticalMetadata.numericMetadata(data)
         categoricalData = False
     else:
+        # Through the CDM URI, obtain cell mappings if any
+        cdmUri = linkedInformationList[0][0]
+        mappedValues = useDataset.getMappedCell(cdmUri)
+
         cdmTotal = useCDM.getCDMFull()
         cdmTotal = cdmTotal.loc[cdmTotal['variableUri'] == linkedInformationList[0][0]]
         cdmTotal = cdmTotal.reset_index(drop=True)
@@ -81,6 +83,10 @@ def detailedMapper():
             # break sometime in the future.
             #if cdmTotal['variableType'][0] == 'http://semanticscience.org/resource/SIO_000914' or cdmTotal['variableType'][0] == 'http://semanticscience.org/resource/SIO_000137':
             metadata = statisticalMetadata.categoricalMetadata(data)
+            # On obtaining the categories through statistical metadata function,
+            # perform outer join on category values and creating a new
+            # dataframe for easy display in the front end.
+            new_metadata = mappedValues.merge(metadata, on='categoricalValue', how='outer')
             #metadata = metadata.to_frame()
             categoricalData = True
         else:
@@ -88,11 +94,16 @@ def detailedMapper():
             metadata = statisticalMetadata.numericMetadata(data)
     if categoricalData: 
         #Renders the detailedMapping template
-        return render_template("mapDatasets/detailedMapping.html", metadata=metadata, titles=metadata.columns.values, chosenMapping=linkedInformationList, cdmValues = cdmColumnsList, categoricalCheck=bool(categoricalData), targetValues=targetValues['categoryLabel'].values)
+        return render_template("mapDatasets/detailedMapping.html",
+                metadata=new_metadata, titles=metadata.columns.values,
+                chosenMapping=linkedInformationList, cdmValues =
+                cdmColumnsList, categoricalCheck=bool(categoricalData),
+                targetValues=targetValues['categoryLabel'].values, math=math)
     else:
         return render_template("mapDatasets/detailedMapping.html",
                 metadata=metadata.to_html(),
-                chosenMapping=linkedInformationList, cdmValues=cdmColumnsList)
+                chosenMapping=linkedInformationList, cdmValues=cdmColumnsList,
+                math=math)
 #Adds a new mapping, or changes a existing mapping to a new one
 @bp.route('/commit', methods = ['GET', 'POST'])
 def submitForm():
