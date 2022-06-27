@@ -8,7 +8,7 @@
   <h3>General column information</h3>
   <p class="mb-0"><strong>Column Name:</strong> {{chosenMapping[0][2]}}</p>
   {% if chosenMapping[0][1] is not sameas chosenMapping[0][0] %}
-  <p class="mb-0" name="oldCdmValue" value="{{chosenMapping[0][0]}}"><strong>CDM variable:</strong> {{chosenMapping[0][1]}} (<a href="{{chosenMapping[0][0]}}" target="_new">{{chosenMapping[0][0]}}</a>)</p>
+  <p class="mb-0"><strong>CDM variable:</strong> {{chosenMapping[0][1]}} (<a href="{{chosenMapping[0][0]}}" target="_new">{{chosenMapping[0][0]}}</a>)</p>
 	    {% endif %}
   <form class="mt-4" method="POST" action="{{ url_for('mapDatasets.submitForm') }}">
     <div>
@@ -20,6 +20,7 @@
           {% endfor %}
         </select>
       </div>
+      <button class="btn btn-primary" type="submit"> Change </button>
     </div>
   </form>
 </div>
@@ -50,9 +51,9 @@
             <!-- temp workaround to read values-->
             <input type="hidden" name="sourceValue" value="{{ row[0] | safe }}" />
             <input type="hidden" name="getCdmValue" value="{{ chosenMapping[0][0] }}" />
-            <select class="form-select" name="targetValues" smethod="GET" action="/getTargetValues">
+	    <select class="form-select me-1" name="targetValues"> 
               {% for value in targetValues %}
-              <option value="{{ value }}" SELECTED> {{ value }}</option>
+	      <option value="{{row[0]}},{{row[1]}},{{value}}" {% if value==row[1] %} selected={{ row[1] }} selected {% endif %}> {{ value }}</option>
               {% endfor %}
             </select>
         </td>
@@ -64,7 +65,7 @@
   {{ metadata | safe }}
   {% endif %}
   <form class="text-end" action="/cellMapping" method="POST">
-	  <button class="btn btn-primary" type="submit">
+	  <button class="btn btn-primary" type="submit" style="float: left;">
 		 Save 
 	  </button>
   </form>
