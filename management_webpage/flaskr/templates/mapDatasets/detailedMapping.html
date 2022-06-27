@@ -10,6 +10,7 @@
   {% if chosenMapping[0][1] is not sameas chosenMapping[0][0] %}
     <p class="mb-0"><strong>CDM variable:</strong> {{chosenMapping[0][1]}} (<a href="{{chosenMapping[0][0]}}" target="_new">{{chosenMapping[0][0]}}</a>)</p>
   {% endif %}
+  {% if chosenMapping[0][1] is none or chosenMapping[0][1] is not number == 0 %}
   <form class="mt-4" method="POST" action="{{ url_for('mapDatasets.submitForm') }}">
     <div>
       Choose / edit CDM variable:
@@ -29,6 +30,7 @@
       </div>
     </div>
   </form>
+  {% endif %}
 </div>
 
 <div class="container mb-5">
@@ -70,6 +72,14 @@
   {{ metadata | safe }}
   {% endif %}
 
+  {% if chosenMapping[0][0] is none or chosenMapping[0][1] is not number %}
+  	<form action="" method="POST">
+		<div>
+			<button class="btn btn-primary" type="submit" name="modify">Modify</button>
+		</div>
+	</form>
+  {% endif %}
+ 
   <!-- {% if chosenMapping[0][1] is not sameas chosenMapping[0][0] %}
   <form action="/deletemapping" method="POST">
     <div>
