@@ -40,36 +40,27 @@
     <thead>
       <tr>
         <th> Categorical Value </th>
-        <th> Cell values normalised </th>
-        <th> Cell value mapping </th>
+        <th> Mapping </th>
       </tr>
     </thead>
     <tbody>
       {% for index, row in metadata.iterrows() %}
       <tr>
         <td> {{ row[0] | safe }} </td>
-        <td> {{ row[1] | safe }} </td>
-        <td>
-          <form class="text-end" action="/cellMapping" method="POST">
-            <!-- temp workaround to read values-->
-            <input type="hidden" name="sourceValue" value="{{ row[0] | safe }}" />
-            <input type="hidden" name="getCdmValue" value="{{ chosenMapping[0][0] }}" />
-            <select class="form-select" name="targetValues" smethod="GET" action="/getTargetValues">
-              {% for value in targetValues %}
-              <option value="{{ value }}" SELECTED> {{ value }}</option>
-              {% endfor %}
-            </select>
-            <button class="btn btn-primary" type="submit">
-              Change
-            </button>
-          </form>
-        </td>
+        <td> 
+		{% if row[1] is not number %}
+		{{ row[1] | safe }}
+		{% else %}
+		Unmapped
+		{% endif %}
+	</td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
   {% else %}
   {{ metadata | safe }}
+  <p style="font-style: italic; font-size: 9px;"> Mapping cell values is only possible for categorical values</p>
   {% endif %}
 
   {% if chosenMapping[0][0] is none or chosenMapping[0][1] is not number %}
