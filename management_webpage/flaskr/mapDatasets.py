@@ -53,10 +53,7 @@ def detailedMapper():
     toBeModified = False
     if request.form.get('modify'):
         toBeModified = True
-        value = request.headers.get('Referer').split("=")[1]
-    else:
-        value = request.args.get('columnUri')
-    
+    value = request.args.get('columnUri')
     #Gets all mapped values
     linkedDatasets = useLinkdata.retrieveDatasetMapped()
     #Gets all CDM definitions
@@ -74,8 +71,8 @@ def detailedMapper():
         categoricalData = False
     else:
         # Through the CDM URI, obtain cell mappings if any
-        cdmUri = linkedInformationList[0][0]
-        mappedValues = useDataset.getMappedCell(cdmUri)
+        columnUri = linkedInformationList[0][0]
+        mappedValues = useDataset.getMappedCell(columnUri)
 
         cdmTotal = useCDM.getCDMFull()
         cdmTotal = cdmTotal.loc[cdmTotal['variableUri'] == linkedInformationList[0][0]]
@@ -116,7 +113,8 @@ def detailedMapper():
         if toBeModified:
             return render_template("mapDatasets/detailedMappingToModify.html",
                     metadata=metadata.to_html(),
-                    chosenMapping=linkedInformationList, cdmValues=cdmColumnsList)
+                    chosenMapping=linkedInformationList,
+                    cdmValues=cdmColumnsList)
         else:
             return render_template("mapDatasets/detailedMapping.html",
                 metadata=metadata.to_html(),
