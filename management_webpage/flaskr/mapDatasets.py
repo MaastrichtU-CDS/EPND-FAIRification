@@ -47,10 +47,16 @@ def jsonMapper():
     return jsonify(mappings)
 
 #Loads the template containing more information
-@bp.route('/detailedMapping', methods=['GET'])
+@bp.route('/detailedMapping', methods=['GET', 'POST'])
 def detailedMapper():
     #Gets the chosen mapping
-    value = request.args.get('columnUri')
+    toBeModified = False
+    if request.form.get('modify'):
+        toBeModified = True
+        value = request.headers.get('Referer').split("=")[1]
+    else:
+        value = request.args.get('columnUri')
+    
     #Gets all mapped values
     linkedDatasets = useLinkdata.retrieveDatasetMapped()
     #Gets all CDM definitions
@@ -94,16 +100,28 @@ def detailedMapper():
             metadata = statisticalMetadata.numericMetadata(data)
     if categoricalData: 
         #Renders the detailedMapping template
-        return render_template("mapDatasets/detailedMapping.html",
-                metadata=new_metadata, titles=metadata.columns.values,
-                chosenMapping=linkedInformationList, cdmValues =
-                cdmColumnsList, categoricalCheck=bool(categoricalData),
-                targetValues=targetValues['categoryLabel'].values, math=math)
+        if toBeModified:
+            return render_template("mapDatasets/detailedMappingToModify.html",
+                    metadata=new_metadata, titles=metadata.columns.values,
+                    chosenMapping=linkedInformationList, cdmValues =
+                    cdmColumnsList, categoricalCheck=bool(categoricalData),
+                    targetValues=targetValues['categoryLabel'].values)
+        else:
+            return render_template("mapDatasets/detailedMapping.html",
+                    metadata=new_metadata, titles=metadata.columns.values,
+                    chosenMapping=linkedInformationList, cdmValues =
+                    cdmColumnsList, categoricalCheck=bool(categoricalData),
+                    targetValues=targetValues['categoryLabel'].values)
     else:
-        return render_template("mapDatasets/detailedMapping.html",
+        if toBeModified:
+            return render_template("mapDatasets/detailedMappingToModify.html",
+                    metadata=metadata.to_html(),
+                    chosenMapping=linkedInformationList, cdmValues=cdmColumnsList)
+        else:
+            return render_template("mapDatasets/detailedMapping.html",
                 metadata=metadata.to_html(),
-                chosenMapping=linkedInformationList, cdmValues=cdmColumnsList,
-                math=math)
+                chosenMapping=linkedInformationList, cdmValues=cdmColumnsList)
+
 #Adds a new mapping, or changes a existing mapping to a new one
 @bp.route('/commit', methods = ['GET', 'POST'])
 def submitForm():
