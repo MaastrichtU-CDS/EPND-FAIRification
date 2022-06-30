@@ -28,7 +28,8 @@
 <div class="container mb-5">
   <h3>Detailed information:</h3>
   {% if categoricalCheck == true %}
-  <table class="table table-striped w-50">
+  <form class="mt-4" method="POST" action="/cellMapping">
+  <table class="table table-striped w-50" name="newTable">
     <thead>
       <tr>
         <th> Categorical Value </th>
@@ -37,6 +38,7 @@
       </tr>
     </thead>
     <tbody>
+	    <input type="hidden" name="rowCount" value ="{{ metadata | length }}">
       {% for index, row in metadata.iterrows() %}
       <tr>
         <td> {{ row[0] | safe }} </td>
@@ -51,24 +53,21 @@
             <!-- temp workaround to read values-->
             <input type="hidden" name="sourceValue" value="{{ row[0] | safe }}" />
             <input type="hidden" name="getCdmValue" value="{{ chosenMapping[0][0] }}" />
-	    <select class="form-select me-1" name="targetValues"> 
-              {% for value in targetValues %}
-	      <option value="{{row[0]}},{{row[1]}},{{value}}" {% if value==row[1] %} selected={{ row[1] }} selected {% endif %}> {{ value }}</option>
-              {% endfor %}
-            </select>
-        </td>
+	    <select class="form-select me-1" name="targetValues{{index}}"> 
+              		{% for value in targetValues %}
+			<option value="{{ row[0]}}, {{row[1]}}, {{value}}"> {{ value }}</option>
+              		{% endfor %}
+            	</select>
+	</td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
+  <button class="btn btn-primary" type="submit"> Save </button>
+  </form>
   {% else %}
   {{ metadata | safe }}
   {% endif %}
-  <form class="text-end" action="/cellMapping" method="POST">
-	  <button class="btn btn-primary" type="submit" style="float: left;">
-		 Save 
-	  </button>
-  </form>
 </div>
 {% endblock %}
 
