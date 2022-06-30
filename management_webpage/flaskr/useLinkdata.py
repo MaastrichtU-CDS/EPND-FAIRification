@@ -56,6 +56,46 @@ def createCellLink(baseUri, target, superClass, value):
     endpoint.method = 'POST'
     endpoint.query()
 
+# Delete cell mappings
+def deleteCellLinks(baseUri, target, superClass, value):
+    endpointUrl = current_app.config.get("rdf_endpoint")
+    endpoint = SPARQLWrapper(endpointUrl + '/statements')
+    q='''
+    PREFIX owl: <http://www.w3.org/2002/07/owl#>
+    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+    PREFIX dbo: <http://um-cds/ontologies/databaseontology/>
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    DELETE{
+    ?s ?p ?o.
+    } WHERE{
+        GRAPH <http://data.local/mapping>{
+            <%s%s> owl:equivalentClass [
+                    rdf:type owl:Class;
+                    owl:intersectionOf [
+                        rdf:first <%s>;
+                        rdf:rest [
+                            rdf:first [
+                                rdf:type owl:Class;
+                                owl:unionOf [
+                                    rdf:first [
+                                        rdf:type owl:Restriction;
+                                        owl:hasValue "%s"^^xsd:string;
+                                        owl:onProperty dbo:has_value;
+                                    ];
+                                    rdf:rest rdf:nil;
+                                ]
+                            ];
+                            rdf:rest rdf:nil;
+                        ]
+                    ]
+                ].
+        }
+    }
+    '''%(baseUri, target, superClass, value)
+    endpoint.setQuery(q)
+    endpoint.method = 'POST'
+    endpoint.query()
+
 #Delete a existing link
 def deleteLink(value1, value2):
     print('start deletion')
