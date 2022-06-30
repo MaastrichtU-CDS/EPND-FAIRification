@@ -50,12 +50,9 @@
 		{% endif %}
 	</td>
         <td>
-            <!-- temp workaround to read values-->
-            <input type="hidden" name="sourceValue" value="{{ row[0] | safe }}" />
-            <input type="hidden" name="getCdmValue" value="{{ chosenMapping[0][0] }}" />
 	    <select class="form-select me-1" name="targetValues{{index}}"> 
               		{% for value in targetValues %}
-			<option value="{{ row[0]}}, {{row[1]}}, {{value}}"> {{ value }}</option>
+			<option value="{{ row[0]}},{{row[1]}},{{value}},{{chosenMapping[0][0]}}"> {{ value }}</option>
               		{% endfor %}
             	</select>
 	</td>
