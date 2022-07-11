@@ -54,10 +54,58 @@ def createCellLink(baseUri, target, superClass, value):
                 ].
             } } WHERE { }
     '''%(baseUri, target, superClass, value)
+    print(q)
     endpoint.setQuery(q)
     endpoint.method = 'POST'
     endpoint.query()
 
+# Delete cell mappings
+def deleteCellLinks(baseUri, target, oldValue, cdmValue, cellValue):
+    endpointUrl = current_app.config.get("rdf_endpoint")
+    endpoint = SPARQLWrapper(endpointUrl + '/statements')
+    oldValueUri = baseUri + str(oldValue)
+    newValueUri = baseUri + str(target)
+    q="""
+    PREFIX owl: <http://www.w3.org/2002/07/owl#>    
+    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    PREFIX dbo: <http://um-cds/ontologies/databaseontology/>WITH <http://data.local/mapping>
+    DELETE{
+        ?s owl:equivalentClass ?o.
+    }
+    INSERT{
+        <%s> owl:equivalentClass ?o.
+    }
+    WHERE{
+        BIND(<%s> as ?s).
+        ?s owl:equivalentClass ?o.
+        ?o rdf:type owl:Class;
+            owl:intersectionOf [
+                rdf:first <%s>;
+                rdf:rest [
+                    rdf:first[
+        			rdf:type owl:Class;
+        			owl:unionOf [
+        				rdf:first [
+    						rdf:type owl:Restriction;
+                            owl:hasValue "%s"^^xsd:string;
+                            owl:onProperty dbo:has_value;
+                        ];
+                    rdf:rest rdf:nil;
+                    ]
+                ];
+            rdf:rest rdf:nil;
+        ]
+    ].
+    }
+    """%(newValueUri, oldValueUri, cdmValue, cellValue)
+    print(q)
+    endpoint.setQuery(q)
+    endpoint.method = 'POST'
+    endpoint.query()
+    
+    print('Deletion complete')
+    
 #Delete a existing link
 def deleteLink(value1, value2):
     print('start deletion')
