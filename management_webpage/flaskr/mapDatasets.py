@@ -49,18 +49,18 @@ def jsonMapper():
 #Loads the template containing more information
 @bp.route('/detailedMapping', methods=['GET', 'POST'])
 def detailedMapper():
-    #Gets the chosen mapping
+    # Gets the chosen mapping
     toBeModified = False
     if request.form.get('modify'):
         toBeModified = True
     value = request.args.get('columnUri')
-    #Gets all mapped values
+    # Gets all mapped values
     linkedDatasets = useLinkdata.retrieveDatasetMapped()
-    #Gets all CDM definitions
+    # Gets all CDM definitions
     cdmColumns= useCDM.getCDMUri()
     cdmColumnsList = cdmColumns.values.tolist()
 
-    #Searches for the mapping that includes the chosen value
+    # Searches for the mapping that includes the chosen value
     linkedInformationDataframe = linkedDatasets[linkedDatasets['columnUri'].str.contains(value)]
     linkedInformationList=linkedInformationDataframe.values.tolist()
     linkedInformationDataframe['cdmUri'] = linkedInformationDataframe['cdmUri'].isnull()
@@ -84,29 +84,29 @@ def detailedMapper():
             # initial analysis and hence using a new condition which seem to
             # work for most of the test cases. Further proofing required. Might
             # break sometime in the future.
-            #if cdmTotal['variableType'][0] == 'http://semanticscience.org/resource/SIO_000914' or cdmTotal['variableType'][0] == 'http://semanticscience.org/resource/SIO_000137':
+            # if cdmTotal['variableType'][0] == 'http://semanticscience.org/resource/SIO_000914' or cdmTotal['variableType'][0] == 'http://semanticscience.org/resource/SIO_000137':
             metadata = statisticalMetadata.categoricalMetadata(data)
             # On obtaining the categories through statistical metadata function,
             # perform outer join on category values and creating a new
             # dataframe for easy display in the front end.
             new_metadata = mappedValues.merge(metadata, on='categoricalValue', how='outer')
-            #metadata = metadata.to_frame()
+            # metadata = metadata.to_frame()
             categoricalData = True
+            new_metadata = new_metadata[['categoricalValue', 'cellMapping',
+                'cellValue']]
         else:
             categoricalData = False
             metadata = statisticalMetadata.numericMetadata(data)
     if categoricalData: 
-        #Renders the detailedMapping template
+        # Renders the detailedMapping template
         if toBeModified:
             return render_template("mapDatasets/detailedMappingToModify.html",
-                    metadata=new_metadata, titles=metadata.columns.values,
-                    chosenMapping=linkedInformationList, cdmValues =
+                    metadata=new_metadata, chosenMapping=linkedInformationList, cdmValues =
                     cdmColumnsList, categoricalCheck=bool(categoricalData),
                     targetValues=targetValues['categoryLabel'].values)
         else:
             return render_template("mapDatasets/detailedMapping.html",
-                    metadata=new_metadata, titles=metadata.columns.values,
-                    chosenMapping=linkedInformationList, cdmValues =
+                    metadata=new_metadata, chosenMapping=linkedInformationList, cdmValues =
                     cdmColumnsList, categoricalCheck=bool(categoricalData),
                     targetValues=targetValues['categoryLabel'].values)
     else:
@@ -136,32 +136,62 @@ def submitForm():
     return redirect(url_for("mapDatasets.mapper"))
 
 @bp.route('/cellMapping', methods= ['GET', 'POST'])
-#This is just a temporary method for dealing with cell value mapping on the
-#front end and needs to be reworked. All sparql results are in dataframe form
-#and the code is agnostic. It's primarily for dealing with this use case.
-#Big TODO is there is only insertion at the moment, not checking if it's
-#already mapped. If it is already mapped, deletion also is required.
-def submitCellMapping():
-    selectedValue = request.form.get('targetValues')
-    superClass = request.form.get('getCdmValue')
-    sourceValue = request.form.get('sourceValue')
-    ns = GraphDBTripleStore(current_app.config.get("graphdb_server"),
-            current_app.config.get("repository"),
-            create_if_not_exists=True).fetch_namespaces()
+# Maps the cell values to the selected drop down value in the front end.
+# Checks if the values are already mapped, if yes - deletes just the equivalent
+# class for already mapped values and then inserts for the same node. This is
+# to avoid reinsertion of all triples. During fresh mapping, createCellLinks
+# method is used.
+def cellMapping():
+    targetValues = []
+    for i in range(int(request.form.get('rowCount'))):
+        targetValues.append(request.form.get('targetValues'+ str(i)))
+    for i in range(len(targetValues)):
+        # Obtaining all the necessary values for further processing. We obtain
+        # the category value like "2.0" or "1.0", the old value which is
+        # "Feminine gender" for example, new selected value like "Masculine
+        # gender" and the column URI like
+        # http://purl.bioontology.org/ontology/SNOMEDCT/365873007
+        catValue, oldValue, newValue, cdmValue = targetValues[i].split(",")
+        if oldValue == newValue:
+            print("No change detected in mapping. Not doing anything")
+            continue
+        else:
+            print("Change in mapping detected. Will delete and remap values",
+                    targetValues[i])
+            # Obtain namespaces
+            ns = GraphDBTripleStore(current_app.config.get("graphdb_server"),
+                    current_app.config.get("repository"),
+                    create_if_not_exists=True).fetch_namespaces()
+            # Obtaining the base URI. Not using a regex.
+            baseUri = findBaseUri(ns, cdmValue)
+            selectedValue = getCategories.getCategoryCode(cdmValue, baseUri, newValue)
+            # Delete the existing links
+            print(type(oldValue), oldValue)
+            if oldValue != "nan":
+                # The UI only displays the human readable category and not the code
+                # to fetch the code for the mapped category
+                olderValue = getCategories.getCategoryCode(cdmValue, baseUri, oldValue)
+                print(f"Remapping values from: {olderValue['category'].loc[0]}\
+                        to {selectedValue['category'].loc[0]}")
+                useLinkdata.deleteCellLinks(baseUri,
+                        selectedValue['category'].loc[0],
+                        olderValue['category'].loc[0], cdmValue, catValue)
+            else:
+                # Create new link
+                useLinkdata.createCellLink(baseUri, selectedValue['category'].loc[0], cdmValue, catValue)
+    
+    return redirect(url_for("mapDatasets.mapper"))
 
-    #need to find the baseUri for a given column mapping
-    #doing that using fetched_namespaces which is list of dictionaries
+def findBaseUri(ns, cdmValue):
+    # The code below finds the baseUri for a given column mapping
+    # doing that using fetched_namespaces which is list of dictionaries
     for i in ns:
         for key, val in i.items():
             if key == 'namespace':
                 for key1, val1 in val.items():
-                    if key1 == 'value' and (val1 in superClass):
+                    if key1 == 'value' and (val1 in cdmValue):
                         baseUri = val1
-    #The UI only displays the human readable category and not the code
-    #to fetch the code for the mapped category
-    selectedValue = getCategories.getCategoryCode(superClass, baseUri, selectedValue)
-    useLinkdata.createCellLink(baseUri, selectedValue['category'].loc[0], superClass, sourceValue)
-    return redirect(url_for("mapDatasets.mapper"))
+    return baseUri
 
 #Deletes a current mapping
 @bp.route('/deletemapping', methods=('POST',))
