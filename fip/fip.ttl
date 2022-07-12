@@ -1,0 +1,23 @@
+@prefix local: <#> .
+@prefix fip: <https://w3id.org/fair/fip/terms/> .
+@prefix dash: <http://datashapes.org/dash#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix sio: <http://semanticscience.org/resource/>.
+@prefix snomed: <http://purl.bioontology.org/ontology/SNOMEDCT/>.
+@prefix UO: <http://purl.obolibrary.org/obo/>.
+@prefix sty: <http://purl.bioontology.org/ontology/STY/>.
+@prefix loinc: <http://purl.bioontology.org/ontology/LNC/>.
+@prefix sh: <http://www.w3.org/ns/shacl#>.
+
+local:myFip rdf:type fip:FIP-Declaration;
+    rdfs:label "EPND common data model";
+    fip:declares-current-use-of [
+        rdf:type <https://schema.metadatacenter.org/core/Template>;
+        sio:SIO_000628 <https://raw.githubusercontent.com/MaastrichtU-CDS/EPND-FAIRification/main/fip/cedar_dataset.json>;
+    ];
+    fip:declares-current-use-of [
+        sh:shapesGraph <https://raw.githubusercontent.com/MaastrichtU-CDS/EPND-FAIRification/main/management_webpage/shapeTest/shacl.ttl>;
+    ].
