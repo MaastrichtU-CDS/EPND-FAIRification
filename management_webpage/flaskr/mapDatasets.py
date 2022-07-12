@@ -92,8 +92,7 @@ def detailedMapper():
             new_metadata = mappedValues.merge(metadata, on='categoricalValue', how='outer')
             # metadata = metadata.to_frame()
             categoricalData = True
-            new_metadata = new_metadata[['categoricalValue', 'cellMapping',
-                'cellValue']]
+            new_metadata = new_metadata[['categoricalValue', 'cellMapping', 'cellValue']]
         else:
             categoricalData = False
             metadata = statisticalMetadata.numericMetadata(data)
@@ -166,7 +165,6 @@ def cellMapping():
             baseUri = findBaseUri(ns, cdmValue)
             selectedValue = getCategories.getCategoryCode(cdmValue, baseUri, newValue)
             # Delete the existing links
-            print(type(oldValue), oldValue)
             if oldValue != "nan":
                 # The UI only displays the human readable category and not the code
                 # to fetch the code for the mapped category
