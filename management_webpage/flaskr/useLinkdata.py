@@ -61,40 +61,37 @@ def deleteCellLinks(baseUri, target, oldValue, cdmValue, cellValue):
     endpoint = SPARQLWrapper(endpointUrl + '/statements')
     oldValueUri = baseUri + str(oldValue)
     newValueUri = baseUri + str(target)
-    q="""
+    q = """
     PREFIX owl: <http://www.w3.org/2002/07/owl#>    
     PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
     PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
-    PREFIX dbo: <http://um-cds/ontologies/databaseontology/>WITH <http://data.local/mapping>
+    PREFIX dbo: <http://um-cds/ontologies/databaseontology/>
+    WITH <http://data.local/mapping>
     DELETE{
-        ?s owl:equivalentClass ?o.
+        <%s> owl:equivalentClass ?o.
     }
     INSERT{
         <%s> owl:equivalentClass ?o.
     }
     WHERE{
-        BIND(<%s> as ?s).
-        ?s owl:equivalentClass ?o.
-        ?o rdf:type owl:Class;
-            owl:intersectionOf [
-                rdf:first <%s>;
-                rdf:rest [
-                    rdf:first[
-        			rdf:type owl:Class;
-        			owl:unionOf [
-        				rdf:first [
-    						rdf:type owl:Restriction;
-                            owl:hasValue "%s"^^xsd:string;
-                            owl:onProperty dbo:has_value;
-                        ];
-                    rdf:rest rdf:nil;
-                    ]
-                ];
-            rdf:rest rdf:nil;
+        dbo:cell_of rdf:type owl:ObjectProperty;
+                    owl:inverseOf dbo:has_cell.
+        <%s> rdf:type owl:Class ;
+             owl:equivalentClass ?o.
+        ?o owl:intersectionOf([
+            rdf:type owl:Restriction ;
+            owl:onProperty dbo:cell_of ;
+            owl:someValuesFrom <%s>;
         ]
-    ].
+        [
+            rdf:type owl:Restriction ;
+            owl:onProperty dbo:has_value ;
+            owl:hasValue "%s"^^xsd:string;
+        ]
+        );
+        rdf:type owl:Class;
     }
-    """%(newValueUri, oldValueUri, cdmValue, cellValue)
+    """%(oldValueUri, newValueUri, oldValueUri, cdmValue, cellValue)
     print(q)
     endpoint.setQuery(q)
     endpoint.method = 'POST'
