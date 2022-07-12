@@ -49,44 +49,39 @@ def getData(value):
 def getMappedCell(cdmUri):
     endpoint = current_app.config.get("rdf_endpoint")
     graph = "http://data.local/mapping"
-    print(cdmUri)
+    # New query
     q = """
-    PREFIX dbo: <http://um-cds/ontologies/databaseontology/>
-    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-    PREFIX owl: <http://www.w3.org/2002/07/owl#>
-    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    PREFIX owl:<http://www.w3.org/2002/07/owl#>
+    PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+    PREFIX dbo:<http://um-cds/ontologies/databaseontology/>
+    PREFIX xsd:<http://www.w3.org/2001/XMLSchema#>
     SELECT ?categoricalValue ?cellMapping
     WHERE{
         {
             SELECT ?node ?categoricalValue
-            WHERE {
+            WHERE{
                 GRAPH <%s>{
-                    ?node owl:equivalentClass[
-                          rdf:type owl:Class;
-                          owl:intersectionOf[
-                                rdf:first <%s>;
-                                rdf:rest[
-                                    rdf:first[
-                                        rdf:type owl:Class;
-                                        owl:unionOf[
-                                            rdf:first[
+                    dbo:cell_of rdf:type owl:ObjectProperty;
+                                owl:inverseOf dbo:has_cell.
+                                ?node rdf:type owl:Class;
+                                       owl:equivalentClass [
+                                            owl:intersectionOf([
                                                 rdf:type owl:Restriction;
-                                                owl:hasValue ?categoricalValue;
+                                                owl:onProperty dbo:cell_of;
+                                                owl:someValuesFrom <%s>;
+                                            ]
+                                            [
+                                                rdf:type owl:Restriction;
                                                 owl:onProperty dbo:has_value;
-                                            ];
-                                        rdf:rest rdf:nil;
-                                        ]
-                                    ];
-                                    rdf:rest rdf:nil;
-                                ]
-                        ]
-                    ].
+                                                owl:hasValue ?categoricalValue;
+                                            ]);
+                                            rdf:type owl:Class;
+                                        ].
                 }
             }
         }
-        ?node rdfs:label ?cellMapping
-
+        ?node rdfs:label ?cellMapping.
     }"""%(graph, cdmUri)
+    print(q)
     df = sd.get(endpoint, q)
     return df
