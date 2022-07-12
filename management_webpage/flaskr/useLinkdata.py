@@ -32,26 +32,22 @@ def createCellLink(baseUri, target, superClass, value):
         GRAPH <http://data.local/mapping> {
             dbo:cell_of rdf:type owl:ObjectProperty;
                  owl:inverseOf dbo:has_cell.
-            <%s%s> owl:equivalentClass [
-                    rdf:type owl:Class;
-                    owl:intersectionOf [
-                        rdf:first <%s>;
-                        rdf:rest [
-                            rdf:first [
-                                rdf:type owl:Class;
-                                owl:unionOf [
-                                    rdf:first [
-                                        rdf:type owl:Restriction;
-                                        owl:hasValue "%s"^^xsd:string;
-                                        owl:onProperty dbo:has_value;
-                                    ];
-                                    rdf:rest rdf:nil;
-                                ]
-                            ];
-                            rdf:rest rdf:nil;
+            <%s%s> rdf:type owl:Class ;
+                owl:equivalentClass [ 
+                    owl:intersectionOf 
+                        ( [ 
+                            rdf:type owl:Restriction ;
+                            owl:onProperty dbo:cell_of ;
+                            owl:someValuesFrom <%s>;
                         ]
-                    ]
-                ].
+                        [ 
+                            rdf:type owl:Restriction ;
+                            owl:onProperty dbo:has_value ;
+                            owl:hasValue "%s"^^xsd:string;
+                        ]
+                        ) ;
+                        rdf:type owl:Class;
+                    ].
             } } WHERE { }
     '''%(baseUri, target, superClass, value)
     print(q)
