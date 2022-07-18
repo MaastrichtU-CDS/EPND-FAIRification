@@ -33,8 +33,7 @@
     <thead>
       <tr>
         <th> Categorical Value </th>
-        <th> Current Mapping </th>
-        <th> New Mapping  </th>
+        <th> Standardized term </th>
       </tr>
     </thead>
     <tbody>
@@ -42,17 +41,11 @@
       {% for index, row in metadata.iterrows() %}
       <tr>
         <td> {{ row[0] | safe }} </td>
-        <td> 
-		{% if row[1] is not number %}
-		{{ row[1] | safe }}
-		{% else %}
-		Unmapped
-		{% endif %}
-	</td>
         <td>
 	    <select class="form-select me-1" name="targetValues{{index}}"> 
+        <option value="{{ row[0]}},{{row[1]}},{{value}},http://www.w3.org/2002/07/owl#Nothing">UNKNOWN</option>
               		{% for value in targetValues %}
-			<option value="{{ row[0]}},{{row[1]}},{{value}},{{chosenMapping[0][0]}}"> {{ value }}</option>
+			<option value="{{ row[0]}},{{row[1]}},{{value}},{{chosenMapping[0][0]}}"{% if value==row[1] %} selected{% endif %}> {{ value }}</option>
               		{% endfor %}
             	</select>
 	</td>
