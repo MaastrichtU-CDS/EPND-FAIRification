@@ -13,11 +13,11 @@
 @prefix sh: <http://www.w3.org/ns/shacl#>.
 
 local:myFip rdf:type fip:FIP-Declaration;
-    rdfs:label "EPND common data model";
+    rdfs:label "EPND use case 1 ATN";
     fip:declares-current-use-of [
         rdf:type <https://schema.metadatacenter.org/core/Template>;
         sio:SIO_000628 <https://raw.githubusercontent.com/MaastrichtU-CDS/EPND-FAIRification/main/fip/cedar_dataset.json>;
     ];
     fip:declares-current-use-of [
-        sh:shapesGraph <https://raw.githubusercontent.com/MaastrichtU-CDS/EPND-FAIRification/main/management_webpage/shapeTest/shacl.ttl>;
+        sh:shapesGraph <https://raw.githubusercontent.com/MaastrichtU-CDS/EPND-FAIRification/case-study-1/EPNDCS1shacl.ttl>;
     ].
