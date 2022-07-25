@@ -19,10 +19,18 @@ def upload():
     ## Retrieve the shacl elements based on the metadata uri -> template -> fip -> shacl
     fipAndShacl = dService.get_fip_and_shacl_for_cedar_instance(metadataUri)
     shapesGraphUri = fipAndShacl[0]['shapesGraph']['value']
-    print(shapesGraphUri)
 
     ## Find the mapped columns based on the shacl file
+    foundShapes = dService.get_mapped_shapes_from_shacl(shapesGraphUri)
 
     ## Generate the target table based on the mapped columns
+    for foundShape in foundShapes:
+        targetClass = foundShape['targetClass']['value']
+        variableType = foundShape['variableType']['value']
+
+        ## retrieve row URI and targetClass column value
+        ## if variableType is categorical, map value to rdf:type
+
+        ## Afterwards append/merge with existing DataFrame
 
     return render_template('publish/preview.html', metadataUri = metadataUri)

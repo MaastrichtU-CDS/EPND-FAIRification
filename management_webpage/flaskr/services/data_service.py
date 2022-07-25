@@ -99,3 +99,37 @@ class DataEndpoint:
             }
 
             """ % instanceUrl)
+    
+    def get_mapped_shapes_from_shacl(self, shaclUri):
+        # The last line in the query below limits to only mapped columns
+        return self.__triplestore.select_sparql("""
+            PREFIX sh: <http://www.w3.org/ns/shacl#>
+            PREFIX sio: <http://semanticscience.org/resource/>
+            PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+            PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+            PREFIX owl: <http://www.w3.org/2002/07/owl#>
+            prefix epnd: <https://raw.githubusercontent.com/MaastrichtU-CDS/EPND-FAIRification/main/management_webpage/shapeTest/shacl.ttl#>
+
+            select ?shape ?targetClass ?targetClassLabel ?variableType ?variableTypeLabel
+            where {
+                {
+                    ?shape rdf:type sh:NodeShape.
+                    FILTER(isUri(?shape) && STRSTARTS(STR(?shape), STR(epnd:)))
+                } MINUS {
+                    ?shape sh:property [
+                        sh:path sio:SIO_000300;
+                    ].
+                }
+                
+                ?shape sh:targetClass ?targetClass.
+                ?targetClass rdfs:label ?targetClassLabel.
+                
+                OPTIONAL {
+                    ?shape rdf:type ?variableType.
+                    FILTER( ?variableType not in (owl:Thing, sh:NodeShape ) ).
+                    OPTIONAL { ?variableType rdfs:label ?variableTypeLabel }.
+                }
+
+                ?targetClass owl:equivalentClass ?columnClass.
+            }"""
+        )
