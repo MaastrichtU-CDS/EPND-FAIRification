@@ -21,3 +21,4 @@ local:myFip rdf:type fip:FIP-Declaration;
     fip:declares-current-use-of [
         sh:shapesGraph <https://raw.githubusercontent.com/MaastrichtU-CDS/EPND-FAIRification/main/management_webpage/shapeTest/shacl.ttl>;
     ].
+<https://raw.githubusercontent.com/MaastrichtU-CDS/EPND-FAIRification/main/fip/cedar_dataset.json> owl:sameAs <http://cedar.local/instances/a36b13bf-aeca-42aa-93c1-99747ff1ff65>.
