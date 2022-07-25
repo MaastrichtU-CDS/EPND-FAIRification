@@ -51,6 +51,11 @@ def create_app(test_config=None):
      app.register_blueprint(data_controller.bp)
      data_controller.rdfStore = rdfStore
      data_controller.triplifierRestUri = app.config.get("triplifier_service")
+
+     from . import publish_controller
+     app.register_blueprint(publish_controller.bp)
+     publish_controller.rdfStore = rdfStore
+     publish_controller.triplifierRestUri = app.config.get("triplifier_service")
      
      return app
 

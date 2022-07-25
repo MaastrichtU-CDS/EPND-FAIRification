@@ -74,3 +74,28 @@ class DataEndpoint:
         print(query)
 
         return self.__triplestore.select_sparql(query)
+    
+    def get_fip_and_shacl_for_cedar_instance(self, instanceUrl):
+        return self.__triplestore.select_sparql("""
+            PREFIX sh: <http://www.w3.org/ns/shacl#>
+            PREFIX schema: <http://schema.org/>
+            PREFIX sio: <http://semanticscience.org/resource/>
+            PREFIX local: <https://raw.githubusercontent.com/MaastrichtU-CDS/EPND-FAIRification/main/fip/fip.ttl#>
+            PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+            PREFIX fip: <https://w3id.org/fair/fip/terms/>
+            PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+            select distinct ?fip ?shapesGraph where {
+                <%s> schema:isBasedOn ?cedarTemplate.
+                
+                ?fip rdf:type fip:FIP-Declaration;
+                    fip:declares-current-use-of [
+                        rdf:type <https://schema.metadatacenter.org/core/Template>;
+                        sio:SIO_000628 ?cedarTemplate;
+                    ];
+                    fip:declares-current-use-of [
+                        sh:shapesGraph ?shapesGraph;
+                    ].
+            }
+
+            """ % instanceUrl)
