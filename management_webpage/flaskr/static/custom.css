@@ -1,0 +1,14 @@
+.bg-green {
+    background-color: #64DB91;
+}
+
+.btn-primary {
+    background-color: #64DB91;
+
+}
+
+.btn-primary:hover,
+.btn-primary:active,
+.btn-primary:visited {
+    background-color: #64DB91;
+}
