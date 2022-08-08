@@ -110,7 +110,7 @@ class DataEndpoint:
             PREFIX owl: <http://www.w3.org/2002/07/owl#>
             prefix epnd: <https://raw.githubusercontent.com/MaastrichtU-CDS/EPND-FAIRification/main/management_webpage/shapeTest/shacl.ttl#>
 
-            select ?shape ?targetClass ?targetClassLabel ?variableType ?variableTypeLabel
+            select ?shape ?targetClass ?targetClassLabel ?variableType ?variableTypeLabel ?columnClass
             where {
                 {
                     ?shape rdf:type sh:NodeShape.

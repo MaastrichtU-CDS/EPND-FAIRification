@@ -3,6 +3,7 @@ from flask import (
     Blueprint, render_template, request
 )
 from flaskr.services import data_service, triplestore
+import logging
 
 bp = Blueprint("publish_controller",__name__)
 rdfStore = None
@@ -26,7 +27,10 @@ def upload():
     ## Generate the target table based on the mapped columns
     for foundShape in foundShapes:
         targetClass = foundShape['targetClass']['value']
+        columnClass = foundShape['columnClass']['value']
         variableType = foundShape['variableType']['value']
+
+        logging.debug(f"Processing target class {targetClass} with column {columnClass}")
 
         ## retrieve row URI and targetClass column value
         ## if variableType is categorical, map value to rdf:type

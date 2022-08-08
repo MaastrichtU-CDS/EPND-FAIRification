@@ -4,6 +4,13 @@ from flask import Flask
 import json
 from flaskr.services import triplestore
 
+import logging
+
+logging.basicConfig(
+     format="%(asctime)s - %(name)-14s - %(levelname)-8s - %(message)s",
+     level=logging.DEBUG
+)
+
 #app = Flask(__name__)
 
 #@app.route('/')
