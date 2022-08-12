@@ -109,8 +109,9 @@ class DataEndpoint:
             PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
             PREFIX owl: <http://www.w3.org/2002/07/owl#>
             prefix epnd: <https://raw.githubusercontent.com/MaastrichtU-CDS/EPND-FAIRification/main/management_webpage/shapeTest/shacl.ttl#>
+            PREFIX dbo: <http://um-cds/ontologies/databaseontology/>
 
-            select ?shape ?targetClass ?targetClassLabel ?variableType ?variableTypeLabel ?columnClass
+            select ?shape ?targetClass ?targetClassLabel ?variableType ?variableTypeLabel ?columnClass ?columnName
             where {
                 {
                     ?shape rdf:type sh:NodeShape.
@@ -131,8 +132,39 @@ class DataEndpoint:
                 }
 
                 ?targetClass owl:equivalentClass ?columnClass.
+                ?columnClass dbo:column ?columnName.
             }"""
         )
 
+        return self.__triplestore.get_values_from_results(results)
+    
+    def get_data_for_column_class(self, listWithColumnClass):
+        query = """
+            PREFIX sh: <http://www.w3.org/ns/shacl#>
+            PREFIX sio: <http://semanticscience.org/resource/>
+            PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+            PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+            PREFIX owl: <http://www.w3.org/2002/07/owl#>
+            PREFIX dbo: <http://um-cds/ontologies/databaseontology/>
+
+            SELECT *
+            WHERE {
+        """
+
+        for colClassRow in listWithColumnClass:
+            query += f"""
+                ?row dbo:has_column [
+                    rdf:type <{colClassRow['columnClass']}>;
+                    dbo:has_cell [
+                        dbo:has_value ?{colClassRow['columnName']};
+                    ];
+                ].
+            """
+        
+        query += " }"
+
+        logging.debug(query)
+
+        results = self.__triplestore.select_sparql(query)
         return self.__triplestore.get_values_from_results(results)
             

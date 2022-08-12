@@ -24,6 +24,8 @@ def preview():
     ## Find the mapped columns based on the shacl file
     foundShapes = dService.get_mapped_shapes_from_shacl(shapesGraphUri)
 
+    originalData = dService.get_data_for_column_class(foundShapes)
+
     ## Generate the target table based on the mapped columns
 
     for foundShape in foundShapes:
@@ -38,4 +40,4 @@ def preview():
 
         ## Afterwards append/merge with existing DataFrame
 
-    return render_template('publish/preview.html', metadataUri = metadataUri, previewTable=foundShapes)
+    return render_template('publish/preview.html', metadataUri = metadataUri, previewTable=originalData)
