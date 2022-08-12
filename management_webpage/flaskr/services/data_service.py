@@ -102,7 +102,7 @@ class DataEndpoint:
     
     def get_mapped_shapes_from_shacl(self, shaclUri):
         # The last line in the query below limits to only mapped columns
-        return self.__triplestore.select_sparql("""
+        results = self.__triplestore.select_sparql("""
             PREFIX sh: <http://www.w3.org/ns/shacl#>
             PREFIX sio: <http://semanticscience.org/resource/>
             PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -133,3 +133,6 @@ class DataEndpoint:
                 ?targetClass owl:equivalentClass ?columnClass.
             }"""
         )
+
+        return self.__triplestore.get_values_from_results(results)
+            

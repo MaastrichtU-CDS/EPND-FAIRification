@@ -22,6 +22,20 @@ class AbstractTripleStore(ABC):
     @abstractmethod
     def fetch_namespaces():
         pass
+    
+    def get_values_from_results(self, results):
+        returnData = [ ]
+        colNames = None
+        for result in results:
+            if colNames is None:
+                colNames = result.keys()
+
+            returnRow = {}
+            for colName in colNames:
+                returnRow[colName] = result[colName]['value']
+            
+            returnData.append(returnRow)
+        return returnData
 
 
 class GraphDBTripleStore(AbstractTripleStore):

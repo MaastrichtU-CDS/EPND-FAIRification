@@ -13,7 +13,7 @@ def __get_data_service():
     return data_service.DataEndpoint(rdfStore)
 
 @bp.route('/publish/preview', methods=['GET'])
-def upload():
+def preview():
     metadataUri = request.args.get("metadataUri")
     dService = __get_data_service()
 
@@ -25,10 +25,11 @@ def upload():
     foundShapes = dService.get_mapped_shapes_from_shacl(shapesGraphUri)
 
     ## Generate the target table based on the mapped columns
+
     for foundShape in foundShapes:
-        targetClass = foundShape['targetClass']['value']
-        columnClass = foundShape['columnClass']['value']
-        variableType = foundShape['variableType']['value']
+        targetClass = foundShape['targetClass']
+        columnClass = foundShape['columnClass']
+        variableType = foundShape['variableType']
 
         logging.debug(f"Processing target class {targetClass} with column {columnClass}")
 
