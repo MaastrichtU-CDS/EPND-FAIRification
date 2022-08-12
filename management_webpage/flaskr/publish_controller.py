@@ -37,4 +37,4 @@ def upload():
 
         ## Afterwards append/merge with existing DataFrame
 
-    return render_template('publish/preview.html', metadataUri = metadataUri)
+    return render_template('publish/preview.html', metadataUri = metadataUri, previewTable=foundShapes)
