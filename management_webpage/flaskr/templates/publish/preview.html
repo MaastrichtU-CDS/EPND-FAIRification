@@ -55,13 +55,6 @@
 			
 			for (var i = 0; i < cols.length; i++) {
 
-				// If show source data, create th element and directly add raw string
-				if (showSourceData() || (cols[i] == 'row')) {
-					var theader = document.createElement("th");
-					theader.innerHTML = cols[i];
-					tr.appendChild(theader);
-				}
-
 				// if show standardized terms, attempt to create a link, otherwise add raw data
 				if (showStandardizedTerms() && (cols[i] != 'row')) {
 					var theader = document.createElement("th");
@@ -75,6 +68,13 @@
 						link.title = use_property_of_shape(cols[i], 'targetClassLabel');
 						theader.appendChild(link)
 					}
+					tr.appendChild(theader);
+				}
+
+				// If show source data, create th element and directly add raw string
+				if (showSourceData() || (cols[i] == 'row')) {
+					var theader = document.createElement("th");
+					theader.innerHTML = cols[i];
 					tr.appendChild(theader);
 				}
 				
@@ -92,17 +92,6 @@
 					colUri = cols[j] + "_class"
 					colUriLabel = cols[j] + "_classLabel"
 
-					// if show source data, just put the raw value in the cell
-					if (showSourceData() || (cols[j] == 'row')) {
-						var cell = trow.insertCell(-1);
-						cell.innerHTML = tableContents[i][cols[j]];
-
-						// Add the newly created table containing json data, but clear contents first
-						var el = document.getElementById(elementId);
-						el.innerHTML = "";
-						el.appendChild(table);
-					}
-
 					// if show standardized data, put a link in there if available
 					if (showStandardizedTerms() && (cols[j] != 'row')) {
 						var cell = trow.insertCell(-1);
@@ -117,6 +106,17 @@
 						} else {
 							cell.innerHTML = tableContents[i][cols[j]];
 						}
+
+						// Add the newly created table containing json data, but clear contents first
+						var el = document.getElementById(elementId);
+						el.innerHTML = "";
+						el.appendChild(table);
+					}
+
+					// if show source data, just put the raw value in the cell
+					if (showSourceData() || (cols[j] == 'row')) {
+						var cell = trow.insertCell(-1);
+						cell.innerHTML = tableContents[i][cols[j]];
 
 						// Add the newly created table containing json data, but clear contents first
 						var el = document.getElementById(elementId);
