@@ -136,7 +136,18 @@ class DataEndpoint:
             }"""
         )
 
-        return self.__triplestore.get_values_from_results(results)
+        results = self.__triplestore.get_values_from_results(results)
+        
+        # loop over namespaces and add the shorthand-notation
+        namespaces = self.__triplestore.fetch_namespaces()
+        namespaces = self.__triplestore.get_values_from_results(namespaces)
+        for row in results:
+            for myNamespace in namespaces:
+                if row["targetClass"].startswith(myNamespace["namespace"]):
+                    row['targetClass_short'] = row["targetClass"].replace(myNamespace["namespace"], myNamespace["prefix"] + ":")
+                    break
+        
+        return results
     
     def get_data_for_column_class(self, listWithColumnClass):
         query = """

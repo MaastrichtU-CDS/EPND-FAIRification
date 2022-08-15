@@ -12,18 +12,36 @@
 			{"col_1":"val_31", "col_2":"val_32", "col_3":"val_33"}
 		];
         myTableContents = JSON.parse('{{ previewTable | tojson | safe }}');
+
+		foundShapes = JSON.parse('{{ foundShapes | tojson | safe }}');
+		window.console.log(foundShapes)
+
+		function use_property_of_shape(longName, keyForValue='targetClass_short') {
+			for (var i in foundShapes) {
+				shape = foundShapes[i]
+				if (shape['columnName']==longName) {
+					return shape[keyForValue]
+				}
+			}
+			return ""
+		}
 		
 		function render_table(elementId, tableContents) {
-			var cols = [];
+			var cols = ["row"];
 			
-			for (var i = 0; i < tableContents.length; i++) {
-				for (var k in tableContents[i]) {
-					if (cols.indexOf(k) === -1) {
-						
-						// Push all keys to the array
-						cols.push(k);
-					}
-				}
+			// for (var i = 0; i < tableContents.length; i++) {
+			// 	for (var k in tableContents[i]) {
+			// 		if (cols.indexOf(k) === -1) {
+			// 			if (!k.includes("_class")) {
+			// 				// Push all keys to the array
+			// 				cols.push(k);
+			// 			}
+			// 		}
+			// 	}
+			// }
+
+			for (var i in foundShapes) {
+				cols.push(foundShapes[i]["columnName"])
 			}
 			
 			// Create a table element
@@ -36,7 +54,17 @@
 				
 				// Create the table header th element
 				var theader = document.createElement("th");
-				theader.innerHTML = cols[i];
+
+				if (use_property_of_shape(cols[i])=="") {
+					theader.innerHTML = cols[i];
+				} else {
+					link = document.createElement("a");
+					link.innerHTML = use_property_of_shape(cols[i]);
+					link.href = use_property_of_shape(cols[i], 'targetClass');
+					link.target = "_new";
+					link.title = use_property_of_shape(cols[i], 'targetClassLabel');
+					theader.appendChild(link)
+				}
 				
 				// Append columnName to the table row
 				tr.appendChild(theader);
@@ -50,8 +78,21 @@
 				for (var j = 0; j < cols.length; j++) {
 					var cell = trow.insertCell(-1);
 					
-					// Inserting the cell at particular place
-					cell.innerHTML = tableContents[i][cols[j]];
+					// Inserting the cell at particular place					
+					colName = cols[j] + "_classShort"
+					colUri = cols[j] + "_class"
+					colUriLabel = cols[j] + "_classLabel"
+
+					if (tableContents[i][colName]>"") {
+						link = document.createElement("a")
+						link.innerHTML = tableContents[i][colName];
+						link.href = tableContents[i][colUri];
+						link.target = "_new";
+						link.title = tableContents[i][colUriLabel];
+						cell.appendChild(link)
+					} else {
+						cell.innerHTML = tableContents[i][cols[j]];
+					}
 				}
 			}
 			

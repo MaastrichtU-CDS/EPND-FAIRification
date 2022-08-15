@@ -60,4 +60,4 @@ def preview():
             row[rowName + "_classShort"] = foundCellClassShort
             row[rowName + "_classLabel"] = foundCellClassLabel
 
-    return render_template('publish/preview.html', metadataUri = metadataUri, previewTable=originalData)
+    return render_template('publish/preview.html', metadataUri = metadataUri, previewTable=originalData, foundShapes=foundShapes)
