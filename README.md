@@ -11,7 +11,7 @@ This repository contains the FAIRifier/FAIRnotator developed for the [European P
 3. Execute the [docker-compose.yml](docker-compose.yml) file using `docker-compose up -d`.
 4. Open [http://localhost:5000](http://localhost:5000) and follow the steps
 
-To use a sample FAIR implementation profile (FIP) use the URL: `https://www.jvsoest.eu/fip.ttl`
+To use a sample FAIR implementation profile (FIP) use the URL: `https://raw.githubusercontent.com/MaastrichtU-CDS/EPND-FAIRification/main/fip/fip.ttl`
 
 ## How to build this software?
 
