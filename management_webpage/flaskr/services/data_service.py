@@ -167,4 +167,48 @@ class DataEndpoint:
 
         results = self.__triplestore.select_sparql(query)
         return self.__triplestore.get_values_from_results(results)
-            
+    
+    def get_mappings_for_target_class(self, targetClass):
+        query = """
+            PREFIX owl:<http://www.w3.org/2002/07/owl#>
+            PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+            PREFIX dbo:<http://um-cds/ontologies/databaseontology/>
+            PREFIX xsd:<http://www.w3.org/2001/XMLSchema#>
+            PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        
+            SELECT ?categoricalValue ?cellClass ?cellLabel
+            WHERE{
+                dbo:cell_of rdf:type owl:ObjectProperty;
+                    owl:inverseOf dbo:has_cell.
+                ?cellClass rdf:type owl:Class;
+                    owl:equivalentClass [
+                        owl:intersectionOf([
+                            rdf:type owl:Restriction;
+                            owl:onProperty dbo:cell_of;
+                            owl:someValuesFrom <%s>;
+                        ]
+                        [
+                            rdf:type owl:Restriction;
+                            owl:onProperty dbo:has_value;
+                            owl:hasValue ?categoricalValue;
+                        ]);
+                        rdf:type owl:Class;
+                    ].
+                ?cellClass rdfs:label ?cellLabel.
+            }
+        """ % (targetClass)
+
+        # perform query and get values
+        results = self.__triplestore.select_sparql(query)
+        results = self.__triplestore.get_values_from_results(results)
+
+        # loop over namespaces and add the shorthand-notation
+        namespaces = self.__triplestore.fetch_namespaces()
+        namespaces = self.__triplestore.get_values_from_results(namespaces)
+        for row in results:
+            for myNamespace in namespaces:
+                if row["cellClass"].startswith(myNamespace["namespace"]):
+                    row['cellClass_short'] = row["cellClass"].replace(myNamespace["namespace"], myNamespace["prefix"] + ":")
+                    break
+        
+        return results

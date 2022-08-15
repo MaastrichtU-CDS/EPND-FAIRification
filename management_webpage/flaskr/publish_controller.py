@@ -4,6 +4,7 @@ from flask import (
 )
 from flaskr.services import data_service, triplestore
 import logging
+from flaskr import useDataset
 
 bp = Blueprint("publish_controller",__name__)
 rdfStore = None
@@ -29,15 +30,34 @@ def preview():
     ## Generate the target table based on the mapped columns
 
     for foundShape in foundShapes:
+        if foundShape["variableType"] != "http://semanticscience.org/resource/SIO_000137":
+            continue
+
+        logging.debug(foundShape)
         targetClass = foundShape['targetClass']
-        columnClass = foundShape['columnClass']
-        variableType = foundShape['variableType']
+        mappings = dService.get_mappings_for_target_class(targetClass)
+        logging.debug("====================================")
+        logging.debug("mappings:")
+        logging.debug(mappings)
+        
+        ## add columns for mapped rows
+        for row in originalData:
+            rowName = foundShape['columnName']
+            foundValue = row[rowName]
 
-        logging.debug(f"Processing target class {targetClass} with column {columnClass}")
+            for mapping in mappings:
+                if mapping["categoricalValue"]==foundValue:
+                    foundCellClass = mapping['cellClass']
+                    foundCellClassShort = mapping['cellClass_short']
+                    foundCellClassLabel = mapping['cellLabel']
+                    break
+                else:
+                    foundCellClass = ""
+                    foundCellClassShort = ""
+                    foundCellClassLabel = ""
 
-        ## retrieve row URI and targetClass column value
-        ## if variableType is categorical, map value to rdf:type
-
-        ## Afterwards append/merge with existing DataFrame
+            row[rowName + "_class"] = foundCellClass
+            row[rowName + "_classShort"] = foundCellClassShort
+            row[rowName + "_classLabel"] = foundCellClassLabel
 
     return render_template('publish/preview.html', metadataUri = metadataUri, previewTable=originalData)
