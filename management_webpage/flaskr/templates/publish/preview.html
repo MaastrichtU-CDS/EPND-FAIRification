@@ -1,8 +1,16 @@
 {% extends "base.html" %}
 {% block content %}
 <h1>Instance details</h1>
-	<input type="checkbox" onchange="render_table(tableId, myTableContents);" id="standardizedTerms" checked>Standardized terminology</input></br>
-	<input type="checkbox" onchange="render_table(tableId, myTableContents);" id="sourceData">Source columns</input></br>
+	<!-- <input type="checkbox" onchange="render_table(tableId, myTableContents);" id="standardizedTerms" checked>Standardized terminology</input></br> -->
+	<!-- <input type="checkbox" onchange="render_table(tableId, myTableContents);" id="sourceData">Source columns</input></br> -->
+	<label class="switch">
+		<input type="checkbox" onchange="render_table(tableId, myTableContents);" id="standardizedTerms" checked/>
+		<span class="slider round"></span>
+	</label> Standardized terminology<br/>
+	<label class="switch">
+		<input type="checkbox" onchange="render_table(tableId, myTableContents);" id="sourceData"/>
+		<span class="slider round"></span>
+	  </label> Source data
 	<table id="previewTable" class="table table-striped mt-2"></table>
 	
 	<script>
