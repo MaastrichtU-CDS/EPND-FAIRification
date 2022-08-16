@@ -12,6 +12,7 @@
 @prefix sty: <http://purl.bioontology.org/ontology/STY/>.
 @prefix loinc: <http://purl.bioontology.org/ontology/LNC/>.
 @prefix sh: <http://www.w3.org/ns/shacl#>.
+@prefix schema: <https://schema.org/>.
 
 local:myFip rdf:type fip:FIP-Declaration;
     rdfs:label "EPND common data model";
