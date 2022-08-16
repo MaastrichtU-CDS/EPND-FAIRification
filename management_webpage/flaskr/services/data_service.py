@@ -80,7 +80,6 @@ class DataEndpoint:
             PREFIX sh: <http://www.w3.org/ns/shacl#>
             PREFIX schema: <http://schema.org/>
             PREFIX sio: <http://semanticscience.org/resource/>
-            PREFIX local: <https://raw.githubusercontent.com/MaastrichtU-CDS/EPND-FAIRification/main/fip/fip.ttl#>
             PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
             PREFIX fip: <https://w3id.org/fair/fip/terms/>
             PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -108,14 +107,12 @@ class DataEndpoint:
             PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
             PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
             PREFIX owl: <http://www.w3.org/2002/07/owl#>
-            prefix epnd: <https://raw.githubusercontent.com/MaastrichtU-CDS/EPND-FAIRification/main/management_webpage/shapeTest/shacl.ttl#>
             PREFIX dbo: <http://um-cds/ontologies/databaseontology/>
 
             select ?shape ?targetClass ?targetClassLabel ?variableType ?variableTypeLabel ?columnClass ?columnName
             where {
                 {
                     ?shape rdf:type sh:NodeShape.
-                    FILTER(isUri(?shape) && STRSTARTS(STR(?shape), STR(epnd:)))
                 } MINUS {
                     ?shape sh:property [
                         sh:path sio:SIO_000300;
