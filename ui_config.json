@@ -2,5 +2,5 @@
     "graphdb_server": "http://rdf-store:7200",
     "repository": "epnd_dummy",
     "rdf_endpoint": "http://rdf-store:7200/repositories/epnd_dummy",
-    "triplifier_service": "http://triplifier:8080"
+    "triplifier_service": "http://localhost:8080"
 }
