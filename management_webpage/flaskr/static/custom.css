@@ -1,16 +1,14 @@
-.bg-green {
-    background-color: #64DB91;
+.bg-darkgreen {
+    background-color: #15350a;/*#64DB91;*/
+    color: #ffffff;
 }
 
-.btn-primary {
-    background-color: #64DB91;
-
+footer a:link, footer a:visited, footer a:hover {
+  color: var(--bs-nav-link-color);
 }
 
-.btn-primary:hover,
-.btn-primary:active,
-.btn-primary:visited {
-    background-color: #64DB91;
+.a-55 {
+  color: rgba(255, 255, 255, .55);
 }
 
 /* ======================== Toggle switches ========================= */
@@ -56,11 +54,11 @@
   }
   
   input:checked + .slider {
-    background-color: #2196F3;
+    background-color: #64db91;
   }
   
   input:focus + .slider {
-    box-shadow: 0 0 1px #2196F3;
+    box-shadow: 0 0 1px #64db91;
   }
   
   input:checked + .slider:before {
