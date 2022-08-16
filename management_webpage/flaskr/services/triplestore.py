@@ -77,7 +77,7 @@ class GraphDBTripleStore(AbstractTripleStore):
                         <http://www.ontotext.com/trree/owlim#base-URL> "http://example.org/owlim#";
                         <http://www.ontotext.com/trree/owlim#check-for-inconsistencies> "false";
                         <http://www.ontotext.com/trree/owlim#defaultNS> "";
-                        <http://www.ontotext.com/trree/owlim#disable-sameAs> "false";
+                        <http://www.ontotext.com/trree/owlim#disable-sameAs> "true";
                         <http://www.ontotext.com/trree/owlim#enable-context-index> "false";
                         <http://www.ontotext.com/trree/owlim#enable-literal-index> "true";
                         <http://www.ontotext.com/trree/owlim#enablePredicateList> "true";
@@ -89,7 +89,7 @@ class GraphDBTripleStore(AbstractTripleStore):
                         <http://www.ontotext.com/trree/owlim#query-timeout> "0";
                         <http://www.ontotext.com/trree/owlim#read-only> "false";
                         <http://www.ontotext.com/trree/owlim#repository-type> "file-repository";
-                        <http://www.ontotext.com/trree/owlim#ruleset> "owl2-rl-optimized";
+                        <http://www.ontotext.com/trree/owlim#ruleset> "rdfsplus-optimized";
                         <http://www.ontotext.com/trree/owlim#storage-folder> "storage";
                         <http://www.ontotext.com/trree/owlim#throw-QueryEvaluationException-on-timeout> "false";
                         sail:sailType "graphdb:FreeSail"

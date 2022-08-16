@@ -15,11 +15,17 @@ class CedarEndpoint:
         """
         query = """
             prefix sio: <http://semanticscience.org/resource/>
+            prefix schema: <https://schema.org/>
             
             SELECT DISTINCT ?cedar_template
             WHERE {
                 ?template_obj_uri rdf:type <https://schema.metadatacenter.org/core/Template>;
-                    sio:SIO_000628 ?cedar_template;
+                    sio:SIO_000628 [
+                        schema:distribution [
+                            schema:encodingFormat "application/ld+json";
+                            schema:contentUrl ?cedar_template;
+                        ];
+                    ].
             }
         """
         return self.__triplestore.select_sparql(query)[0]["cedar_template"]["value"]
