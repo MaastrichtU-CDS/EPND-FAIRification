@@ -51,19 +51,17 @@ def getMappedCell(cdmUri):
     graph = "http://data.local/mapping"
     # New query
     q = """
-    PREFIX owl:<http://www.w3.org/2002/07/owl#>
+        PREFIX owl:<http://www.w3.org/2002/07/owl#>
     PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
     PREFIX dbo:<http://um-cds/ontologies/databaseontology/>
     PREFIX xsd:<http://www.w3.org/2001/XMLSchema#>
-    SELECT ?categoricalValue ?cellMapping
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT ?categoricalValue ?cellMapping ?cellClass
     WHERE{
-        {
-            SELECT ?node ?categoricalValue
-            WHERE{
                 GRAPH <%s>{
                     dbo:cell_of rdf:type owl:ObjectProperty;
                                 owl:inverseOf dbo:has_cell.
-                                ?node rdf:type owl:Class;
+                                ?cellClass rdf:type owl:Class;
                                        owl:equivalentClass [
                                             owl:intersectionOf([
                                                 rdf:type owl:Restriction;
@@ -78,10 +76,10 @@ def getMappedCell(cdmUri):
                                             rdf:type owl:Class;
                                         ].
                 }
-            }
-        }
-        ?node rdfs:label ?cellMapping.
-    }"""%(graph, cdmUri)
+        ?cellClass rdfs:label ?cellMapping.
+    }
+
+"""%(graph, cdmUri)
     print(q)
     df = sd.get(endpoint, q)
     return df

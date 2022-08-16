@@ -6,3 +6,4 @@ __pycache__/
 cedar-embeddable-editor-release*/
 **/cedar/add.html
 **/static/cee
+node_modules/

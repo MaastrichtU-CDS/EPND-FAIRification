@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Instance details</h1>
+	<!-- <input type="checkbox" onchange="render_table(tableId, myTableContents);" id="standardizedTerms" checked>Standardized terminology</input></br> -->
+	<!-- <input type="checkbox" onchange="render_table(tableId, myTableContents);" id="sourceData">Source columns</input></br> -->
+	<label class="switch">
+		<input type="checkbox" onchange="render_table(tableId, myTableContents);" id="standardizedTerms" checked/>
+		<span class="slider round"></span>
+	</label> Standardized terminology<br/>
+	<label class="switch">
+		<input type="checkbox" onchange="render_table(tableId, myTableContents);" id="sourceData"/>
+		<span class="slider round"></span>
+	  </label> Source data
+	<table id="previewTable" class="table table-striped mt-2"></table>
+	
+	<script>
+		var tableId = "previewTable"
+        myTableContents = JSON.parse('{{ previewTable | tojson | safe }}');
+
+		foundShapes = JSON.parse('{{ foundShapes | tojson | safe }}');
+		
+		function showStandardizedTerms() {
+			return document.getElementById("standardizedTerms").checked
+		}
+
+		function showSourceData() {
+			return document.getElementById("sourceData").checked
+		}
+
+		function use_property_of_shape(longName, keyForValue='targetClass_short') {
+			for (var i in foundShapes) {
+				shape = foundShapes[i]
+				if (shape['columnName']==longName) {
+					return shape[keyForValue]
+				}
+			}
+			return ""
+		}
+		
+		function render_table(elementId, tableContents) {
+			var cols = ["row"];
+			
+			// for (var i = 0; i < tableContents.length; i++) {
+			// 	for (var k in tableContents[i]) {
+			// 		if (cols.indexOf(k) === -1) {
+			// 			if (!k.includes("_class")) {
+			// 				// Push all keys to the array
+			// 				cols.push(k);
+			// 			}
+			// 		}
+			// 	}
+			// }
+
+			for (var i in foundShapes) {
+				cols.push(foundShapes[i]["columnName"])
+			}
+			
+			// Create a table element
+			var table = document.createElement("table");
+			
+			// Create table row tr element of a table
+			var tr = table.insertRow(-1);
+			
+			for (var i = 0; i < cols.length; i++) {
+
+				// if show standardized terms, attempt to create a link, otherwise add raw data
+				if (showStandardizedTerms() && (cols[i] != 'row')) {
+					var theader = document.createElement("th");
+					if (use_property_of_shape(cols[i])=="") {
+						theader.innerHTML = cols[i];
+					} else {
+						link = document.createElement("a");
+						link.innerHTML = use_property_of_shape(cols[i]);
+						link.href = use_property_of_shape(cols[i], 'targetClass');
+						link.target = "_new";
+						link.title = use_property_of_shape(cols[i], 'targetClassLabel');
+						theader.appendChild(link)
+					}
+					tr.appendChild(theader);
+				}
+
+				// If show source data, create th element and directly add raw string
+				if (showSourceData() || (cols[i] == 'row')) {
+					var theader = document.createElement("th");
+					theader.innerHTML = cols[i];
+					tr.appendChild(theader);
+				}
+				
+			}
+			
+			// Adding the data to the table
+			for (var i = 0; i < tableContents.length; i++) {
+				
+				// Create a new row
+				trow = table.insertRow(-1);
+				for (var j = 0; j < cols.length; j++) {
+					
+					// Inserting the cell at particular place					
+					colName = cols[j] + "_classShort"
+					colUri = cols[j] + "_class"
+					colUriLabel = cols[j] + "_classLabel"
+
+					// if show standardized data, put a link in there if available
+					if (showStandardizedTerms() && (cols[j] != 'row')) {
+						var cell = trow.insertCell(-1);
+
+						if (tableContents[i][colName]>"") {
+							link = document.createElement("a")
+							link.innerHTML = tableContents[i][colName];
+							link.href = tableContents[i][colUri];
+							link.target = "_new";
+							link.title = tableContents[i][colUriLabel];
+							cell.appendChild(link)
+						} else {
+							cell.innerHTML = tableContents[i][cols[j]];
+						}
+
+						// Add the newly created table containing json data, but clear contents first
+						var el = document.getElementById(elementId);
+						el.innerHTML = "";
+						el.appendChild(table);
+					}
+
+					// if show source data, just put the raw value in the cell
+					if (showSourceData() || (cols[j] == 'row')) {
+						var cell = trow.insertCell(-1);
+						cell.innerHTML = tableContents[i][cols[j]];
+
+						// Add the newly created table containing json data, but clear contents first
+						var el = document.getElementById(elementId);
+						el.innerHTML = "";
+						el.appendChild(table);
+					}
+				}
+			}
+		}
+
+        render_table(tableId, myTableContents);
+	</script>
+
+{% endblock %}
