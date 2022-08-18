@@ -1,0 +1,15 @@
+{% if navigationPath is defined %}
+<nav aria-label="breadcrumb" class="px-2">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+
+        {% for path_item in navigationPath %}
+            {% if not loop.last %}
+                <li class="breadcrumb-item"><a href="{{ path_item['url'] }}">{{ path_item['name'] }}</a></li>
+            {% else %}
+                <li class="breadcrumb-item active" aria-current="page">{{ path_item['name'] }}</li>    
+            {% endif %}
+        {% endfor %}
+    </ol>
+</nav>
+{% endif %}

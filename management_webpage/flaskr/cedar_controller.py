@@ -12,6 +12,7 @@ from tzlocal import get_localzone
 bp = Blueprint("cedar_controller",__name__)
 rdfStore = None
 cedar_instance_base_url = "http://cedar.local/instances"
+predicate_name_metadata_instance = "http://purl.org/dc/terms/title"
 
 def __get_cedar_service():
     return cedar_service.CedarEndpoint(rdfStore)
@@ -21,7 +22,7 @@ def __get_data_service():
 
 @bp.route('/metadata', methods=['GET'])
 def index():
-    instances = __get_cedar_service().list_instances(titlePredicate="http://purl.org/dc/terms/title")
+    instances = __get_cedar_service().list_instances(titlePredicate=predicate_name_metadata_instance)
     # TODO: show the title of the template instance
     for idx, val in enumerate(instances):
         print(instances[idx])
@@ -29,11 +30,11 @@ def index():
         if "label" in instances[idx]:
             if instances[idx]["label"]["value"] is not None:
                 instances[idx]["instance"]["short"] = instances[idx]["label"]["value"]
-    return render_template("cedar/index.html", instances=instances)
+    return render_template("cedar/index.html", instances=instances, navigationPath=[{"name": "cohorts", "url": "/metadata"}])
 
 @bp.route("/metadata/add")
 def cee():
-    return render_template("cedar/add.html")
+    return render_template("cedar/add.html", navigationPath=[{"name": "cohorts", "url": "/metadata"}, {"name": "add", "url": None}])
 
 @bp.route("/metadata/instance")
 def showInstance():
@@ -44,9 +45,13 @@ def showInstance():
     distributionList = __get_data_service().get_distributions_for_metadata(identifier)
     for distribution in distributionList:
         distribution["tableNames"] = __get_data_service().get_tables_for_distribution(distribution["ontologyUri"]['value'])
-    print(distributionList)
 
-    return render_template("cedar/instance.html", properties=properties, references=references, instance_uri=identifier, distributionList=distributionList)
+    instanceTitle = "unknown"
+    for property in properties:
+        if property["predicate"]['value'] == predicate_name_metadata_instance:
+            instanceTitle = property['object']['value']
+    
+    return render_template("cedar/instance.html", properties=properties, references=references, instance_uri=identifier, distributionList=distributionList, navigationPath=[{"name": "cohorts", "url": "/metadata"}, {"name": instanceTitle, "url": None}])
 
 @bp.route("/metadata/delete")
 def delete_instance():
