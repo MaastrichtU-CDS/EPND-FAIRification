@@ -4,16 +4,41 @@ from flask import (
 )
 from flaskr import useDataset, useCDM, useLinkdata, statisticalMetadata, getCategories
 from flaskr.services.triplestore import GraphDBTripleStore
+from flaskr.services import cedar_service, data_service, triplestore
 import pandas as pd
 import numpy as np
 import math
 
 bp = Blueprint("mapDatasets",__name__)
 
+def createBreadCrumbBasic(datasetId: str, dataOntologyUri: str=None):
+    cedar_uri = useDataset.get_cedar_template_for_dataset_uri(datasetId)
+    graphDbStore = GraphDBTripleStore(current_app.config.get("graphdb_server"),
+                    current_app.config.get("repository"),
+                    create_if_not_exists=True)
+    cService = cedar_service.CedarEndpoint(graphDbStore)
+    cedar_name = cService.get_instance_name_for_uri(cedar_uri)
+
+    mappingUrl = None
+    if dataOntologyUri is not None:
+        mappingUrl = f"/column_mappings?identifier={datasetId}&ontology={dataOntologyUri}"
+
+    return [
+        {"name": "cohorts", "url": "/metadata"}, 
+        {"name": "cohort:" + cedar_name, "url": "/metadata/instance?uri=" + cedar_uri},
+        {"name": "mapping", "url": mappingUrl}
+        ]
+
+
 @bp.route('/column_mappings', methods=('GET', 'POST'))
 def mapper():
 
-    datasetColumns = useDataset.getDatasetUri()
+    #column_mappings?identifier=88480db6-1ef1-45aa-bbe1-a2285caf1bac&ontology=http://ontology.local/88480db6-1ef1-45aa-bbe1-a2285caf1bac/
+    identifier = request.args.get("identifier")
+    dataOntologyUri = request.args.get("ontology")
+    navigationPath = None
+    if identifier is not None:
+        navigationPath = createBreadCrumbBasic(identifier, dataOntologyUri)
 
     cdmColumns = useCDM.getCDMUri()
     #Gets all information of the linked data
@@ -25,7 +50,7 @@ def mapper():
             row[1] = None
 
     #Renders the default template
-    return render_template("mapDatasets/mapDatasets.html", mappings=linkedDatasetsList)
+    return render_template("mapDatasets/mapDatasets.html", mappings=linkedDatasetsList, navigationPath=navigationPath)
 
 
 @bp.route('/api/mappings', methods=['GET'])

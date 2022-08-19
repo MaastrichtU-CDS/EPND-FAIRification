@@ -1,4 +1,4 @@
-{% if navigationPath is defined %}
+{% if (navigationPath is not none) and (navigationPath is defined) %}
 <nav aria-label="breadcrumb" class="px-2">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="/">Home</a></li>

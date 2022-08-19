@@ -1,8 +1,9 @@
 import pandas as pd
 import sparql_dataframe as sd
-from SPARQLWrapper import JSON, SPARQLWrapper
 import json
 from flask import current_app
+from flaskr.services import triplestore
+import logging
 
 #Get all variable names and URI's from the dataset.
 def getDatasetUri():
@@ -22,6 +23,25 @@ def getDatasetUri():
     """
     df = sd.get(endpoint, q)
     return df
+
+def get_cedar_template_for_dataset_uri(dataset_uri):
+    """
+    Retrieve the cedar template URI for a given dataset URI
+    """
+    query = """
+    prefix dcat: <http://www.w3.org/ns/dcat#>
+
+    select ?cedar_uri where { 
+        ?cedar_uri dcat:distribution [ 
+            dcat:identifier "%s"; 
+        ].
+    }""" % dataset_uri
+    logging.debug(query)
+
+    rdfStore = triplestore.GraphDBTripleStore(current_app.config.get("graphdb_server"), current_app.config.get("repository"), create_if_not_exists=True)
+    queryResult = rdfStore.select_sparql(query)
+    for row in queryResult:
+        return row["cedar_uri"]["value"]
 
 #Gets the data of a specific dataset URI
 def getData(value):
