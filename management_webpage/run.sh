@@ -1,3 +1,5 @@
+source venv/bin/activate
+
 FLASK_APP=flaskr
 FLASK_ENV=development
 
