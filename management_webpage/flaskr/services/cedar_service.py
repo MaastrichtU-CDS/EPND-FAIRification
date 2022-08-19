@@ -8,6 +8,8 @@ class CedarEndpoint:
         triplestore: implementation of AbstractTripleStore
         """
         self.__triplestore = triplestore
+        # TODO: make this variable configurable, needs to be put into the FIP
+        self.__predicate_name_metadata_instance = "http://purl.org/dc/terms/title"
     
     def get_template_location(self):
         """
@@ -29,8 +31,22 @@ class CedarEndpoint:
             }
         """
         return self.__triplestore.select_sparql(query)[0]["cedar_template"]["value"]
+    
+    def get_instance_name_for_uri(self, instanceUri):
+        """
+        Retrieve the title for the instance used
+        """
 
-    def list_instances(self, titlePredicate=None):
+        query = """
+        SELECT ?name
+        WHERE {
+            <%s> <%s> ?name.
+        }
+        """ % (instanceUri, self.__predicate_name_metadata_instance)
+
+        return self.__triplestore.select_sparql(query)[0]["name"]["value"]
+
+    def list_instances(self):
         """
         Retrieve all instances stored in the SPARQL endpoint
         """
@@ -44,14 +60,14 @@ class CedarEndpoint:
         }
         """
 
-        if titlePredicate is not None:
+        if self.__predicate_name_metadata_instance is not None:
             query = f"""
             prefix pav: <http://purl.org/pav/>
 
             select distinct ?instance ?time ?label
             where {{ 
                 ?instance pav:createdOn ?time;
-                    <{titlePredicate}> ?label.
+                    <{self.__predicate_name_metadata_instance}> ?label.
             }}
             """
 

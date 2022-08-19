@@ -12,7 +12,6 @@ from tzlocal import get_localzone
 bp = Blueprint("cedar_controller",__name__)
 rdfStore = None
 cedar_instance_base_url = "http://cedar.local/instances"
-predicate_name_metadata_instance = "http://purl.org/dc/terms/title"
 
 def __get_cedar_service():
     return cedar_service.CedarEndpoint(rdfStore)
@@ -22,8 +21,7 @@ def __get_data_service():
 
 @bp.route('/metadata', methods=['GET'])
 def index():
-    instances = __get_cedar_service().list_instances(titlePredicate=predicate_name_metadata_instance)
-    # TODO: show the title of the template instance
+    instances = __get_cedar_service().list_instances()
     for idx, val in enumerate(instances):
         print(instances[idx])
         instances[idx]["instance"]["short"] = instances[idx]["instance"]["value"].replace(cedar_instance_base_url + "/", "")
@@ -46,12 +44,9 @@ def showInstance():
     for distribution in distributionList:
         distribution["tableNames"] = __get_data_service().get_tables_for_distribution(distribution["ontologyUri"]['value'])
 
-    instanceTitle = "unknown"
-    for property in properties:
-        if property["predicate"]['value'] == predicate_name_metadata_instance:
-            instanceTitle = property['object']['value']
+    instanceTitle = __get_cedar_service().get_instance_name_for_uri(identifier)
     
-    return render_template("cedar/instance.html", properties=properties, references=references, instance_uri=identifier, distributionList=distributionList, navigationPath=[{"name": "cohorts", "url": "/metadata"}, {"name": instanceTitle, "url": None}])
+    return render_template("cedar/instance.html", properties=properties, references=references, instance_uri=identifier, distributionList=distributionList, navigationPath=[{"name": "cohorts", "url": "/metadata"}, {"name": "cohort:" + instanceTitle, "url": None}])
 
 @bp.route("/metadata/delete")
 def delete_instance():
