@@ -28,3 +28,5 @@ The software is actually built when executing docker-compose (see above). To for
     pip install -r requirements.txt
     sh run.sh
     ```
+## Demo video
+A demo video based on commit version [d763069](https://github.com/MaastrichtU-CDS/EPND-FAIRification/tree/d7630693527bd5c884fdd778caf41a43291074db) is available on YouTube: [https://www.youtube.com/watch?v=T3lE1kw55IE](https://www.youtube.com/watch?v=T3lE1kw55IE)
