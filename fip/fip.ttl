@@ -11,17 +11,18 @@
 @prefix sty: <http://purl.bioontology.org/ontology/STY/>.
 @prefix loinc: <http://purl.bioontology.org/ontology/LNC/>.
 @prefix sh: <http://www.w3.org/ns/shacl#>.
+@prefix schema: <https://schema.org/>.
 
 local:myFip rdf:type fip:FIP-Declaration;
     rdfs:label "EPND use case 1 ATN";
     fip:declares-current-use-of [
         rdf:type <https://schema.metadatacenter.org/core/Template>;
         sio:SIO_000628 <https://repo.metadatacenter.org/templates/7569b4a5-03a8-42c5-8209-784caf64b435>;
-        #sio:SIO_000628 <https://raw.githubusercontent.com/MaastrichtU-CDS/EPND-FAIRification/main/fip/cedar_dataset.json>;
     ];
     fip:declares-current-use-of [
         sh:shapesGraph <https://raw.githubusercontent.com/MaastrichtU-CDS/EPND-FAIRification/case-study-1/EPNDCS1shacl.ttl>;
     ].
+
 <https://repo.metadatacenter.org/templates/7569b4a5-03a8-42c5-8209-784caf64b435> schema:distribution [
     schema:encodingFormat "application/ld+json";
     schema:contentUrl <https://raw.githubusercontent.com/MaastrichtU-CDS/EPND-FAIRification/main/fip/cedar_dataset.json>;
