@@ -79,7 +79,7 @@ ex:An_age_since_birth_measurement_datum_at_the_time_of_a_clinical_visit_Shape a 
                             sh:closed true;
                             sh:property [ 
                                 sh:path rdf:type; 
-                                sh:hasValue UO:UO:UO_0000033; 
+                                sh:hasValue UO:UO_0000033; 
                                 sh:minCount 1;
                             ];
                             sh:property [ 
@@ -116,7 +116,7 @@ ex:Age_when_biosample_was_taken__Shape a sh:NodeShape, sio:SIO_000915; #numeric
                             sh:closed true;
                             sh:property [ 
                                 sh:path rdf:type; 
-                                sh:hasValue UO:UO:UO_0000033; 
+                                sh:hasValue UO:UO_0000033; 
                                 sh:minCount 1;
                             ];
                             sh:property [ 
@@ -409,7 +409,7 @@ ex:CSF_Amyloidbeta42_cut_off_dependent_on_the_assay_and_for_different_preanalyti
                             sh:closed true;
                             sh:property [ 
                                 sh:path rdf:type; 
-                                sh:hasValue UO:snomed:258808001; 
+                                sh:hasValue snomed:258808001; 
                                 sh:minCount 1;
                             ];
                             sh:property [ 
@@ -446,7 +446,7 @@ ex:Amyloid_beta42__Shape a sh:NodeShape, sio:SIO_000915; #numeric
                             sh:closed true;
                             sh:property [ 
                                 sh:path rdf:type; 
-                                sh:hasValue UO:snomed:258808001; 
+                                sh:hasValue snomed:258808001; 
                                 sh:minCount 1;
                             ];
                             sh:property [ 
