@@ -1,6 +1,6 @@
 
 @prefix OBI: <http://purl.obolibrary.org/obo>.
-@prefix ncbi: <https://www.ncbi.nlm.nih.gov/>.
+@prefix ncbi: <https://www.ncbi.nlm.nih.gov/gene/>.
 @prefix LNC: <http://purl.bioontology.org/ontology/LNC>.
 @prefix ex: <http://example/#> .
 @prefix schema: <http://schema.org/> .
@@ -28,7 +28,7 @@ snomed:439272007 rdfs:label "Date of procedure (observable entity)".
 snomed:459651000124107 rdfs:label "Montreal cognitive assessment score".
 snomed:273617000 rdfs:label "Mini Mental State Examination".
 snomed:273633002 rdfs:label "Motor assessment scale score".
-ncbi:25728 rdfs:label "APOE genotype category".
+ncbi:348 rdfs:label "APOE genotype category".
 LNC:MTHU015751 rdfs:label "collection date ".
 
 
@@ -904,13 +904,13 @@ ex:Genetics_Shape a sh:NodeShape;
  
 ex:APOE_genotype_category_Shape  a   sh:NodeShape, sio:SIO_000137; #category
                                 sh:closed true;
-                                sh:targetClass ncbi:25728;
+                                sh:targetClass ncbi:348;
                                 sh:xone 
                                 ( 
                                    [
                                         sh:property [
                                                 sh:path rdf:type;
-                                                sh:hasValue ncbi:25728;
+                                                sh:hasValue ncbi:348;
                                                 sh:minCount 2;
                                                 sh:maxCount 2;
                                         ];
@@ -923,7 +923,7 @@ ex:APOE_genotype_category_Shape  a   sh:NodeShape, sio:SIO_000137; #category
                                     ]    [
                                         sh:property [
                                                 sh:path rdf:type;
-                                                sh:hasValue ncbi:25728;
+                                                sh:hasValue ncbi:348;
                                                 sh:minCount 2;
                                                 sh:maxCount 2;
                                         ];
@@ -936,7 +936,7 @@ ex:APOE_genotype_category_Shape  a   sh:NodeShape, sio:SIO_000137; #category
                                     ]    [
                                         sh:property [
                                                 sh:path rdf:type;
-                                                sh:hasValue ncbi:25728;
+                                                sh:hasValue ncbi:348;
                                                 sh:minCount 2;
                                                 sh:maxCount 2;
                                         ];
@@ -949,7 +949,7 @@ ex:APOE_genotype_category_Shape  a   sh:NodeShape, sio:SIO_000137; #category
                                     ]    [
                                         sh:property [
                                                 sh:path rdf:type;
-                                                sh:hasValue ncbi:25728;
+                                                sh:hasValue ncbi:348;
                                                 sh:minCount 2;
                                                 sh:maxCount 2;
                                         ];
@@ -962,7 +962,7 @@ ex:APOE_genotype_category_Shape  a   sh:NodeShape, sio:SIO_000137; #category
                                     ]    [
                                         sh:property [
                                                 sh:path rdf:type;
-                                                sh:hasValue ncbi:25728;
+                                                sh:hasValue ncbi:348;
                                                 sh:minCount 2;
                                                 sh:maxCount 2;
                                         ];
@@ -975,7 +975,7 @@ ex:APOE_genotype_category_Shape  a   sh:NodeShape, sio:SIO_000137; #category
                                     ]    [
                                         sh:property [
                                                 sh:path rdf:type;
-                                                sh:hasValue ncbi:25728;
+                                                sh:hasValue ncbi:348;
                                                 sh:minCount 2;
                                                 sh:maxCount 2;
                                         ];
@@ -989,7 +989,7 @@ ex:APOE_genotype_category_Shape  a   sh:NodeShape, sio:SIO_000137; #category
                                 );
                                 sh:property [
                                     sh:path rdf:type ;
-                                    sh:in ( EPND:E2E2 EPND:E2E3 EPND:E2E4 EPND:E3E3 EPND:E3E4 EPND:E4E4 ncbi:25728 ) ;
+                                    sh:in ( EPND:E2E2 EPND:E2E3 EPND:E2E4 EPND:E3E3 EPND:E3E4 EPND:E4E4 ncbi:348 ) ;
                                     sh:minCount 2; # columnClass and valueClass combination 
                                 ].
                                                
