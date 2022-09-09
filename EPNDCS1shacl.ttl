@@ -67,6 +67,12 @@ EPND:E3E4 rdfs:label "APOE allele E3E4".
 EPND:E4E4 rdfs:label "APOE allele E4E4".
 sio:SIO_000269 rdfs:label "true".
 sio:SIO_000270 rdfs:label "false".
+sio:SIO_000137 rdfs:label "category".
+sio:SIO_000915 rdfs:label "numeric scale".
+sio:SIO_000914 rdfs:label "binary scale".
+sio:SIO_000221 rdfs:label "has unit".
+sio:SIO_000300 rdfs:label "has value".
+sio:SIO_000223 rdfs:label "has property".
 
 ex:An_age_since_birth_measurement_datum_at_the_time_of_a_clinical_visit_Shape a sh:NodeShape, sio:SIO_000915; #numeric
                             sh:targetClass OBI:0003076;
