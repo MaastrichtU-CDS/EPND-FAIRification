@@ -75,6 +75,7 @@ def jsonMapper():
 @bp.route('/detailedMapping', methods=['GET', 'POST'])
 def detailedMapper():
     # Gets the chosen mapping
+    print("In detailed mapping...")
     toBeModified = False
     if request.form.get('modify'):
         toBeModified = True
@@ -90,7 +91,7 @@ def detailedMapper():
     linkedInformationList=linkedInformationDataframe.values.tolist()
     linkedInformationDataframe['cdmUri'] = linkedInformationDataframe['cdmUri'].isnull()
     linkedInformationDataframe = linkedInformationDataframe.reset_index(drop=True)
-    if linkedInformationDataframe['cdmUri'][0] == True:
+    if linkedInformationDataframe['cdmUri'][0]:
         data = useDataset.getData(value)
         metadata = statisticalMetadata.numericMetadata(data)
         categoricalData = False
@@ -179,29 +180,40 @@ def cellMapping():
         if oldValue == newValue:
             print("No change detected in mapping. Not doing anything")
             continue
+        elif not newValue:
+            print("Detected empty selection as the target selection, can't\
+                    really do anything.")
+            continue
         else:
-            print("Change in mapping detected. Will delete and remap values",
-                    targetValues[i])
             # Obtain namespaces
             ns = GraphDBTripleStore(current_app.config.get("graphdb_server"),
                     current_app.config.get("repository"),
                     create_if_not_exists=True).fetch_namespaces()
             # Obtaining the base URI. Not using a regex.
             baseUri = findBaseUri(ns, cdmValue)
-            selectedValue = getCategories.getCategoryCode(cdmValue, baseUri, newValue)
+            # Changing from category code string value to obtaining the entire
+            # URI as the BASE URI is not consistent across the ontology. For
+            # APOE, the BASE URI varies whereas for gender it does not.
+            selectedValue = getCategories.getCategoryCode(cdmValue, newValue)
             # Delete the existing links
             if oldValue != "nan":
+                print(f"Change in mapping detected. Will delete and remap values \
+                        for {targetValues[i]}")
                 # The UI only displays the human readable category and not the code
                 # to fetch the code for the mapped category
-                olderValue = getCategories.getCategoryCode(cdmValue, baseUri, oldValue)
-                print(f"Remapping values from: {olderValue['category'].loc[0]}\
-                        to {selectedValue['category'].loc[0]}")
-                useLinkdata.deleteCellLinks(baseUri,
-                        selectedValue['category'].loc[0],
-                        olderValue['category'].loc[0], cdmValue, catValue)
+                olderValue = getCategories.getCategoryCode(cdmValue, oldValue)
+                print(f"Remapping values from: {olderValue['categoryUri'].loc[0]}\
+                        to {selectedValue['categoryUri'].loc[0]}")
+                # As getCategoryCode method has been changed, the effect is
+                # on delete cell link as well. So this method is changed as well.
+                useLinkdata.deleteCellLinks(selectedValue['categoryUri'].loc[0],\
+                        olderValue['categoryUri'].loc[0], cdmValue, catValue)
             else:
                 # Create new link
-                useLinkdata.createCellLink(baseUri, selectedValue['category'].loc[0], cdmValue, catValue)
+                print("No existing link detected, creating new ones. Yay.")
+                # As getCategoryCoede method has been changed, the effect is on
+                # create cell link as well, so this method is modified as well.
+                useLinkdata.createCellLink(selectedValue['categoryUri'].loc[0], cdmValue, catValue)
     
     return redirect(url_for("mapDatasets.mapper"))
 
