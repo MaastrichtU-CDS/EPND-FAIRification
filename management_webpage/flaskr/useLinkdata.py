@@ -20,7 +20,7 @@ insert {{
     endpoint.method = 'POST'
     endpoint.query()
 
-def createCellLink(baseUri, target, superClass, value):
+def createCellLink(target, superClass, value):
     endpointUrl = current_app.config.get("rdf_endpoint")
     endpoint = SPARQLWrapper(endpointUrl + '/statements')
     q='''
@@ -32,7 +32,7 @@ def createCellLink(baseUri, target, superClass, value):
         GRAPH <http://data.local/mapping> {
             dbo:cell_of rdf:type owl:ObjectProperty;
                  owl:inverseOf dbo:has_cell.
-            <%s%s> rdf:type owl:Class ;
+            <%s> rdf:type owl:Class ;
                 owl:equivalentClass [ 
                     owl:intersectionOf 
                         ( [ 
@@ -49,18 +49,16 @@ def createCellLink(baseUri, target, superClass, value):
                         rdf:type owl:Class;
                     ].
             } } WHERE { }
-    '''%(baseUri, target, superClass, value)
+    '''%(target, superClass, value)
     print(q)
     endpoint.setQuery(q)
     endpoint.method = 'POST'
     endpoint.query()
 
 # Delete cell mappings
-def deleteCellLinks(baseUri, target, oldValue, cdmValue, cellValue):
+def deleteCellLinks(target, oldValue, cdmValue, cellValue):
     endpointUrl = current_app.config.get("rdf_endpoint")
     endpoint = SPARQLWrapper(endpointUrl + '/statements')
-    oldValueUri = baseUri + str(oldValue)
-    newValueUri = baseUri + str(target)
     q = """
     PREFIX owl: <http://www.w3.org/2002/07/owl#>    
     PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -91,7 +89,7 @@ def deleteCellLinks(baseUri, target, oldValue, cdmValue, cellValue):
         );
         rdf:type owl:Class;
     }
-    """%(oldValueUri, newValueUri, oldValueUri, cdmValue, cellValue)
+    """%(oldValue, target, oldValue, cdmValue, cellValue)
     print(q)
     endpoint.setQuery(q)
     endpoint.method = 'POST'
