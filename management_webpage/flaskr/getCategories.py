@@ -28,11 +28,13 @@ def getClassCategories(value):
       { ?category rdfs:label ?categoryLabel. }
       FILTER ( ?category != ?targetClass ).
     }'''%value
+    print(f"This query is being used  for obtaing \
+            categories for a given class \n {q}")
     df = sd.get(endpoint, q)
     return df
 
 #get snomed code for selected subclass
-def getCategoryCode(sourceValue, baseUri, selectedValue):
+def getCategoryCode(sourceValue, selectedValue):
     endpoint = current_app.config.get("rdf_endpoint")
     q = '''
     PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -41,7 +43,7 @@ def getCategoryCode(sourceValue, baseUri, selectedValue):
     PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
     PREFIX sio: <http://semanticscience.org/resource/>
 
-    SELECT distinct ?category
+    SELECT distinct ?categoryUri 
     WHERE {
         ## Bind your requested variable to ?targetClass
         BIND (<%s> AS ?targetClass).
@@ -50,13 +52,14 @@ def getCategoryCode(sourceValue, baseUri, selectedValue):
                  sh:property [
                     sh:path rdf:type;
                     # explained in http://www.snee.com/bobdc.blog/2014/04/rdf-lists-and-sparql.html
-                    sh:in/rdf:rest*/rdf:first ?category1;
+                    sh:in/rdf:rest*/rdf:first ?categoryUri;
                 ].
-        BIND(strafter(str(?category1), "%s") AS ?category)
         OPTIONAL {
-            ?category1 rdfs:label ?categoryLabel.
+            ?categoryUri rdfs:label ?categoryLabel.
         }
-        FILTER (?category1 != ?targetClass && ?categoryLabel = "%s").
-    }'''%(sourceValue, baseUri, selectedValue)
+        FILTER (?categoryUri != ?targetClass && ?categoryLabel = "%s").
+    }'''%(sourceValue, selectedValue)
+    print(f"This query is being used for getting the URI\
+            for a given category under a class \n {q}")
     df = sd.get(endpoint, q)
     return df
