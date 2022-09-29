@@ -28,7 +28,7 @@ def getClassCategories(value):
       { ?category rdfs:label ?categoryLabel. }
       FILTER ( ?category != ?targetClass ).
     }'''%value
-    print(f"This query is being used  for obtaing \
+    print(f"This query is being used for obtaining \
             categories for a given class \n {q}")
     df = sd.get(endpoint, q)
     return df
@@ -57,7 +57,8 @@ def getCategoryCode(sourceValue, selectedValue):
         OPTIONAL {
             ?categoryUri rdfs:label ?categoryLabel.
         }
-        FILTER (?categoryUri != ?targetClass && ?categoryLabel = "%s").
+        ## Remember remember, the casing problem while dealing with strings.
+        FILTER (?categoryUri != ?targetClass && ?categoryLabel = LCASE("%s")).
     }'''%(sourceValue, selectedValue)
     print(f"This query is being used for getting the URI\
             for a given category under a class \n {q}")
