@@ -11,8 +11,8 @@ def getCDMUri():
     prefix sh: <http://www.w3.org/ns/shacl#>
     prefix xsd: <http://www.w3.org/2001/XMLSchema#>
     prefix sio: <http://semanticscience.org/resource/>
-
-    SELECT ?variableUri ?variableUriLabel
+    prefix sty: <http://purl.bioontology.org/ontology/STY/>
+    SELECT DISTINCT ?variableUri ?variableUriLabel
     WHERE {
         ?nodeShape rdf:type sh:NodeShape;
             sh:targetClass ?variableUri.
@@ -30,7 +30,10 @@ def getCDMUri():
         
         ## Units are always their own instance (measurement -> unit -> literal), therefore filtering the unit instances.
         FILTER (!(STRSTARTS(str(?variableUri), "http://purl.obolibrary.org/obo/UO_"))).
-        FILTER (?variableUri != sio:SIO_001112).
+        ## This filter will have be modified based on changes in the future.
+        ## Another one might have to be added is schema1:Date depending on the
+        ## role it plays
+        FILTER (?variableUri != sio:SIO_001112 && ?variableUri != sty:T081 && ?variableUri != sty:T079 && ?variableUri != sty:T080).
         
     }
     """
