@@ -11,7 +11,7 @@ def getCDMUri():
     prefix sh: <http://www.w3.org/ns/shacl#>
     prefix xsd: <http://www.w3.org/2001/XMLSchema#>
     prefix sio: <http://semanticscience.org/resource/>
-
+    prefix sty: <http://purl.bioontology.org/ontology/STY/>
     SELECT DISTINCT ?variableUri ?variableUriLabel
     WHERE {
         ?nodeShape rdf:type sh:NodeShape;
