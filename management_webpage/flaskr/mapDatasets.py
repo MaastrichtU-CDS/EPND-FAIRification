@@ -177,12 +177,19 @@ def cellMapping():
         # gender" and the column URI like
         # http://purl.bioontology.org/ontology/SNOMEDCT/365873007
         catValue, oldValue, newValue, cdmValue = targetValues[i].split(",")
+        print(f"Target values are {targetValues}")
         if oldValue == newValue:
             print("No change detected in mapping. Not doing anything")
             continue
         elif not newValue:
-            print("Detected empty selection as the target selection, can't\
-                    really do anything.")
+            if not oldValue.__eq__("nan"):
+                print("Deleting older cell links")
+                olderValue = getCategories.getCategoryCode(cdmValue, oldValue)
+                useLinkdata.deleteCellLinksNoInsert(olderValue['categoryUri'].loc[0],\
+                        cdmValue, catValue)
+            else:
+                print("Detected empty selection as the target selection,\
+                        can't really do anything.")
             continue
         else:
             # Obtain namespaces
