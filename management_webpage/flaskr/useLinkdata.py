@@ -96,7 +96,46 @@ def deleteCellLinks(target, oldValue, cdmValue, cellValue):
     endpoint.query()
     
     print('Deletion complete')
+
+#Delete links for remapping from an actual value to UNKNOWN
+def deleteCellLinksNoInsert(oldValue, cdmValue, cellValue):
+    endpointUrl = current_app.config.get("rdf_endpoint")
+    endpoint = SPARQLWrapper(endpointUrl + '/statements')
+    q = """
+    PREFIX owl: <http://www.w3.org/2002/07/owl#>    
+    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    PREFIX dbo: <http://um-cds/ontologies/databaseontology/>
+    WITH <http://data.local/mapping>
+    DELETE{
+        <%s> owl:equivalentClass ?o.
+    }
+    WHERE{
+        dbo:cell_of rdf:type owl:ObjectProperty;
+                    owl:inverseOf dbo:has_cell.
+        <%s> rdf:type owl:Class ;
+             owl:equivalentClass ?o.
+        ?o owl:intersectionOf([
+            rdf:type owl:Restriction ;
+            owl:onProperty dbo:cell_of ;
+            owl:someValuesFrom <%s>;
+        ]
+        [
+            rdf:type owl:Restriction ;
+            owl:onProperty dbo:has_value ;
+            owl:hasValue "%s"^^xsd:string;
+        ]
+        );
+        rdf:type owl:Class;
+    }
+    """%(oldValue, oldValue, cdmValue, cellValue)
+    print(q)
+    endpoint.setQuery(q)
+    endpoint.method = 'POST'
+    endpoint.query()
     
+    print('Deletion complete')
+
 #Delete a existing link
 def deleteLink(value1, value2):
     print('start deletion')
