@@ -58,7 +58,7 @@ def getCategoryCode(sourceValue, selectedValue):
             ?categoryUri rdfs:label ?categoryLabel.
         }
         ## Remember remember, the casing problem while dealing with strings.
-        FILTER (?categoryUri != ?targetClass && ?categoryLabel = LCASE("%s")).
+        FILTER (?categoryUri != ?targetClass && LCASE(?categoryLabel) = LCASE("%s")).
     }'''%(sourceValue, selectedValue)
     print(f"This query is being used for getting the URI\
             for a given category under a class \n {q}")
