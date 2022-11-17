@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   rdf-store:
-    image: registry.gitlab.com/um-cds/fair/tools/docker-graphdb:latest
+    image: ghcr.io/maastrichtu-cds/fair_tools_docker-graphdb/docker-graphdb:latest
     ports: 
       - "7200:7200"
     environment:
