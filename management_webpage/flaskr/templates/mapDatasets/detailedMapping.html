@@ -47,7 +47,7 @@
       <tr>
         <td> {{ row[0] | safe }} </td>
         <td> 
-		{% if row[1] is not number %}
+		{% if row[1] is not number or row[1] is boolean %}
 		{{ row[1] | safe }}
 		{% else %}
 		Unmapped

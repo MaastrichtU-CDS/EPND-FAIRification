@@ -43,7 +43,7 @@
         <td> {{ row[0] | safe }} </td>
         <td>
 	    <select class="form-select me-1" name="targetValues{{index}}"> 
-        <option value="{{ row[0]}},{{row[1]}},{{value}},http://www.w3.org/2002/07/owl#Nothing">UNKNOWN</option>
+		    <option value="{{ row[0]}},{{row[1]}},{{value}},{{chosenMapping[0][0]}}">UNKNOWN</option>
               		{% for value in targetValues %}
 			<option value="{{ row[0]}},{{row[1]}},{{value}},{{chosenMapping[0][0]}}"{% if value==row[1] %} selected{% endif %}> {{ value }}</option>
               		{% endfor %}
