@@ -140,7 +140,7 @@ def deleteCellLinksNoInsert(oldValue, cdmValue, cellValue):
         ?o4 rdf:type owl:Restriction;
             owl:hasValue ?value;
             owl:onProperty dbo:has_value.
-        VALUES (?value){("<%s>")}
+        VALUES (?value){("%s")}
     }
     """%(oldValue, cdmValue, cellValue)
     print(q)
