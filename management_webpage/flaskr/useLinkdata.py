@@ -108,27 +108,41 @@ def deleteCellLinksNoInsert(oldValue, cdmValue, cellValue):
     PREFIX dbo: <http://um-cds/ontologies/databaseontology/>
     WITH <http://data.local/mapping>
     DELETE{
-        <%s> owl:equivalentClass ?o.
+        ?targetClass owl:equivalentClass ?o;
+                     rdf:type owl:Class.
+        ?o rdf:type owl:Class;
+           owl:intersectionOf ?o1.
+        ?o1 rdf:first ?o2;
+            rdf:rest ?o3.
+        ?o2 owl:onProperty dbo:cell_of;
+            owl:someValuesFrom ?cdm;
+            rdf:type owl:Restriction.
+        ?o3 rdf:first ?o4;
+            rdf:rest rdf:nil.
+        ?o4 rdf:type owl:Restriction;
+            owl:hasValue ?value;
+            owl:onProperty dbo:has_value.
     }
     WHERE{
-        dbo:cell_of rdf:type owl:ObjectProperty;
-                    owl:inverseOf dbo:has_cell.
-        <%s> rdf:type owl:Class ;
-             owl:equivalentClass ?o.
-        ?o owl:intersectionOf([
-            rdf:type owl:Restriction ;
-            owl:onProperty dbo:cell_of ;
-            owl:someValuesFrom <%s>;
-        ]
-        [
-            rdf:type owl:Restriction ;
-            owl:onProperty dbo:has_value ;
-            owl:hasValue "%s"^^xsd:string;
-        ]
-        );
-        rdf:type owl:Class;
+        BIND(<%s> as ?targetClass)
+        BIND(<%s> as ?cdm)
+        ?targetClass owl:equivalentClass ?o;
+                 rdf:type owl:Class.
+        ?o rdf:type owl:Class;
+           owl:intersectionOf ?o1.
+        ?o1 rdf:first ?o2;
+            rdf:rest ?o3.
+        ?o2 owl:onProperty dbo:cell_of;
+            owl:someValuesFrom ?cdm;
+            rdf:type owl:Restriction.
+        ?o3 rdf:first ?o4;
+            rdf:rest rdf:nil.
+        ?o4 rdf:type owl:Restriction;
+            owl:hasValue ?value;
+            owl:onProperty dbo:has_value.
+        VALUES (?value){("<%s>")}
     }
-    """%(oldValue, oldValue, cdmValue, cellValue)
+    """%(oldValue, cdmValue, cellValue)
     print(q)
     endpoint.setQuery(q)
     endpoint.method = 'POST'
