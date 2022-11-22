@@ -28,7 +28,7 @@ services:
         condition: service_healthy
   
   triplifier:
-    image: registry.gitlab.com/um-cds/fair/tools/triplifier-boot:latest
+    image: ghcr.io/maastrichtu-cds/triplifier-boot:latest
     ports:
       - "8080:8080"
     environment:
