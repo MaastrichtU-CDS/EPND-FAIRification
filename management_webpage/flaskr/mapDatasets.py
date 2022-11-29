@@ -253,6 +253,9 @@ def deleteMappingAPI():
     datasetUri = request.json['datasetUri']
     cdmUri = request.json['cdmUri']
     useLinkdata.deleteLink(datasetUri, cdmUri)
-
+    targetClass = useDataset.getMappedCell(cdmUri) 
+    for index, row in targetClass.iterrows():
+        useLinkdata.deleteCellLinksNoInsert(row['cellClass'], cdmUri,
+                                            row['categoricalValue'])
     #Renders the default template
     return jsonify(status="success")
