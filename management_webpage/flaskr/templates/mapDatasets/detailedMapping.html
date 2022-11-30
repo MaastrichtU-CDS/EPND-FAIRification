@@ -63,7 +63,7 @@
   {% endif %}
 
   {% if chosenMapping[0][0] is none or chosenMapping[0][1] is not number %}
-  <form action="/detailedMapping?columnUri={{ chosenMapping[0][3] }}" method="POST">
+  <form id="modifyForm" method="POST" action="#">
 		<div>
 			<button class="btn btn-primary" type="submit" name="modify" value="modify">Modify</button>
 		</div>
@@ -89,6 +89,7 @@
   const lastIndex = columnUri.lastIndexOf('/');
   const ontology = columnUri.slice(0, lastIndex) + '/';
   document.getElementById("backlink").href = "/column_mappings?identifier=" + datasetId + "&ontology=" + ontology;
+  document.getElementById("modifyForm").action = "/detailedMapping?identifier=" + datasetId + "&columnUri={{ chosenMapping[0][3] }}";
   const table = document.getElementsByClassName('dataframe')[0]
   console.log(table)
   table.classList.add('table', 'table-striped', 'w-25')
