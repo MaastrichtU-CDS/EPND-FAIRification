@@ -8,7 +8,9 @@
       <p class="fw-bold p-2 border-bottom border-dark mb-2">Dataset column</p>
       <input type="text" class="form-control mb-1" v-model="search" placeholder="Search for ..." />
       <ul class="list-group list-group-flush">
-        <a v-for="(entry, index) in searchUnmapped" :key="index" class="list-group-item list-group-item-action" :href="`/detailedMapping?columnUri=` + entry.columnUri">
+        <a v-for="(entry, index) in searchUnmapped" :key="index"
+            class="list-group-item list-group-item-action"
+            :href="`/detailedMapping?identifier=` + datasetId + `&columnUri=` + entry.columnUri">
           [[ entry.columnName ]]
         </a>
       </ul>
@@ -30,7 +32,8 @@
       </div>
       <ul class="list-group list-group-flush">
         <li v-for="(entry, index) in mapped" :key="index" class="list-group-item list-group-item-action p-0">
-          <a class="position-absolute top-0 bottom-0" style="right: 0; left: 0;" :href="`/detailedMapping?columnUri=` + entry.columnUri"></a>
+          <a class="position-absolute top-0 bottom-0" style="right: 0; left:
+              0;" :href="`/detailedMapping?identifier=` + datasetId + `&columnUri=` + entry.columnUri"></a>
           <div class="row">
             <div class="col">
               <p class="p-2 mb-0">[[ entry.columnName ]]</p>
@@ -65,10 +68,13 @@
 {% block scripts %}
 <script src="https://unpkg.com/vue@3"></script>
 <script>
+  const parameters = new URLSearchParams(document.location.search);
+  const datasetId = parameters.get("identifier");
   let app = Vue.createApp({
     data() {
       return {
         entries: [],
+        datasetId: datasetId,
         search: ''
       };
     },
