@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="mt-1 mb-3">
-  <a href="/column_mappings">&larr; back</a>
+  <a id="backlink" href="#">&larr; back</a>
 </div>
 <div class="container mb-5">
   <h3>General column information</h3>
@@ -83,6 +83,12 @@
 
 {% block scripts %}
 <script>
+  const parameters = new URLSearchParams(document.location.search);
+  const datasetId = parameters.get("identifier");
+  const columnUri = parameters.get("columnUri");
+  const lastIndex = columnUri.lastIndexOf('/');
+  const ontology = columnUri.slice(0, lastIndex) + '/';
+  document.getElementById("backlink").href = "/column_mappings?identifier=" + datasetId + "&ontology=" + ontology;
   const table = document.getElementsByClassName('dataframe')[0]
   console.log(table)
   table.classList.add('table', 'table-striped', 'w-25')

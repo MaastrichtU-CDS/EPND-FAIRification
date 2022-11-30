@@ -10,7 +10,7 @@
       <ul class="list-group list-group-flush">
         <a v-for="(entry, index) in searchUnmapped" :key="index"
             class="list-group-item list-group-item-action"
-            :href="`/detailedMapping?identifier=` + datasetId + `&columnUri=` + entry.columnUri">
+            :href="`/detailedMapping?identifier=` + datasetId +`&columnUri=` + entry.columnUri">
           [[ entry.columnName ]]
         </a>
       </ul>
@@ -33,7 +33,7 @@
       <ul class="list-group list-group-flush">
         <li v-for="(entry, index) in mapped" :key="index" class="list-group-item list-group-item-action p-0">
           <a class="position-absolute top-0 bottom-0" style="right: 0; left:
-              0;" :href="`/detailedMapping?identifier=` + datasetId + `&columnUri=` + entry.columnUri"></a>
+              0;" :href="`/detailedMapping?identifier=` + datasetId +`&columnUri=` + entry.columnUri"></a>
           <div class="row">
             <div class="col">
               <p class="p-2 mb-0">[[ entry.columnName ]]</p>
