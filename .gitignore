@@ -1,9 +1,17 @@
 **/logs
+
 venv
+.venv
+
 __pycache__/
+
 .DS_Store
+.idea/
+
 *.zip
+
 cedar-embeddable-editor-release*/
 **/cedar/add.html
 **/static/cee
+
 node_modules/
