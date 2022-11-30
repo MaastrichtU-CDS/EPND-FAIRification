@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="mt-1 mb-3">
-	<a href="/detailedMapping?columnUri={{ chosenMapping[0][3] }}">&larr; back</a>
+	<a id="backlink" href="#">&larr; back</a>
 </div>
 <div class="container mb-5">
   <h3>General column information</h3>
@@ -63,6 +63,9 @@
 
 {% block scripts %}
 <script>
+  const parameters = new URLSearchParams(document.location.search);
+  const datasetId = parameters.get("identifier");
+  document.getElementById("backlink").href = "/detailedMapping?identifier=" + datasetId + "&columnUri={{ chosenMapping[0][3] }}";
   const table = document.getElementsByClassName('dataframe')[0]
   console.log(table)
   table.classList.add('table', 'table-striped', 'w-25')
