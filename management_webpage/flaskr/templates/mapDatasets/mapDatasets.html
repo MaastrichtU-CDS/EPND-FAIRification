@@ -80,11 +80,15 @@
     },
 
     async mounted() {
-      const result = await fetch('/api/mappings')
-        .then(response => response.json())
+      const result = await fetch('/api/mappings', {
+	method: 'POST',
+	headers: {
+	  'Content-Type': 'application/json'
+	},
+	body: JSON.stringify({ identifier: datasetId })
+      }).then(response => response.json())
       this.entries = result
     },
-
     computed: {
       unmapped() {
         return this.entries.filter(entry => !entry.cdmUriLabel)
@@ -107,11 +111,11 @@
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ datasetUri: entry.columnUri, cdmUri: entry.cdmUri })
+          body: JSON.stringify({ identifier: datasetId, datasetUri: entry.columnUri, cdmUri: entry.cdmUri })
         }).then(response => response.json())
         entry.cdmUriLabel = ''
         entry.deleting = false
-      }
+      }  
     }
   });
 
