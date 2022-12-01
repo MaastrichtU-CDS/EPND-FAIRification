@@ -11,7 +11,7 @@
     <p class="mb-0"><strong>CDM variable:</strong> {{chosenMapping[0][1]}} (<a href="{{chosenMapping[0][0]}}" target="_new">{{chosenMapping[0][0]}}</a>)</p>
   {% endif %}
   {% if chosenMapping[0][1] is none or chosenMapping[0][1] is not number == 0 %}
-  <form class="mt-4" method="POST" action="{{ url_for('mapDatasets.submitForm') }}">
+  <form id="changeForm" class="mt-4" method="POST" action="{{ url_for('mapDatasets.submitForm', identifier=request.args.get('identifier'), columnUri=request.args.get('columnUri')) }}">
     <div>
       Choose / edit CDM variable:
       <div class="d-flex w-50">
