@@ -42,7 +42,7 @@ def mapper():
 
     cdmColumns = useCDM.getCDMUri()
     #Gets all information of the linked data
-    linkedDatasets = useLinkdata.retrieveDatasetMapped()
+    linkedDatasets = useLinkdata.retrieveDatasetMapped(identifier)
     linkedDatasetsList = linkedDatasets.values.tolist()
     for row in linkedDatasetsList:
         if type(row[0]) != str and math.isnan(row[0]):
@@ -53,14 +53,15 @@ def mapper():
     return render_template("mapDatasets/mapDatasets.html", mappings=linkedDatasetsList, navigationPath=navigationPath)
 
 
-@bp.route('/api/mappings', methods=['GET'])
+@bp.route('/api/mappings', methods=['POST'])
 def jsonMapper():
 
     datasetColumns = useDataset.getDatasetUri()
 
     cdmColumns = useCDM.getCDMUri()
     #Gets all information of the linked data
-    linkedDatasets = useLinkdata.retrieveDatasetMapped()
+    datasetId = request.json['identifier']
+    linkedDatasets = useLinkdata.retrieveDatasetMapped(datasetId)
     linkedDatasetsList = linkedDatasets.values.tolist()
     mappings = []
     for row in linkedDatasetsList:
@@ -80,8 +81,9 @@ def detailedMapper():
     if request.form.get('modify'):
         toBeModified = True
     value = request.args.get('columnUri')
+    datasetId = request.args.get("identifier")
     # Gets all mapped values
-    linkedDatasets = useLinkdata.retrieveDatasetMapped()
+    linkedDatasets = useLinkdata.retrieveDatasetMapped(datasetId)
     # Gets all CDM definitions
     cdmColumns= useCDM.getCDMUri()
     cdmColumnsList = cdmColumns.values.tolist()
@@ -98,7 +100,7 @@ def detailedMapper():
     else:
         # Through the CDM URI, obtain cell mappings if any
         columnUri = linkedInformationList[0][0]
-        mappedValues = useDataset.getMappedCell(columnUri)
+        mappedValues = useDataset.getMappedCell(columnUri, datasetId)
 
         cdmTotal = useCDM.getCDMFull()
         cdmTotal = cdmTotal.loc[cdmTotal['variableUri'] == linkedInformationList[0][0]]
@@ -150,15 +152,21 @@ def detailedMapper():
 def submitForm():
     #Gets the selected values
     selectedValue = request.form.get('cdmValues')    
+    datasetId = request.args.get('identifier')
+    columnUri = request.args.get('columnUri')
+    ontology = columnUri.rsplit('/',0)[0] + '/'
     valueSplit = selectedValue.split(",")
     if valueSplit[1] == 'nan':
-        useLinkdata.createLink(valueSplit[0], valueSplit[2])
+        useLinkdata.createLink(datasetId, valueSplit[0], valueSplit[2])
     else:
-        useLinkdata.deleteLink(valueSplit[0], valueSplit[1])
-        useLinkdata.createLink(valueSplit[0], valueSplit[2])
-
+        useLinkdata.deleteLink(datasetId, valueSplit[0], valueSplit[1])
+        targetClass = useDataset.getMappedCell(valueSplit[1], datasetId)
+        for index, row in targetClass.iterrows():
+            useLinkdata.deleteCellLinksNoInsert(row['cellClass'], valueSplit[1], row['categoricalValue'], datasetId)
+        useLinkdata.createLink(datasetId, valueSplit[0], valueSplit[2])
     #Renders the default template
-    return redirect(url_for("mapDatasets.mapper"))
+    return redirect(url_for("mapDatasets.mapper", identifier=datasetId,
+                            ontology=ontology))
 
 @bp.route('/cellMapping', methods= ['GET', 'POST'])
 # Maps the cell values to the selected drop down value in the front end.
@@ -177,6 +185,7 @@ def cellMapping():
         # gender" and the column URI like
         # http://purl.bioontology.org/ontology/SNOMEDCT/365873007
         catValue, oldValue, newValue, cdmValue = targetValues[i].split(",")
+        datasetId = request.args.get('identifier')
         print(f"Target values are {targetValues}")
         if oldValue == newValue:
             print("No change detected in mapping. Not doing anything")
@@ -186,7 +195,7 @@ def cellMapping():
                 print("Deleting older cell links")
                 olderValue = getCategories.getCategoryCode(cdmValue, oldValue)
                 useLinkdata.deleteCellLinksNoInsert(olderValue['categoryUri'].loc[0],\
-                        cdmValue, catValue)
+                        cdmValue, catValue, datasetId)
             else:
                 print("Detected empty selection as the target selection,\
                         can't really do anything.")
@@ -214,15 +223,17 @@ def cellMapping():
                 # As getCategoryCode method has been changed, the effect is
                 # on delete cell link as well. So this method is changed as well.
                 useLinkdata.deleteCellLinks(selectedValue['categoryUri'].loc[0],\
-                        olderValue['categoryUri'].loc[0], cdmValue, catValue)
+                        olderValue['categoryUri'].loc[0], cdmValue, catValue,\
+                        datasetId)
             else:
                 # Create new link
                 print("No existing link detected, creating new ones. Yay.")
                 # As getCategoryCoede method has been changed, the effect is on
                 # create cell link as well, so this method is modified as well.
-                useLinkdata.createCellLink(selectedValue['categoryUri'].loc[0], cdmValue, catValue)
+                useLinkdata.createCellLink(selectedValue['categoryUri'].loc[0],\
+                                           cdmValue, catValue, datasetId)
     
-    return redirect(url_for("mapDatasets.mapper"))
+    return redirect(url_for("mapDatasets.mapper", identifier=datasetId, ontology=request.args.get('ontology')))
 
 def findBaseUri(ns, cdmValue):
     # The code below finds the baseUri for a given column mapping
@@ -235,27 +246,18 @@ def findBaseUri(ns, cdmValue):
                         baseUri = val1
     return baseUri
 
+
 #Deletes a current mapping
-@bp.route('/deletemapping', methods=('POST',))
-def deleteMapping():
-    #Gets the mapping that needs to be deleted, and deletes it
-    value = request.form['delete']
-    valueSplit = value.split(",")
-    useLinkdata.deleteLink(valueSplit[0], valueSplit[1])
-
-    #Renders the default template
-    return redirect(url_for("mapDatasets.mapper"))
-
-    #Deletes a current mapping
 @bp.route('/api/deletemapping', methods=['POST'])
 def deleteMappingAPI():
     #Gets the mapping that needs to be deleted, and deletes it
     datasetUri = request.json['datasetUri']
     cdmUri = request.json['cdmUri']
-    useLinkdata.deleteLink(datasetUri, cdmUri)
-    targetClass = useDataset.getMappedCell(cdmUri) 
+    datasetId = request.json['identifier']
+    useLinkdata.deleteLink(datasetId, cdmUri, datasetUri)
+    targetClass = useDataset.getMappedCell(cdmUri, datasetId) 
     for index, row in targetClass.iterrows():
         useLinkdata.deleteCellLinksNoInsert(row['cellClass'], cdmUri,
-                                            row['categoricalValue'])
+                                            row['categoricalValue'], datasetId)
     #Renders the default template
     return jsonify(status="success")
