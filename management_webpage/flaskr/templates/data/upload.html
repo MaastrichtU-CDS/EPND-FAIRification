@@ -70,6 +70,9 @@
 
 <script>
     HOST_TRIPFLIFIER = "{{ triplifierRestUri }}";
+    if (HOST_TRIPFLIFIER.startsWith("window.location")) {
+        HOST_TRIPFLIFIER = "http://" + {{ triplifierRestUri }}
+    }
     HOST_BACKEND = window.location.protocol + "//" + window.location.host;
     METADATA_URI = "{{ metadataUri }}"
 
