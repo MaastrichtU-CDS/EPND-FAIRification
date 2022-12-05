@@ -26,6 +26,9 @@ services:
       - REPOSITORY=epnd_dummy
       - RDF_ENDPOINT=http://rdf-store:7200/repositories/epnd_dummy
       - TRIPLIFIER_SERVICE=http://localhost:8080
+    depends_on:
+      rdf-store:
+        condition: service_healthy
 
   triplifier:
     image: ghcr.io/maastrichtu-cds/triplifier-boot:latest
