@@ -33,7 +33,12 @@ def create_app(test_config=None):
      # Load the instance config, if exists
      print("loading JSON config")
      with open("config.json") as f:
-          app.config.update(json.load(f))
+          app.config.update({
+               'graphdb_server': os.environ['GRAPHDB_SERVER'],
+               'repository': os.environ['REPOSITORY'],
+               'rdf_endpoint': os.environ['RDF_ENDPOINT'],
+               'triplifier_service': os.environ['TRIPLIFIER_SERVICE'],
+          })
 
      # from . import linkdatasets
      # app.register_blueprint(linkdatasets.bp)

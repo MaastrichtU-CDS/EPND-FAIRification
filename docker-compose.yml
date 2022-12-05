@@ -21,12 +21,12 @@ services:
     image: ghcr.io/maastrichtu-cds/epnd-fairification:main
     ports:
       - 5000:5000
-    volumes:
-      - ./ui_config.json:/app/config.json
-    depends_on:
-      rdf-store:
-        condition: service_healthy
-  
+    environment:
+      - GRAPHDB_SERVER=http://rdf-store:7200
+      - REPOSITORY=epnd_dummy
+      - RDF_ENDPOINT=http://rdf-store:7200/repositories/epnd_dummy
+      - TRIPLIFIER_SERVICE=http://localhost:8080
+
   triplifier:
     image: ghcr.io/maastrichtu-cds/triplifier-boot:latest
     ports:
