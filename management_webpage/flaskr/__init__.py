@@ -41,7 +41,7 @@ def create_app(test_config=None):
           })
      else:
           with open("config.json") as f:
-               app.config.update(f)
+               app.config.update(json.load(f))
 
      # from . import linkdatasets
      # app.register_blueprint(linkdatasets.bp)
