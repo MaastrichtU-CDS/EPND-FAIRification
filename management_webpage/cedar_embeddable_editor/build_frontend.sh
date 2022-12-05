@@ -2,7 +2,7 @@ version='2.6.18'
 os=$(uname -s)
 
 sed=sed
-if [[ $os -eq "Darwin" ]]; then
+if [[ $os == "Darwin" ]]; then
     sed=gsed
 fi
 echo $sed

@@ -11,7 +11,7 @@ RUN apt install -y nodejs npm
 ADD ./app /app
 WORKDIR /app
 
-RUN cd cedar_embeddable_editor && sh build_frontend.sh
+RUN cd cedar_embeddable_editor && bash build_frontend.sh
 RUN pip install -r requirements.txt
 
 WORKDIR /
