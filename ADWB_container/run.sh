@@ -6,8 +6,7 @@ docker run --rm -it \
     -v $(pwd)/../build_triplifier_boot.sh:/triplifier-boot/build.sh \
     --workdir /triplifier-boot \
     maven:3.6.0-jdk-11-slim /bin/bash build.sh
-sudo mv target/triplifier-boot-0.0.1-SNAPSHOT.jar ../triplifier-boot-0.0
-.1-SNAPSHOT.jar
+sudo mv target/triplifier-boot-0.0.1-SNAPSHOT.jar ../triplifier-boot-0.0.1-SNAPSHOT.jar
 cd ../ && sudo rm -Rf triplifier-boot
 
 cp -R ../management_webpage ./app
