@@ -15,7 +15,7 @@ cp -R ../management_webpage ./app
 docker build -t jvsoest/adwb ./
 
 rm -Rf ./app
-rm triplifier*.jar
+sudo rm triplifier*.jar
 
 docker run -it --rm \
     -p 7200:7200 \
