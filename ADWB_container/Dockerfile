@@ -1,5 +1,5 @@
-#FROM registry.gitlab.com/um-cds/fair/tools/docker-graphdb:latest
-FROM jvsoest/graphdb
+FROM ghcr.io/maastrichtu-cds/fair_tools_docker-graphdb/docker-graphdb:latest
+#FROM jvsoest/graphdb
 
 RUN apt update && apt upgrade -y
 # Install Python
