@@ -29,12 +29,6 @@ spec:
         io.kompose.service: rdf-store
     spec:
       serviceAccountName: anyuid
-      securityContext:
-        seLinuxOptions:
-          level: 's0:c67,c49'
-        runAsUser: 0
-        supplementalGroups:
-          - 100
       containers:
         - env:
             - name: GDB_HEAP_SIZE
@@ -49,7 +43,7 @@ spec:
               command:
                 - curl
                 - -f
-                - http://localhost:7200/repositories
+                - http://rdf-store-epnd.apps.dsri2.unimaas.nl/repositories
             failureThreshold: 5
             periodSeconds: 5
             timeoutSeconds: 3
@@ -59,10 +53,10 @@ spec:
           resources: {}
           volumeMounts:
             - mountPath: /opt/graphdb/home/data
-              name: rdf-storage-dir
+              name: rdf-storage
       restartPolicy: Always
       volumes:
-        - name: rdf-storage-dir
+        - name: rdf-storage
           persistentVolumeClaim:
-            claimName: rdf-storage-dir
+            claimName: rdf-storage
 status: {}

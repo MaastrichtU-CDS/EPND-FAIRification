@@ -24,12 +24,13 @@ spec:
       labels:
         io.kompose.service: triplifier
     spec:
+      serviceAccountName: anyuid
       containers:
         - env:
             - name: SPRING_PROFILES_ACTIVE
               value: default
             - name: TASK_SPARQLURL
-              value: http://rdf-store:7200
+              value: http://rdf-store-epnd.apps.dsri2.unimaas.nl
             - name: TASK_WORKDIR
               value: /triplifier-workdir
           image: ghcr.io/maastrichtu-cds/triplifier-boot:latest
@@ -39,10 +40,10 @@ spec:
           resources: {}
           volumeMounts:
             - mountPath: /triplifier-workdir
-              name: triplifier-workdir
+              name: triplifier-storage
       restartPolicy: Always
       volumes:
-        - name: triplifier-workdir
+        - name: triplifier-storage
           persistentVolumeClaim:
-            claimName: triplifier-workdir
+            claimName: triplifier-storage
 status: {}

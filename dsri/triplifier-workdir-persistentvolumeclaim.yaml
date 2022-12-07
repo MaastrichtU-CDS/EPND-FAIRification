@@ -3,8 +3,8 @@ kind: PersistentVolumeClaim
 metadata:
   creationTimestamp: null
   labels:
-    io.kompose.service: triplifier-workdir
-  name: triplifier-workdir
+    io.kompose.service: triplifier-storage
+  name: triplifier-storage
 spec:
   accessModes:
     - ReadWriteOnce

@@ -3,8 +3,8 @@ kind: PersistentVolumeClaim
 metadata:
   creationTimestamp: null
   labels:
-    io.kompose.service: rdf-storage-dir
-  name: rdf-storage-dir
+    io.kompose.service: rdf-storage
+  name: rdf-storage
 spec:
   accessModes:
     - ReadWriteOnce

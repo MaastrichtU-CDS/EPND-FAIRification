@@ -24,23 +24,17 @@ spec:
         io.kompose.service: webui
     spec:
       serviceAccountName: anyuid
-      securityContext:
-        seLinuxOptions:
-          level: 's0:c67,c49'
-        runAsUser: 0
-        supplementalGroups:
-          - 100
       containers:
         - env:
             - name: GRAPHDB_SERVER
-              value: http://rdf-store:7200
+              value: http://rdf-store-epnd.apps.dsri2.unimaas.nl
             - name: RDF_ENDPOINT
-              value: http://rdf-store:7200/repositories/epnd_dummy
+              value: http://rdf-store-epnd.apps.dsri2.unimaas.nl/repositories/epnd_dummy
             - name: REPOSITORY
               value: epnd_dummy
             - name: TRIPLIFIER_SERVICE
-              value: http://localhost:8080
-          image: ghcr.io/maastrichtu-cds/epnd-fairification:main
+              value: http://triplifier-epnd.apps.dsri2.unimaas.nl
+          image: ghcr.io/maastrichtu-cds/epnd-fairification:dev
           name: webui
           ports:
             - containerPort: 5000
