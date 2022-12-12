@@ -4,23 +4,24 @@ from SPARQLWrapper import SPARQLWrapper
 from flask import current_app
 
 #Add a new link
-def createLink(value1, value2):
+def createLink(datasetId, value1, value2):
     endpointUrl = current_app.config.get("rdf_endpoint")
     endpoint = SPARQLWrapper(endpointUrl + '/statements')
+    graph = "http://mapping.local/" + str(datasetId) + "/"
     q = """
     PREFIX owl: <http://www.w3.org/2002/07/owl#>
 insert {{
-    GRAPH <http://mapping.local/> {{
+    GRAPH <{}> {{
         <{}>
             owl:equivalentClass <{}>
         }}
     }} where {{ }}
-    """.format(value1, value2)
+    """.format(graph, value1, value2)
     endpoint.setQuery(q)
     endpoint.method = 'POST'
     endpoint.query()
 
-def createCellLink(target, superClass, value):
+def createCellLink(target, superClass, value, datasetId):
     endpointUrl = current_app.config.get("rdf_endpoint")
     endpoint = SPARQLWrapper(endpointUrl + '/statements')
     q='''
@@ -29,7 +30,7 @@ def createCellLink(target, superClass, value):
     PREFIX dbo: <http://um-cds/ontologies/databaseontology/>
     PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
     INSERT {
-        GRAPH <http://data.local/mapping> {
+        GRAPH <http://data.local/mapping/%s> {
             dbo:cell_of rdf:type owl:ObjectProperty;
                  owl:inverseOf dbo:has_cell.
             <%s> rdf:type owl:Class ;
@@ -49,14 +50,13 @@ def createCellLink(target, superClass, value):
                         rdf:type owl:Class;
                     ].
             } } WHERE { }
-    '''%(target, superClass, value)
-    print(q)
+    '''%(datasetId, target, superClass, value)
     endpoint.setQuery(q)
     endpoint.method = 'POST'
     endpoint.query()
 
 # Delete cell mappings
-def deleteCellLinks(target, oldValue, cdmValue, cellValue):
+def deleteCellLinks(target, oldValue, cdmValue, cellValue, datasetId):
     endpointUrl = current_app.config.get("rdf_endpoint")
     endpoint = SPARQLWrapper(endpointUrl + '/statements')
     q = """
@@ -64,7 +64,7 @@ def deleteCellLinks(target, oldValue, cdmValue, cellValue):
     PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
     PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
     PREFIX dbo: <http://um-cds/ontologies/databaseontology/>
-    WITH <http://data.local/mapping>
+    WITH <http://data.local/mapping/%s>
     DELETE{
         <%s> owl:equivalentClass ?o.
     }
@@ -89,7 +89,7 @@ def deleteCellLinks(target, oldValue, cdmValue, cellValue):
         );
         rdf:type owl:Class;
     }
-    """%(oldValue, target, oldValue, cdmValue, cellValue)
+    """%(datasetId, oldValue, target, oldValue, cdmValue, cellValue)
     print(q)
     endpoint.setQuery(q)
     endpoint.method = 'POST'
@@ -98,7 +98,7 @@ def deleteCellLinks(target, oldValue, cdmValue, cellValue):
     print('Deletion complete')
 
 #Delete links for remapping from an actual value to UNKNOWN
-def deleteCellLinksNoInsert(oldValue, cdmValue, cellValue):
+def deleteCellLinksNoInsert(oldValue, cdmValue, cellValue, datasetId):
     endpointUrl = current_app.config.get("rdf_endpoint")
     endpoint = SPARQLWrapper(endpointUrl + '/statements')
     q = """
@@ -106,7 +106,7 @@ def deleteCellLinksNoInsert(oldValue, cdmValue, cellValue):
     PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
     PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
     PREFIX dbo: <http://um-cds/ontologies/databaseontology/>
-    WITH <http://data.local/mapping>
+    WITH <http://data.local/mapping/%s>
     DELETE{
         ?targetClass owl:equivalentClass ?o;
                      rdf:type owl:Class.
@@ -142,7 +142,7 @@ def deleteCellLinksNoInsert(oldValue, cdmValue, cellValue):
             owl:onProperty dbo:has_value.
         VALUES (?value){("%s")}
     }
-    """%(oldValue, cdmValue, cellValue)
+    """%(datasetId, oldValue, cdmValue, cellValue)
     print(q)
     endpoint.setQuery(q)
     endpoint.method = 'POST'
@@ -151,28 +151,27 @@ def deleteCellLinksNoInsert(oldValue, cdmValue, cellValue):
     print('Deletion complete')
 
 #Delete a existing link
-def deleteLink(value1, value2):
+def deleteLink(datasetId, cdmUri, datasetUri):
     print('start deletion')
-    print(value1)
-    print(value2)
     endpointUrl = current_app.config.get("rdf_endpoint")
     endpoint = SPARQLWrapper(endpointUrl + '/statements')
     q = """
-PREFIX owl: <http://www.w3.org/2002/07/owl#>
-delete {{
-    GRAPH <http://mapping.local/> {{
-        <{}> owl:equivalentClass <{}>
-    }}
-}} where {{ }} 
+    PREFIX owl: <http://www.w3.org/2002/07/owl#>
+    delete {{
+        GRAPH <http://mapping.local/{}/> {{
+            <{}> owl:equivalentClass <{}>
+        }}
+    }} where {{ }} 
 
-    """.format(value1, value2)
+    """.format(datasetId, datasetUri, cdmUri)
+    print(q)
     endpoint.setQuery(q)
     endpoint.method = 'POST'
     endpoint.query()
     print('end deletion')
 
 #Retrieves all mapped values
-def retrieveMappings():
+def retrieveMappings(datasetId):
     endpoint = current_app.config.get("rdf_endpoint")
     q = """
     prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -185,7 +184,7 @@ def retrieveMappings():
 
     SELECT ?cdmUri ?cdmUriLabel ?columnName ?columnUri
     WHERE {
-                GRAPH <http://mapping.local/> {
+                GRAPH <http://mapping.local/%s/> {
                 ?columnUri owl:equivalentClass ?cdmUri
             }
                 ?columnUri rdfs:subClassOf dbo:ColumnCell;
@@ -205,14 +204,15 @@ def retrieveMappings():
         FILTER (!(STRSTARTS(str(?cdmUri), "http://purl.obolibrary.org/obo/UO_"))).
         FILTER (?cdmUri != sio:SIO_001112).
     }
-    """
+    """%(datasetId)
     df = sd.get(endpoint, q)
     return df
 
 #Retrieves the dataset columns both mapped and not mapped
-def retrieveDatasetMapped():
+def retrieveDatasetMapped(datasetId):
     print(current_app.config)
     endpoint = current_app.config.get("rdf_endpoint")
+    graph = "http://mapping.local/" + str(datasetId) + "/"
     q = """    
     prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
     prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -221,34 +221,30 @@ def retrieveDatasetMapped():
     prefix sio: <http://semanticscience.org/resource/>
     PREFIX owl: <http://www.w3.org/2002/07/owl#>
     PREFIX dbo: <http://um-cds/ontologies/databaseontology/>
-
     SELECT ?cdmUri ?cdmUriLabel ?columnName ?columnUri
     WHERE {
-    
-    	    ?columnUri rdfs:subClassOf dbo:ColumnCell;
-            dbo:column ?columnName;
-            dbo:table ?tableUri.
-   	    ?tableUri dbo:table ?tableName.
-    optional{
-                GRAPH <http://mapping.local/> {
+        ?columnUri rdfs:subClassOf dbo:ColumnCell;
+                   dbo:column ?columnName;
+                   dbo:table ?tableUri.
+        ?tableUri dbo:table ?tableName.
+        optional{
+            GRAPH <%s> {
                 ?columnUri owl:equivalentClass ?cdmUri
             }
-                ?columnUri rdfs:subClassOf dbo:ColumnCell;
-                    dbo:column ?columnName;
-                    dbo:table ?tableUri.
-                ?tableUri dbo:table ?tableName.
-        
-        ?nodeShape rdf:type sh:NodeShape;
-            sh:targetClass ?cdmUri.
-
-        OPTIONAL {
-            ?cdmUri rdfs:label ?cdmUriLabel.
+            ?columnUri rdfs:subClassOf dbo:ColumnCell;
+                       dbo:column ?columnName;
+                       dbo:table ?tableUri.
+            ?tableUri dbo:table ?tableName.
+            ?nodeShape rdf:type sh:NodeShape;
+                       sh:targetClass ?cdmUri.
+            OPTIONAL {
+                ?cdmUri rdfs:label ?cdmUriLabel.
+            }
+            ## Units are always their own instance (measurement -> unit -> literal), therefore filtering the unit instances.
+            FILTER (!(STRSTARTS(str(?cdmUri), "http://purl.obolibrary.org/obo/UO_"))).
+            FILTER (?cdmUri != sio:SIO_001112).
         }
-
-        
-        ## Units are always their own instance (measurement -> unit -> literal), therefore filtering the unit instances.
-        FILTER (!(STRSTARTS(str(?cdmUri), "http://purl.obolibrary.org/obo/UO_"))).
-        FILTER (?cdmUri != sio:SIO_001112).}
-    }"""
+    }"""%(graph)
+    print(q)
     df = sd.get(endpoint, q)
     return df

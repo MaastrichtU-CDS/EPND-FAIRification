@@ -66,9 +66,9 @@ def getData(value):
     return df
 
 #Get all mapped cell values for a given URI
-def getMappedCell(cdmUri):
+def getMappedCell(cdmUri, datasetId):
     endpoint = current_app.config.get("rdf_endpoint")
-    graph = "http://data.local/mapping"
+    graph = "http://data.local/mapping/" + datasetId
     # New query
     q = """
         PREFIX owl:<http://www.w3.org/2002/07/owl#>

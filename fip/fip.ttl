@@ -15,13 +15,13 @@
 @prefix schema: <https://schema.org/>.
 
 local:myFip rdf:type fip:FIP-Declaration;
-    rdfs:label "EPND common data model";
+    rdfs:label "EPND use case 1 ATN";
     fip:declares-current-use-of [
         rdf:type <https://schema.metadatacenter.org/core/Template>;
         sio:SIO_000628 <https://repo.metadatacenter.org/templates/7569b4a5-03a8-42c5-8209-784caf64b435>;
     ];
     fip:declares-current-use-of [
-        sh:shapesGraph <https://raw.githubusercontent.com/MaastrichtU-CDS/EPND-FAIRification/main/management_webpage/shapeTest/shacl.ttl>;
+        sh:shapesGraph <https://raw.githubusercontent.com/MaastrichtU-CDS/EPND-FAIRification/case-study-1/EPNDCS1shacl.ttl>;
     ].
 
 <https://repo.metadatacenter.org/templates/7569b4a5-03a8-42c5-8209-784caf64b435> schema:distribution [

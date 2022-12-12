@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="mt-1 mb-3">
-	<a href="/detailedMapping?columnUri={{ chosenMapping[0][3] }}">&larr; back</a>
+	<a id="backlink" href="#">&larr; back</a>
 </div>
 <div class="container mb-5">
   <h3>General column information</h3>
@@ -10,7 +10,7 @@
   {% if chosenMapping[0][1] is not sameas chosenMapping[0][0] %}
   <p class="mb-0"><strong>CDM variable:</strong> {{chosenMapping[0][1]}} (<a href="{{chosenMapping[0][0]}}" target="_new">{{chosenMapping[0][0]}}</a>)</p>
 	    {% endif %}
-  <form class="mt-4" method="POST" action="{{ url_for('mapDatasets.submitForm') }}">
+  <form id="changeForm" class="mt-4" method="POST">
     <div>
       Choose / edit CDM variable:
       <div class="d-flex w-50">
@@ -28,7 +28,7 @@
 <div class="container mb-5">
   <h3>Detailed information:</h3>
   {% if categoricalCheck == true %}
-  <form class="mt-4" method="POST" action="/cellMapping">
+  <form class="mt-4" method="POST" id="saveMapping">
   <table class="table table-striped w-50" name="newTable">
     <thead>
       <tr>
@@ -53,7 +53,7 @@
       {% endfor %}
     </tbody>
   </table>
-  <button class="btn btn-primary" type="submit" action="/cellMapping"> Save </button>
+  <button class="btn btn-primary" type="submit"> Save </button>
   </form>
   {% else %}
   {{ metadata | safe }}
@@ -63,6 +63,14 @@
 
 {% block scripts %}
 <script>
+  const parameters = new URLSearchParams(document.location.search);
+  const datasetId = parameters.get("identifier");
+  const columnUri = parameters.get("columnUri");
+  const lastIndex = columnUri.lastIndexOf('/');
+  const ontology = columnUri.slice(0, lastIndex) + '/';
+  document.getElementById("backlink").href = "/detailedMapping?identifier=" + datasetId + "&columnUri={{ chosenMapping[0][3] }}";
+  document.getElementById("changeForm").action = "/commit?identifier=" + datasetId + "&columnUri= {{ chosenMapping[0][3] }}";
+  document.getElementById("saveMapping").action = "/cellMapping?identifier=" + datasetId + "&ontology=" + ontology;
   const table = document.getElementsByClassName('dataframe')[0]
   console.log(table)
   table.classList.add('table', 'table-striped', 'w-25')
