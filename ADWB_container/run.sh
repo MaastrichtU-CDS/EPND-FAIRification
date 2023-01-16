@@ -5,7 +5,7 @@ docker run --rm -it \
     -v $(pwd):/triplifier-boot \
     -v $(pwd)/../build_triplifier_boot.sh:/triplifier-boot/build.sh \
     --workdir /triplifier-boot \
-    maven:3.6.0-jdk-11-slim /bin/bash build.sh
+    maven:3.8-eclipse-temurin-11 /bin/bash build.sh
 sudo mv target/triplifier-boot-0.0.1-SNAPSHOT.jar ../triplifier-boot-0.0.1-SNAPSHOT.jar
 cd ../ && sudo rm -Rf triplifier-boot
 
