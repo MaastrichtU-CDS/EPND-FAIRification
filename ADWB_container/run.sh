@@ -1,4 +1,6 @@
 ## build triplifier
+sudo rm triplifier*.jar # clean old build first
+
 git clone --recurse-submodules https://github.com/MaastrichtU-CDS/triplifier-boot
 cd triplifier-boot
 docker run --rm -it \
@@ -9,16 +11,5 @@ docker run --rm -it \
 sudo mv target/triplifier-boot-0.0.1-SNAPSHOT.jar ../triplifier-boot-0.0.1-SNAPSHOT.jar
 cd ../ && sudo rm -Rf triplifier-boot
 
-cp -R ../management_webpage ./app
-
-## build the actual container
-docker build -t jvsoest/adwb ./
-
-rm -Rf ./app
-sudo rm triplifier*.jar
-
-docker run -it --rm \
-    -p 7200:7200 \
-    -p 8080:8080 \
-    -p 5000:5000 \
-    jvsoest/adwb
+## Do final container build
+sh run_build_short.sh
