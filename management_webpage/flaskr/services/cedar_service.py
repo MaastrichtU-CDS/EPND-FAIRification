@@ -37,6 +37,9 @@ class CedarEndpoint:
         Retrieve the title for the instance used
         """
 
+        if self.__predicate_name_metadata_instance is None:
+            return ""
+
         query = """
         SELECT ?name
         WHERE {
@@ -44,7 +47,12 @@ class CedarEndpoint:
         }
         """ % (instanceUri, self.__predicate_name_metadata_instance)
 
-        return self.__triplestore.select_sparql(query)[0]["name"]["value"]
+        queryResult = self.__triplestore.select_sparql(query)
+
+        if len(queryResult == 0):
+            return ""
+        else :
+            return self.__triplestore.select_sparql(query)[0]["name"]["value"]
 
     def list_instances(self):
         """
