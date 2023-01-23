@@ -2,14 +2,14 @@ from flaskr.services.triplestore import AbstractTripleStore
 import logging
 
 class CedarEndpoint:
-    def __init__(self, triplestore: AbstractTripleStore):
+    def __init__(self, triplestore: AbstractTripleStore, metadata_title_predicate=None):
         """
         The CedarEndpoint class manages communication to the SPARQL endpoint.
         triplestore: implementation of AbstractTripleStore
         """
         self.__triplestore = triplestore
-        # TODO: make this variable configurable, needs to be put into the FIP
-        self.__predicate_name_metadata_instance = "http://purl.org/dc/terms/title"
+        # TODO: make this variable configurable, needs to be put into the FIP (e.g. "http://purl.org/dc/terms/title")
+        self.__predicate_name_metadata_instance = metadata_title_predicate
     
     def get_template_location(self):
         """
