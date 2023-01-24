@@ -11,7 +11,7 @@ if [ -z "$TRIPLIFIER_LOCATION" ]; then
     TRIPLIFIER_LOCATION=cat /app/config.json | jq '.triplifier_service'
     export TRIPLIFIER_LOCATION
 fi
-cat config.json | jq '.triplifier_service = "$TRIPLIFIER_LOCATION"' > /app/config.json
+cat /app/config.json | jq --arg "triplifier_location" $TRIPLIFIER_LOCATION '.triplifier_service = $triplifier_location' > /app/config.json
 
 FLASK_APP=flaskr
 FLASK_ENV=development
