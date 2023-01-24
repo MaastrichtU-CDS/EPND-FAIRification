@@ -8,10 +8,10 @@ cd /app
 
 # Set triplifier location
 if [ -z "$TRIPLIFIER_LOCATION" ]; then
-    TRIPLIFIER_LOCATION=cat /app/config.json | jq '.triplifier_service'
+    TRIPLIFIER_LOCATION=$(cat /app/config.json | jq '.triplifier_service')
     export TRIPLIFIER_LOCATION
 fi
-cat /app/config.json | jq --arg "triplifier_location" $TRIPLIFIER_LOCATION '.triplifier_service = $triplifier_location' > /app/config.json
+cat /app/config.json | jq --argjson "triplifier_location" "$TRIPLIFIER_LOCATION" '.triplifier_service = $triplifier_location' > /app/config.json
 
 FLASK_APP=flaskr
 FLASK_ENV=development
