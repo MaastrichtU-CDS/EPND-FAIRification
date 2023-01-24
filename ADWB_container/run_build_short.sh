@@ -2,7 +2,7 @@
 cp -R ../management_webpage ./app
 
 ## build the actual container
-docker build -t jvsoest/adwb ./
+docker build -t jvsoest/adwb --no-cache ./
 
 ## Remove temp webapp folder
 rm -Rf ./app
