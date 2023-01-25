@@ -1,5 +1,5 @@
 ## build triplifier
-sudo rm triplifier*.jar # clean old build first
+sudo rm -f triplifier*.jar # clean old build first
 
 git clone --recurse-submodules https://github.com/MaastrichtU-CDS/triplifier-boot
 cd triplifier-boot
