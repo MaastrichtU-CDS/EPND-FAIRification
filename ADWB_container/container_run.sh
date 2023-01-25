@@ -6,12 +6,16 @@ sleep 60
 cd /triplifier-boot && java -jar triplifier-boot.jar & > /triplifier_stdout.log 2> /triplifier_stderr.log
 cd /app
 
+sleep 20
+
 # Set triplifier location
 if [ -z "$TRIPLIFIER_LOCATION" ]; then
     TRIPLIFIER_LOCATION=$(cat /app/config.json | jq '.triplifier_service')
     export TRIPLIFIER_LOCATION
 fi
 cat /app/config.json | jq --argjson "triplifier_location" "$TRIPLIFIER_LOCATION" '.triplifier_service = $triplifier_location' > /app/config.json
+
+sleep 5
 
 FLASK_APP=flaskr
 FLASK_ENV=development
