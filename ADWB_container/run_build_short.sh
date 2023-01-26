@@ -7,8 +7,8 @@ docker build -t jvsoest/adwb --no-cache ./
 ## Remove temp webapp folder
 rm -Rf ./app
 
-docker run -it --rm \
-    -p 7200:7200 \
-    -p 8080:8080 \
-    -p 5000:5000 \
-    jvsoest/adwb
+# docker run -it --rm \
+#     -p 7200:7200 \
+#     -p 8080:8080 \
+#     -p 5000:5000 \
+#     jvsoest/adwb
