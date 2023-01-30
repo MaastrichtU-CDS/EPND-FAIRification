@@ -21,7 +21,7 @@ WORKDIR /
 
 ## Install triplifier-boot
 RUN mkdir /triplifier-boot
-COPY triplifier-boot-0.0.1-SNAPSHOT.jar /triplifier-boot/triplifier-boot.jar
+COPY triplifier/triplifier-boot-0.0.1-SNAPSHOT.jar /triplifier-boot/triplifier-boot.jar
 
 ## Add run file
 COPY container_run.sh /run.sh
