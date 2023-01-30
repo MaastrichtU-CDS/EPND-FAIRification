@@ -24,12 +24,15 @@ spec:
           - 100
       containers:
         - name: fairnotator-single
-          image: jvsoest/adwb
+          image: jvsoest/adwb:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 5000
             - containerPort: 8080
             - containerPort: 7200
+          env:
+            - name: TRIPLIFIER_LOCATION
+              value: "http://fairnotator-single-triplifier-epnd.apps.dsri2.unimaas.nl"
           securityContext:
             capabilities:
               drop:
