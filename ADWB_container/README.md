@@ -23,3 +23,5 @@ For reference, added some build times for the project.
 
 **Windows (WSL2)**:
 - [4 cpu, 16gb mem, i7-7660U surface pro 2017] sh run.sh 2.54s user 3.27s system 1% cpu 7:06.60 total
+
+**Update**: It now works on macOS, checkout of repository *within* running docker image removes volume mount overhead and brings build time in ballpark of WSL2 and Ubuntu (native Docker)

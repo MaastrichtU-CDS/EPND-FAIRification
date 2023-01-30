@@ -6,7 +6,7 @@ rm -Rf app/node_modules
 rm -Rf app/venv
 
 ## build the actual container
-docker build -t jvsoest/adwb --no-cache ./
+docker build -t ghcr.io/maastrichtu-cds/epnd-fairification/adwb:single --no-cache ./
 
 ## Remove temp webapp folder
 rm -Rf ./app
@@ -15,4 +15,5 @@ rm -Rf ./app
 #     -p 7200:7200 \
 #     -p 8080:8080 \
 #     -p 5000:5000 \
+#     --entrypoint /bin/bash \
 #     jvsoest/adwb
