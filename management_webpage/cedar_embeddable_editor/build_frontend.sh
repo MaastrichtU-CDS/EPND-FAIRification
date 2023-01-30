@@ -26,6 +26,8 @@ $sed -i "/this.messageHandlerService.traceObject/ a window.location.href = '\\/m
 npm install
 node_modules/@angular/cli/bin/ng build --configuration production --baseHref="/static/cee/"
 
+rm -Rf node_modules/
+
 # # Copy to flaskr
 rm -R ../../flaskr/static/cee
 mkdir -p ../../flaskr/static/cee
