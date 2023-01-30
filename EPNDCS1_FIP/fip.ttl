@@ -17,13 +17,13 @@ local:myFip rdf:type fip:FIP-Declaration;
     rdfs:label "EPND use case 1 ATN";
     fip:declares-current-use-of [
         rdf:type <https://schema.metadatacenter.org/core/Template>;
-        sio:SIO_000628 <https://repo.metadatacenter.org/templates/8ef171c7-b7b6-401c-9dda-e4d132944297>;
+        sio:SIO_000628 <https://repo.metadatacenter.org/templates/cda2f30a-6b9c-4210-a87d-be78a416fdd4>;
     ];
     fip:declares-current-use-of [
         sh:shapesGraph <https://raw.githubusercontent.com/MaastrichtU-CDS/EPND-FAIRification/case-study-1/EPNDCS1shacl.ttl>;
     ].
 
-<https://repo.metadatacenter.org/templates/8ef171c7-b7b6-401c-9dda-e4d132944297> schema:distribution [
+<https://repo.metadatacenter.org/templates/cda2f30a-6b9c-4210-a87d-be78a416fdd4> schema:distribution [
     schema:encodingFormat "application/ld+json";
     schema:contentUrl <https://raw.githubusercontent.com/MaastrichtU-CDS/EPND-FAIRification/main/EPNDCS1_FIP/cedar_dataset.json>;
 ].
