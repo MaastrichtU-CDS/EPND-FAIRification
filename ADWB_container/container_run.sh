@@ -9,11 +9,7 @@ cd /app
 sleep 20
 
 # Set triplifier location
-if [ -z "$TRIPLIFIER_LOCATION" ]; then
-    TRIPLIFIER_LOCATION=$(cat /app/config.json | jq '.triplifier_service')
-    export TRIPLIFIER_LOCATION
-fi
-echo $(cat /app/config.json | jq --argjson "triplifier_location" "$TRIPLIFIER_LOCATION" '.triplifier_service = $triplifier_location') > /app/config.json
+python replace_env.py
 
 sleep 5
 
