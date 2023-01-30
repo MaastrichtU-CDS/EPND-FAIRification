@@ -15,5 +15,4 @@ rm -Rf ./app
 #     -p 7200:7200 \
 #     -p 8080:8080 \
 #     -p 5000:5000 \
-#     --entrypoint /bin/bash \
-#     jvsoest/adwb
+#     ghcr.io/maastrichtu-cds/epnd-fairification/adwb:single
