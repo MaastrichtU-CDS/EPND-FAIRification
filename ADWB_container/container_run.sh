@@ -13,7 +13,7 @@ if [ -z "$TRIPLIFIER_LOCATION" ]; then
     TRIPLIFIER_LOCATION=$(cat /app/config.json | jq '.triplifier_service')
     export TRIPLIFIER_LOCATION
 fi
-cat /app/config.json | jq --argjson "triplifier_location" "$TRIPLIFIER_LOCATION" '.triplifier_service = $triplifier_location' > /app/config.json
+echo $(cat /app/config.json | jq --argjson "triplifier_location" "$TRIPLIFIER_LOCATION" '.triplifier_service = $triplifier_location') > /app/config.json
 
 sleep 5
 

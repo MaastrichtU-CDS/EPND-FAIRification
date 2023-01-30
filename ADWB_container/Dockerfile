@@ -28,5 +28,5 @@ COPY container_run.sh /run.sh
 
 WORKDIR /
 EXPOSE 5000 7200 8080
-ENTRYPOINT ["sh", "run.sh"]
+ENTRYPOINT ["/bin/bash", "run.sh"]
 CMD [""]
