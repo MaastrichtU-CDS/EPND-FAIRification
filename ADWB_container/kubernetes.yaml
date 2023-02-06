@@ -24,7 +24,7 @@ spec:
           - 100
       containers:
         - name: fairnotator-single
-          image: jvsoest/adwb-30012023
+          image: jvsoest/adwb:20230206
           imagePullPolicy: Always
           ports:
             - containerPort: 5000
