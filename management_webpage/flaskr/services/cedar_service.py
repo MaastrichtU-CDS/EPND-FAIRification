@@ -2,14 +2,14 @@ from flaskr.services.triplestore import AbstractTripleStore
 import logging
 
 class CedarEndpoint:
-    def __init__(self, triplestore: AbstractTripleStore):
+    def __init__(self, triplestore: AbstractTripleStore, metadata_title_predicate=None):
         """
         The CedarEndpoint class manages communication to the SPARQL endpoint.
         triplestore: implementation of AbstractTripleStore
         """
         self.__triplestore = triplestore
-        # TODO: make this variable configurable, needs to be put into the FIP
-        self.__predicate_name_metadata_instance = "http://purl.org/dc/terms/title"
+        # TODO: make this variable configurable, needs to be put into the FIP (e.g. "http://purl.org/dc/terms/title")
+        self.__predicate_name_metadata_instance = metadata_title_predicate
     
     def get_template_location(self):
         """
@@ -37,6 +37,9 @@ class CedarEndpoint:
         Retrieve the title for the instance used
         """
 
+        if self.__predicate_name_metadata_instance is None:
+            return ""
+
         query = """
         SELECT ?name
         WHERE {
@@ -44,7 +47,12 @@ class CedarEndpoint:
         }
         """ % (instanceUri, self.__predicate_name_metadata_instance)
 
-        return self.__triplestore.select_sparql(query)[0]["name"]["value"]
+        queryResult = self.__triplestore.select_sparql(query)
+
+        if len(queryResult == 0):
+            return ""
+        else :
+            return self.__triplestore.select_sparql(query)[0]["name"]["value"]
 
     def list_instances(self):
         """

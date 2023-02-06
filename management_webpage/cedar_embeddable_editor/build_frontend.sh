@@ -2,7 +2,7 @@ version='2.6.18'
 os=$(uname -s)
 
 sed=sed
-if [[ $os -eq "Darwin" ]]; then
+if [[ $os == "Darwin" ]]; then
     sed=gsed
 fi
 echo $sed
@@ -25,6 +25,8 @@ cd cedar-embeddable-editor-release-$version
 $sed -i "/this.messageHandlerService.traceObject/ a window.location.href = '\\/metadata';" src/app/modules/shared/components/cedar-data-saver/cedar-data-saver.component.ts
 npm install
 node_modules/@angular/cli/bin/ng build --configuration production --baseHref="/static/cee/"
+
+rm -Rf node_modules/
 
 # # Copy to flaskr
 rm -R ../../flaskr/static/cee

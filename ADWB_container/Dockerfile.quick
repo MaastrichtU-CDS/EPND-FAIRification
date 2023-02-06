@@ -1,0 +1,2 @@
+FROM ghcr.io/maastrichtu-cds/epnd-fairification/adwb:single
+COPY container_run.sh /run.sh

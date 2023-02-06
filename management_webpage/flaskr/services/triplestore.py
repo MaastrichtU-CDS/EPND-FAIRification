@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from turtle import turtles
 from urllib import response
 
 from SPARQLWrapper import SPARQLWrapper, JSON, GET, POST, POSTDIRECTLY
