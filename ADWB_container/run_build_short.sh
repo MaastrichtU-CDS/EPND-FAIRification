@@ -16,5 +16,4 @@ docker run -it --rm \
     -p 8080:8080 \
     -p 5000:5000 \
     -e "TRIPLIFIER_LOCATION=http://fairnotator-single-triplifier-epnd.apps.dsri2.unimaas.nl" \
-    --entrypoint /bin/bash \
-    ghcr.io/maastrichtu-cds/epnd-fairification/adwb:single
+    ghcr.io/maastrichtu-cds/epnd-fairification/adwb:single-quick-build
