@@ -15,16 +15,16 @@
 @prefix schema: <https://schema.org/>.
 
 local:myFip rdf:type fip:FIP-Declaration;
-    rdfs:label "EPND use case 1 ATN";
+    rdfs:label "EPND Case Study 1 (ATN)";
     fip:declares-current-use-of [
         rdf:type <https://schema.metadatacenter.org/core/Template>;
         sio:SIO_000628 <https://repo.metadatacenter.org/templates/7569b4a5-03a8-42c5-8209-784caf64b435>;
     ];
     fip:declares-current-use-of [
-        sh:shapesGraph <https://raw.githubusercontent.com/MaastrichtU-CDS/EPND-FAIRification/case-study-1/EPNDCS1shacl.ttl>;
+        sh:shapesGraph <https://raw.githubusercontent.com/MaastrichtU-CDS/EPND-Case-Study-1/main/EPNDCS1shacl.ttl>;
     ].
 
 <https://repo.metadatacenter.org/templates/7569b4a5-03a8-42c5-8209-784caf64b435> schema:distribution [
     schema:encodingFormat "application/ld+json";
-    schema:contentUrl <https://raw.githubusercontent.com/MaastrichtU-CDS/EPND-FAIRification/main/fip/cedar_dataset.json>;
+    schema:contentUrl <https://raw.githubusercontent.com/MaastrichtU-CDS/EPND-Case-Study-1/main/cedar_dataset.json>;
 ].
