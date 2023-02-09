@@ -2,7 +2,7 @@ from flask import (
     Blueprint, render_template, request, redirect, url_for, current_app
 )
 import validators
-from flaskr.services import fip_service, triplestore
+from flaskr.services import fip_service, triplestore, nanopub_service
 import rdflib
 
 bp = Blueprint("fip_controller",__name__)
@@ -26,10 +26,14 @@ def index():
 
 def __parse_fip(fip_uri):
     try:
+        np_service = nanopub_service.NanopubService(fip_uri)
+        fip_uri_updated = np_service.parse_shacl_uri()
         g = rdflib.Graph()
-        g.parse(fip_uri, format="turtle")
+        g.parse(fip_uri_updated, format="turtle")
+        print(g)
     except Exception as e:
-        raise Exception("Could not load the FIP file at %s - Is the URL correct?" % fip_uri)
+        raise Exception("Could not load the FIP file at %s - Is the URL\
+                        correct?" % fip_uri_updated)
     
     triples = g.serialize(format="turtle")
 
