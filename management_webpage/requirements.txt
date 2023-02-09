@@ -7,3 +7,4 @@ click==8.0.4
 validators==0.19.0
 requests==2.27.1
 tzlocal==4.2
+nanopub==2.0.0
