@@ -27,15 +27,16 @@ def index():
 
 def __parse_fip(fip_uri):
     try:
-        g = rdflib.Graph()
-        if not re.compile(r"\.ttl$"):
+        r1 = re.compile(r"\.ttl$")
+        if not r1.match(fip_uri):
             np_service = nanopub_service.NanopubService(fip_uri)
             fip_uri = np_service.parse_shacl_uri()
+        g = rdflib.Graph()
         g.parse(fip_uri, format="turtle")
-        print(g)
+
     except Exception as e:
         raise Exception("Could not load the FIP file at %s - Is the URL\
-                        correct?" % fip_uri_updated)
+                        correct?" % fip_uri)
     
     triples = g.serialize(format="turtle")
 
