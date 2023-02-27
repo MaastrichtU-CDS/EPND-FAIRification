@@ -39,11 +39,14 @@ class AbstractTripleStore(ABC):
 
 class GraphDBTripleStore(AbstractTripleStore):
 
-    def __init__(self, server_url, repository_name, create_if_not_exists=False) -> None:
+    def __init__(self, server_url, repository_name, create_if_not_exists=False, fill_folder_when_created=None) -> None:
         self.endpoint = server_url + "/repositories/" + repository_name
 
         if create_if_not_exists:
-            self.__create_repo_if_not_exists(server_url, repository_name)
+            repo_created = self.__create_repo_if_not_exists(server_url, repository_name)
+
+            if repo_created:
+                print("testing whether repo created is there")
 
         self.sparql = SPARQLWrapper(self.endpoint, updateEndpoint=self.endpoint + '/statements')
 
@@ -99,14 +102,11 @@ class GraphDBTripleStore(AbstractTripleStore):
             data = { "config": repoConfig }
             # header = { "Content-Type": "multipart/form-data" }
             response = requests.post(url, files=data)#, headers=header)
-            print(response.text)
-    '''
-    def __init__(self, endpoint) -> None:
-        self.endpoint = endpoint
-        self.sparql = SPARQLWrapper(endpoint, updateEndpoint=endpoint + '/statements')
+            if response.status_code >= 200 & response.status_code < 300:
+                return True
+        
+        return False
 
-        super().__init__()
-    '''
     def fetch_namespaces(self):
         url = self.endpoint + "/namespaces"
         response = requests.get(url, headers={"Accept": "application/sparql-results+json"})
