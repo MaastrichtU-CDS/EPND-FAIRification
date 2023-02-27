@@ -28,5 +28,6 @@ class NanopubService:
                         URIRef("https://w3id.org/fair/fip/terms/declares-planned-use-of"):
                             o2_parsed = re.split('#', o2)[0]
                             for s3, p3, o3 in self.fetch_np(o2_parsed).assertion:
-                                if p3 == URIRef("http://www.w3.org/2000/01/rdf-schema#seeAlso"):
+                                if p3 ==\
+                                URIRef("http://usefulinc.com/ns/doap#implements"):
                                     return o3 
