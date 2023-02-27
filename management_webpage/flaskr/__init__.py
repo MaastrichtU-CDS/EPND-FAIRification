@@ -56,6 +56,8 @@ def create_app(test_config=None):
      cedar_controller.rdfStore = rdfStore
      if "cedar_instance_base_url" in app.config:
           cedar_controller.cedar_instance_base_url = app.config.get("cedar_instance_base_url")
+     if "turtle_folder" in app.config:
+          cedar_controller.turtle_folder = app.config.get("turtle_folder")
 
      from . import data_controller
      app.register_blueprint(data_controller.bp)

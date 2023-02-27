@@ -8,10 +8,12 @@ import uuid
 from rdflib import Graph
 import datetime
 from tzlocal import get_localzone
+import os
 
 bp = Blueprint("cedar_controller",__name__)
 rdfStore = None
 cedar_instance_base_url = "http://cedar.local/instances"
+turtle_folder = None
 
 def __get_cedar_service():
     return cedar_service.CedarEndpoint(rdfStore)
@@ -57,10 +59,17 @@ def delete_instance():
 def get_template():
     cedar_location = __get_cedar_service().get_template_location()
     print(cedar_location)
-    
-    response = requests.get(cedar_location)
-    template = response.json()
-    return template
+
+    if ("://localhost" in cedar_location) & (turtle_folder is not None):
+        split_url = cedar_location.split("/")
+        filename = split_url[len(split_url)-1]
+        file_path = os.path.join(turtle_folder, filename)
+        with open(file_path) as f:
+            return json.load(f)
+    else :
+        response = requests.get(cedar_location)
+        template = response.json()
+        return template
 
 @bp.route("/api/cedar/template.json")
 def template():
