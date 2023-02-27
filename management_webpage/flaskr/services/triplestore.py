@@ -47,7 +47,7 @@ class GraphDBTripleStore(AbstractTripleStore):
         if create_if_not_exists:
             repo_created = self.__create_repo_if_not_exists(server_url, repository_name)
 
-            if repo_created & fill_folder_when_created is not None:
+            if (repo_created) & (fill_folder_when_created is not None):
                 self.__load_turtle_from_folder(fill_folder_when_created)
 
         self.sparql = SPARQLWrapper(self.endpoint, updateEndpoint=self.endpoint + '/statements')
