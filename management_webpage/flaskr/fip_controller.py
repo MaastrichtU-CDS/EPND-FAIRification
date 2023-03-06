@@ -32,17 +32,14 @@ def __parse_fip(fip_uri):
         if not fip_uri.endswith('.ttl', -4):
             np_service = nanopub_service.NanopubService(fip_uri)
             fip_uri = np_service.parse_shacl_uri()
-            print(fip_uri)
     try:
         g = rdflib.Graph()
         g.parse(fip_uri, format='turtle')
-        print(g) 
     except Exception as e:
         raise Exception("Could not load the FIP file at %s - Is the URL\
                             correct?" % fip_uri)
     
     triples = g.serialize(format="turtle")
-    print(triples)
     fService = __get_fip_service()
     fService.load_fip(fip_uri, triples)
     fService.cache_shacl()
