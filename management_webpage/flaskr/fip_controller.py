@@ -27,21 +27,26 @@ def index():
     return render_template("fip/index.html")
 
 def __parse_fip(fip_uri):
-    # Checking between raw ttl files and nanopub links
-    if validators.url(fip_uri):
-        if not fip_uri.endswith('.ttl', -4):
-            np_service = nanopub_service.NanopubService(fip_uri)
-            fip_uri = np_service.parse_shacl_uri()
+    g = rdflib.Graph()
+    fip = ""
     try:
-        g = rdflib.Graph()
-        g.parse(fip_uri, format='turtle')
+        # Checking between raw ttl files and nanopub links
+        if validators.url(fip_uri):
+            if not fip_uri.endswith('.ttl', -4):
+                np_service = nanopub_service.NanopubService(fip_uri)
+                fip = np_service.parse_shacl_uri()
+                g.parse(data=fip)
+        else:
+            g.parse(fip_uri, format='turtle')
     except Exception as e:
         raise Exception("Could not load the FIP file at %s - Is the URL\
                             correct?" % fip_uri)
-    
     triples = g.serialize(format="turtle")
     fService = __get_fip_service()
-    fService.load_fip(fip_uri, triples)
+    if not(validators.url(fip_uri)):
+        fService.load_fip("http://local/" + fip_uri, triples)
+    else:
+        fService.load_fip(fip_uri, triples)
     fService.cache_shacl()
 
 @bp.route('/', methods=['POST'])
