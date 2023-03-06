@@ -4,19 +4,33 @@
 @prefix schema: <http://schema.org/> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix sio: <http://semanticscience.org/resource/>.
+@prefix snomed: <http://purl.bioontology.org/ontology/SNOMEDCT/>.
+@prefix uo: <http://purl.obolibrary.org/obo/>.
 
-ex:Johan
+ex:Jan
     rdf:type schema:Person, schema:nerd;
-    schema:givenName "Johan" ;
-    schema:familyName "van Soest" ;
-    schema:birthDate "1987-30-10"^^xsd:date ;
-    schema:has_gender [
-        rdf:type schema:gender, schema:male;
-    ];
-    schema:has_age [
-        rdf:type schema:age_at_diagnosis;
-        sio:SIO_000221 [
-            rdf:type schema:years;
-            sio:SIO_000300 "34"^^xsd:int;
-        ];
-    ].
+    schema:givenName "Jan" ;
+    schema:familyName "van Test" ;
+    schema:birthDate "1963-11-03"^^xsd:date ;
+    sio:SIO_000223 ex:JanGender;
+    sio:SIO_000223 ex:JanAge.
+
+ex:JanGender rdf:type snomed:365873007, snomed:703117000.
+ex:JanAge rdf:type snomed:423493009;
+        sio:SIO_000221 ex:JanAgeUnit.
+ex:JanAgeUnit rdf:type uo:UO_0000036;
+            sio:SIO_000300 "35"^^xsd:int.
+
+ex:Lies
+    rdf:type schema:Person, schema:nerd;
+    schema:givenName "Lies" ;
+    schema:familyName "van Test" ;
+    schema:birthDate "1953-04-13"^^xsd:date ;
+    sio:SIO_00023 ex:LiesGender;
+    sio:SIO_000223 ex:LiesAge.
+
+ex:LiesGender rdf:type snomed:365873007, snomed:703118005.
+ex:LiesAge rdf:type snomed:423493009;
+        sio:SIO_000221 ex:LiesAgeUnit.
+ex:LiesAgeUnit rdf:type uo:UO_0000036;
+            sio:SIO_000300 "34"^^xsd:int.

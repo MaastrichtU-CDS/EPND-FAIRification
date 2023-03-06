@@ -106,7 +106,7 @@ snomed:703117000 rdfs:label "Masculine gender".
 epnd:GenderShape
     a sh:NodeShape, sio:SIO_000137;
     sh:closed true;
-    sh:targetClass snomed:365873007;
+    sh:targetClass snomed:365873007, snomed:703117000, snomed:703118005;
     ## This method forces SHACL to mention that only two values are allowed (gender & male, or gender & female)
     sh:xone (
         [
