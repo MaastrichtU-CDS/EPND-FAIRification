@@ -38,7 +38,10 @@ def create_app(test_config=None):
      # from . import linkdatasets
      # app.register_blueprint(linkdatasets.bp)
      # app.add_url_rule('/', endpoint='linker')
-     rdfStore = triplestore.GraphDBTripleStore(app.config.get("graphdb_server"), app.config.get("repository"), create_if_not_exists=True)
+     rdfStore = triplestore.GraphDBTripleStore(app.config.get("graphdb_server"),
+                                               app.config.get("repository"),
+                                               create_if_not_exists=True,
+                                               fill_folder_when_created=app.config.get("turtle_folder"))
 
      from . import mapDatasets
      app.register_blueprint(mapDatasets.bp)
@@ -53,6 +56,8 @@ def create_app(test_config=None):
      cedar_controller.rdfStore = rdfStore
      if "cedar_instance_base_url" in app.config:
           cedar_controller.cedar_instance_base_url = app.config.get("cedar_instance_base_url")
+     if "turtle_folder" in app.config:
+          cedar_controller.turtle_folder = app.config.get("turtle_folder")
 
      from . import data_controller
      app.register_blueprint(data_controller.bp)
