@@ -1,10 +1,9 @@
 from flask import (
-    Blueprint, render_template, request, redirect, url_for, current_app
+    Blueprint, render_template, request, redirect, url_for
 )
 import validators
-from flaskr.services import fip_service, triplestore, nanopub_service
+from flaskr.services import fip_service, nanopub_service
 import rdflib
-import re, os
 from werkzeug.utils import secure_filename
 
 bp = Blueprint("fip_controller",__name__)
@@ -38,7 +37,7 @@ def __parse_fip(fip_uri):
                 g.parse(data=fip)
         else:
             g.parse(fip_uri, format='turtle')
-    except Exception as e:
+    except Exception:
         raise Exception("Could not load the FIP file at %s - Is the URL\
                             correct?" % fip_uri)
     triples = g.serialize(format="turtle")
