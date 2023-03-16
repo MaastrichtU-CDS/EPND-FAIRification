@@ -1,51 +1,66 @@
-from nanopub import Nanopub
-from rdflib import URIRef 
-import re
+import sparql_dataframe as sd
+from flask import current_app
 
 class NanopubService:
     def __init__(self, uri):
         self.uri = uri
 
-    def fetch_np(self, np): 
-        try:
-            np_parsed = Nanopub(np)
-        except ConnectionError as e:
-            raise Exception("Connection refused by server,\
-                    please try after a while")
-        return np_parsed
-
     def parse_shacl_uri(self):
-        np = self.fetch_np(self.uri)
-        for s, p, o in np.assertion:
-            for s1, p1, o1 in self.fetch_np(o).assertion:
-                if o1 ==\
-                URIRef("https://w3id.org/fair/fip/terms/FIP-Question-I2-D")\
-                and\
-                p1 ==\
-                URIRef("https://w3id.org/fair/fip/terms/refers-to-question"):
-                    for s2, p2, o2 in self.fetch_np(o).assertion:
-                        if p2 ==\
-                        URIRef("https://w3id.org/fair/fip/terms/declares-planned-use-of"):
-                            o2_parsed = re.split('#', o2)[0]
-                            for s3, p3, o3 in self.fetch_np(o2_parsed).assertion:
-                                if p3 ==\
-                                URIRef("http://usefulinc.com/ns/doap#implements"):
-                                    shacl_uri = o3
-                                    break
-                if o1 ==\
-                URIRef("https://w3id.org/fair/fip/terms/FIP-Question-I3-MD")\
-                and p1 ==\
-                URIRef("https://w3id.org/fair/fip/terms/refers-to-question"):
-                    for s2, p2, o2 in self.fetch_np(o).assertion:
-                        if p2 ==\
-                        URIRef("https://w3id.org/fair/fip/terms/declares-planned-use-of"):
-                            o2_parsed = re.split('#', o2)[0]
-                            for s3, p3, o3 in\
-                            self.fetch_np(o2_parsed).assertion:
-                                if p3 ==\
-                                        URIRef("http://usefulinc.com/ns/doap#implements"):
-                                            cedar_uri = o3
-                                            break
+        # Query the sparql endpoint to obtain the results
+        # https://virtuoso.nps.petapico.org/sparql
+        endpoint = current_app.config.get("nanopub_endpoint")
+        q = """
+        PREFIX np: <http://www.nanopub.org/nschema#>
+        PREFIX fip: <https://w3id.org/fair/fip/terms/>
+        SELECT distinct ?shacl WHERE {
+            ?np a np:Nanopublication;
+                np:hasAssertion ?assert;
+                np:hasProvenance ?prov;
+                np:hasPublicationInfo ?pInfo ;
+                <http://purl.org/nanopub/x/includesElement> ?element.
+            ?element np:hasAssertion ?sub_element.
+            GRAPH ?sub_element {
+                ?a fip:refers-to-question fip:FIP-Question-I2-D;
+                    fip:declares-planned-use-of ?shacl_link.
+            }
+            bind(URI(strbefore(str(?shacl_link), "#")) as ?shacl_link_temp)
+            ?shacl_link_temp np:hasAssertion ?shacl_assertion.
+            GRAPH ?shacl_assertion{
+                ?b <http://usefulinc.com/ns/doap#implements> ?shacl;
+                    a <fip:Available-FAIR-Enabling-Resource> ,\
+                    fip:FAIR-Enabling-Resource , \
+                    fip:Structured-vocabulary .
+            }
+            FILTER(str(?np) = "%s")
+        }
+        """%self.uri
+        df = sd.get(endpoint, q)
+        shacl_uri = df['shacl'][0]
+        q = '''
+        PREFIX np: <http://www.nanopub.org/nschema#>
+        PREFIX fip: <https://w3id.org/fair/fip/terms/>
+
+        SELECT distinct ?cedar WHERE {
+            ?np a np:Nanopublication;
+                np:hasAssertion ?assert;
+                np:hasProvenance ?prov;
+                np:hasPublicationInfo ?pInfo ;
+                <http://purl.org/nanopub/x/includesElement> ?element.
+            ?element np:hasAssertion ?sub_element.
+            GRAPH ?sub_element {
+                ?a fip:refers-to-question fip:FIP-Question-I3-MD;
+                    fip:declares-planned-use-of ?cedar_link.
+            }
+            bind(URI(strbefore(str(?cedar_link), "#")) as ?cedar_link_temp)
+            ?cedar_link_temp np:hasAssertion ?cedar_assertion.
+            GRAPH ?cedar_assertion{
+                ?b <http://usefulinc.com/ns/doap#implements> ?cedar.
+            }
+            FILTER(str(?np) = "%s")
+        }
+        '''%self.uri
+        df = sd.get(endpoint, q)
+        cedar_uri = df['cedar'][0]
         if shacl_uri and cedar_uri:
             fip_uri = self.create_fip_uri(shacl_uri, cedar_uri)
             return fip_uri
