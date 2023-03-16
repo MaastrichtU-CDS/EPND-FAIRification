@@ -127,8 +127,7 @@ class GraphDBTripleStore(AbstractTripleStore):
     def upload_turtle(self, turtleString, namedGraph):
         url = self.endpoint + "/rdf-graphs/service?graph=" + namedGraph
         response = requests.post(url, data=turtleString, headers={"Content-Type": "text/turtle"})
-        
-        if response.status_code > 299 | response.status_code < 200:
+        if response.status_code > 299 or response.status_code < 200:
             print("url: " + url)
             print("data: " + turtleString)
             print(response.text)

@@ -5,12 +5,21 @@
 <div class="d-flex justify-content-center"><img src="/static/EPND_logo_Primary_RGB_2x-100.jpg"  style="margin-bottom: 50px;" height="100"></div>
 
 <h2>Select FIP</h2>
-<p>Enter the URL for the FAIR implementation profile you want to use below.</p>
+<div>
+<button class="btn btn-primary float-left" onclick="getElementById('upload-file').style.display='none'; getElementById('upload-web').style.display='block'">Web</button> 
+<button class="btn btn-primary float-left" onclick="getElementById('upload-web').style.display='none'; getElementById('upload-file').style.display='block'">File upload</button> 
+</div>
 
-<form method="POST">
-    <div class="form-group">
-        <input type="text" class="form-control input-lg" id="fip-uri" name="fip-uri" placeholder="Enter FIP URL">
-        <small id="fip-uri-help" class="form-text text-muted">This URL is given by the project consortium</small>
+<form method="POST" enctype="multipart/form-data">
+    <div class="form-group" style="margin-top: 20px;">
+	    <div id="upload-web" style="display: none;">
+        	<input type="text" class="form-control input-lg" id="fip-uri" name="fip-uri" placeholder="Enter the URL for the FAIR implementation profile you want to use">
+        	<small id="fip-uri-help" class="form-text text-muted">This URL is
+                given by the project consortium, example - http://purl.org/np/RA_wmtSljcR4pObf4SzaWp5-qIHcTiyFAEjLKvZ_d6sUI</small>
+	    </div>
+	    <div id="upload-file" style="display: none;">
+		<input type="file" name="fip-file" id="fip-file" accept=".ttl">
+	    </div>
         {% if warning %}
         <div class="alert alert-danger alert-dismissible" role="alert">
             {{ warning }}
