@@ -1,4 +1,4 @@
-Flask==2.0.3
+Flask==2.2.5
 Pandas==1.4.1
 Numpy==1.22.3
 SPARQLWrapper==2.0.0
