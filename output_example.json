@@ -1,0 +1,100 @@
+{
+    "@context": {},
+    "databases": [
+        {
+            "name": "testdb",
+            "schema": "testschema",
+            "tables": [
+                {
+                    "name": "testtable",
+                    "columns": [
+                        {
+                            "name": "id",
+                            "type": "int",
+                            "nullable": false
+                        },
+                        {
+                            "name": "reference",
+                            "type": "int",
+                            "nullable": true
+                        },
+                        {
+                            "name": "name",
+                            "type": "varchar",
+                            "nullable": false
+                        }
+                    ],
+                    "primary_key": [
+                        "id"
+                    ],
+                    "foreign_keys": [
+                        {
+                            "column": "reference",
+                            "references": {
+                                "table": "othertable",
+                                "column": "id"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "mappings": [
+        {
+            "type": "value",
+            "source": {
+                "database": "testdb",
+                "schema": "testschema",
+                "table": "testtable",
+                "column": "id"
+            },
+            "target": {
+                "type": "identifier",
+                "uri": "ncit:C16960",
+                "name": "Patient" // for convenience, not needed
+            }
+        },
+        {
+            "type": "value",
+            "source": {
+                "database": "testdb",
+                "schema": "testschema",
+                "table": "testtable",
+                "column": "weight"
+            },
+            "target": {
+                "type": "numeric",
+                "uri": "snomed:27113001",
+                "name": "Body weight", // for convenience, not needed
+                "unit": {
+                    "uri": "uo:0000009",
+                    "name": "Kilogram" // for convenience, not needed
+                }
+            }
+        },
+        {
+            "type": "category",
+            "source": {
+                "database": "testdb",
+                "schema": "testschema",
+                "table": "testtable",
+                "column": "geslacht"
+            },
+            "target": {
+                "type": "category-mapping",
+                "uri": "snomed:285116001",
+                "name": "Gender identity finding (finding)", // for convenience, not needed
+                "value_mapping": [
+                    {
+                        "source": "M",
+                        "target": {
+                            "uri": "snomed:446151000124109",
+                            "name": "Identifies as male gender (finding)" // for convenience, not needed
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}
