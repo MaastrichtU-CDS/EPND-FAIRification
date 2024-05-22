@@ -1,7 +1,0 @@
-{
-    "graphdb_server": "http://localhost:7200",
-    "repository": "epnd_dummy",
-    "rdf_endpoint": "http://localhost:7200/repositories/epnd_dummy",
-    "triplifier_service": "http://localhost:8080",
-    "turtle_folder": "local_turtle_load_test"
-}
