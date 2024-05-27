@@ -5,3 +5,4 @@ __pycache__/
 env/bin/pip
 .env.prod
 .env.prod.db
+**.log

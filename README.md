@@ -100,6 +100,19 @@ If you have a suggestion that would make this better, please fork the repo and c
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+## Development
+
+### Debugging and setting breakpoints
+A *launch.json* is included for vscode (see the .vscode folder). In order to set breakpoints and debug the application, deploy the using the development setup: 
+```
+docker compose up -d --build
+```
+
+Then, in visual studio code, under *Run and Debug*, select *Run Django* and click the play button to connect to the debugger.
+The fairnotator application checks the DEBUG environment variable to ascertain whether debugpy should be attached, which is set to 1 in this configuration (see the *.env.dev*). 
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 ## License
 
 Distributed under the Apache 2.0 License. See `LICENSE.txt` for more information.
