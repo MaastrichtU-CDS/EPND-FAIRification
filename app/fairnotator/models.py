@@ -10,7 +10,6 @@ class CsvFile(Datasource):
 
 
 class Database(Datasource):
-    name = models.CharField(max_length=255)
     schema = models.CharField(max_length=255)
 
 

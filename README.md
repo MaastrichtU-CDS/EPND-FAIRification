@@ -103,7 +103,7 @@ If you have a suggestion that would make this better, please fork the repo and c
 ## Development
 
 ### Debugging and setting breakpoints
-A *launch.json* is included for vscode (see the .vscode folder). In order to set breakpoints and debug the application, deploy the using the development setup: 
+A *launch.json* is included for vscode (see the .vscode folder). In order to set breakpoints, hot reload code and debug the application, deploy the application using the development setup: 
 ```
 docker compose up -d --build
 ```

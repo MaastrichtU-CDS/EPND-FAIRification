@@ -6,3 +6,4 @@ env/bin/pip
 .env.prod
 .env.prod.db
 **.log
+app/static/CACHE/

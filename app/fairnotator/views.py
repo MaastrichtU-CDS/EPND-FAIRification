@@ -1,28 +1,34 @@
-import csv
 from django.shortcuts import render
 from .forms import CSVUploadForm
 import logging
+from .file_service import determine_encoding
+import pandas
+import io
 
 
-log = logging.getLogger(__name__)
-
+log = logging.getLogger('django')
 
 def upload_csv(request):
-    data = None
+    columns = None
+    context = None
     if request.method == 'POST':
         form = CSVUploadForm(request.POST, request.FILES)
         if form.is_valid():
             uploaded_file = request.FILES['file']
-            data = []
-            read_csv = csv.reader(uploaded_file.read().decode('utf-8').splitlines())
-            for row in read_csv:
-                log.info(row)
-                data.append(row)
+            blob = uploaded_file.read()
+            encoding = determine_encoding(blob)
+            data_frame = pandas.read_csv(io.StringIO(blob.decode(encoding)),delimiter=',')
+            columns = [{'field': f, 'title': f} for f in data_frame.head()]
+            context = {
+                'form': form,
+                'data': data_frame,
+                'columns': columns
+                }
+            return render(request, 'index.html', context)
+        else:
+            return render(request, 'index.html', None)
     else:
-        form = CSVUploadForm()
-
-    context = {
-        'form': form,
-        'data': data
-    }
-    return render(request, 'index.html', context)
+        context = {
+             'form': CSVUploadForm(),
+            }
+        return render(request, 'index.html', context)
