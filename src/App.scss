@@ -1,0 +1,58 @@
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+
+$primary: #130b6d;
+
+$theme-colors: map-merge($theme-colors, (
+  "primary": $primary
+));
+
+$btn-font-family: "Figtree","Helvetica Neue","Helvetica","Arial",sans-serif !important;
+
+@import "bootstrap";
+
+.btn {
+  font-weight: 600; 
+}
+
+.App {
+  height: 100vh;
+}
+
+.container-fluid {
+  height: 100%;
+}
+
+.container-fluid > div {
+  height: 100%;
+}
+
+.list-container {
+  overflow-y: auto;
+}
+
+.table-responsive {
+  overflow-y: auto;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: "Figtree","Helvetica Neue","Helvetica","Arial",sans-serif !important;
+  background-color: #eef0e6;
+}
+
+.custom-container {
+  height: calc(100vh - 2.5rem - 56px); // 2rem padding and 56px navbar
+  background-color: #eef0e6;
+}
+
+.card-header {
+  border-bottom: 0;
+  background-color: transparent;
+}
+
+.card-body {
+  overflow-y: auto;
+  max-height: 100%;
+}

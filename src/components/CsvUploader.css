@@ -1,0 +1,18 @@
+.upload-area {
+    border: 2px dashed lightgray; 
+    border-radius: 5px;
+    padding: 20px;
+    text-align: center;
+    background-color: #f8f9fa;
+    cursor: pointer;
+}
+
+.upload-area p {
+    margin: 0;
+    font-size: 16px;
+    color: #6c757d;
+}
+
+.upload-area input[type="file"] {
+    display: none;
+}

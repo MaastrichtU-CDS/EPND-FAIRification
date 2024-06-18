@@ -1,9 +1,0 @@
-Django==4.2.3
-psycopg2-binary==2.9.6
-gunicorn==21.2.0
-debugpy==1.8.1
-chardet==5.2.0
-pandas==2.2.2
-django-pandas==0.6.7
-django-compressor==4.4
-django-libsass==0.9
