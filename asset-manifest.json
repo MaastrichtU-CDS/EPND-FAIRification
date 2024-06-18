@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/EPND-FAIRification/static/css/main.42056a7d.css",
+    "main.js": "/EPND-FAIRification/static/js/main.8dfe6b0d.js",
+    "static/js/453.8ab44547.chunk.js": "/EPND-FAIRification/static/js/453.8ab44547.chunk.js",
+    "index.html": "/EPND-FAIRification/index.html",
+    "main.42056a7d.css.map": "/EPND-FAIRification/static/css/main.42056a7d.css.map",
+    "main.8dfe6b0d.js.map": "/EPND-FAIRification/static/js/main.8dfe6b0d.js.map",
+    "453.8ab44547.chunk.js.map": "/EPND-FAIRification/static/js/453.8ab44547.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.42056a7d.css",
+    "static/js/main.8dfe6b0d.js"
+  ]
+}
