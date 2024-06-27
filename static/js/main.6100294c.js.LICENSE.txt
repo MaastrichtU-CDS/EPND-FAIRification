@@ -6,6 +6,12 @@ License: MIT
 */
 
 /*!
+	Copyright (c) 2018 Jed Watson.
+	Licensed under the MIT License (MIT), see
+	http://jedwatson.github.io/classnames
+*/
+
+/*!
  *  decimal.js v10.4.3
  *  An arbitrary-precision Decimal type for JavaScript.
  *  https://github.com/MikeMcl/decimal.js
