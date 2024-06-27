@@ -52,13 +52,13 @@ class JsonLdService {
       jsonLdObject.mappings[existingMappingIndex].target.value_mapping = [];
     }
     
-    const existingCategoricalValueIndex = jsonLdObject.mappings[existingMappingIndex].target.value_mapping.findIndex(v => v.source === source);
+    const existingCategoricalValueIndex = jsonLdObject.mappings[existingMappingIndex].target.value_mapping.findIndex(v => {
+      return v.target.uri === target.uri});
     if (existingCategoricalValueIndex !== -1) {
       jsonLdObject.mappings[existingMappingIndex].target.value_mapping[existingCategoricalValueIndex] = { source, target };
     } else {
       jsonLdObject.mappings[existingMappingIndex].target.value_mapping.push({ source, target });
     }
-    
     await this.saveJsonLdObject(jsonLdObject);
   }
 
@@ -72,6 +72,15 @@ class JsonLdService {
     }
 
     await this.saveJsonLdObject(jsonLdObject);
+  }
+
+  async deleteMapping(target) {
+    const jsonLdObject = await this.getJsonLdObject();
+    const mappingIndex = jsonLdObject.mappings.findIndex(mapping => mapping.target.uri === target.uri);
+    if (mappingIndex !== -1) {
+      jsonLdObject.mappings.splice(mappingIndex, 1);
+      await this.saveJsonLdObject(jsonLdObject);
+    }
   }
 
   async addDatasource(database) {
