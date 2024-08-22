@@ -16,63 +16,45 @@
     <a href="https://github.com/MaastrichtU-CDS/EPND-FAIRification"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://www.youtube.com/watch?v=T3lE1kw55IE">View Demo</a>
+    <a href="https://maastrichtu-cds.github.io/EPND-FAIRification/#">View Demo</a>
     ·
     <a href="https://github.com/MaastrichtU-CDS/EPND-FAIRification/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
     ·
     <a href="https://github.com/MaastrichtU-CDS/EPND-FAIRification/issues/new?labels=enhancement&template=feature-request---.md">Request Feature</a>
   </p>
 </div>
-<!-- TABLE OF CONTENTS -->
-<details>
-  <summary>Table of Contents</summary>
-  <ol>
-    <li>
-      <a href="#about-the-project">About The Project</a>
-      <ul>
-        <li><a href="#built-with">Built With</a></li>
-      </ul>
-    </li>
-    <li>
-      <a href="#getting-started">Getting Started</a>
-      <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#installation">Installation</a></li>
-      </ul>
-    </li>
-    <li><a href="#usage">Usage</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
-    <li><a href="#contributing">Contributing</a></li>
-    <li><a href="#license">License</a></li>
-    <li><a href="#contact">Contact</a></li>
-    <li><a href="#acknowledgments">Acknowledgments</a></li>
-  </ol>
-</details>
 
 ## About The Project
+This project is meant as a starting point for a new FairNotator. The goal is to create a simple interface to allow domain experts to map the syntax of their local data (CSV is assumed for the time being) to a common terminology (currently represented as an excel sheet).
+
+The output of the mapping is a JSON-LD, which is to be used as a starting point that can be plugged into a variety of ETL solutions based on project needs (such as OMOP or R2RML ETL pipelines).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 
 ### Built With
 
-* [![React](https://img.shields.io/badge/-ReactJs-61DAFB?logo=react&logoColor=white&style=for-the-badge)](https://react.dev/)
+[![React](https://img.shields.io/badge/-ReactJs-61DAFB?logo=react&logoColor=white&style=for-the-badge)](https://react.dev/)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+## Prerequisites
+ - [Node.js & npm](https://nodejs.org/en)
 
 ## Getting Started
+For development and testing, run:
+```
+npm start
+```
 
+The current version is not configurable yet and uses hardcoded values for the column names of the terminology sheet. Copy paste the contents of [this file](https://github.com/MaastrichtU-CDS/EPND-FAIRification/blob/main/EPNDCS1Terminology.xls) to a google sheet to link to.
 
-### Prerequisites
+The [dummydata.csv](https://github.com/MaastrichtU-CDS/EPND-FAIRification/blob/fairnotator-1.0/dummydata.csv) file can be used as an example of a local data file.
 
-
-### Installation
+[output_example.json](https://github.com/MaastrichtU-CDS/EPND-FAIRification/blob/fairnotator-1.0/output_example.json) provides an example of what outputs should look like.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-
 ## Usage
-
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -94,34 +76,11 @@ If you have a suggestion that would make this better, please fork the repo and c
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-## Development
-
-### Debugging and setting breakpoints
-A *launch.json* is included for vscode (see the .vscode folder). In order to set breakpoints, hot reload code and debug the application, deploy the application using the development setup: 
-```
-docker compose up -d --build
-```
-
-Then, in visual studio code, under *Run and Debug*, select *Run Django* and click the play button to connect to the debugger.
-The fairnotator application checks the DEBUG environment variable to ascertain whether debugpy should be attached, which is set to 1 in this configuration (see the *.env.dev*). 
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 ## License
 
 Distributed under the Apache 2.0 License. See `LICENSE.txt` for more information.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-## Contact
-
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-## Acknowledgments
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 
 [contributors-shield]: https://img.shields.io/github/contributors/MaastrichtU-CDS/EPND-FAIRification.svg?style=for-the-badge
 [contributors-url]: https://github.com/MaastrichtU-CDS/EPND-FAIRification/graphs/contributors
