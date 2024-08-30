@@ -7,35 +7,88 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.scss';
 import JsonLdService from './services/JsonLdService.js';
 import { OntologyTerm } from './models/ontology-term.ts';
-import { ValueMapping } from './models/value-mapping.ts';
-import logo from './assets/logo.svg';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
+import JsonLdPreviewOffcanvas from './components/JsonLdPreviewOffcanvas.tsx';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faFloppyDisk, faTrashCan } from '@fortawesome/free-regular-svg-icons';
+import { Typeahead } from 'react-bootstrap-typeahead';
+import 'react-bootstrap-typeahead/css/Typeahead.css';
+import options from './assets/uo-terms.json';
+import 'react-bootstrap-typeahead/css/Typeahead.css';
+import 'react-bootstrap-typeahead/css/Typeahead.bs5.css';
+import { UnitOntologyTerm } from './models/unit-ontology-term.ts';
+import DateFormatSelect from './components/DateFormatSelect.tsx';
 
 function App() {
-  const [googleSheetData, setGoogleSheetData] = useState([]);
-  const [localTerms, setLocalTerms] = useState([]);
+  const [googleSheetData, setGoogleSheetData] = useState<OntologyTerm[]>([]);
+  const [localTerms, setLocalTerms] = useState<string[]>([]);
   const [selectedOntologyTerm, setSelectedOntologyTerm] = useState<OntologyTerm | null>(null);
   const [showList, setShowList] = useState(false);
   const [selectedMapping, setSelectedMapping] = useState('');
-  const [csvData, setCsvData] = useState([]);
+  const [csvData, setCsvData] = useState(new Map<string, any>());
   const [csvFileName, setCsvFileName] = useState('');
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isPreviewOffcanvasOpen, setIsPreviewOffcanvasOpen] = useState(false);
+  const [jsonLdObject, setJsonLdObject] = useState({});
+  const [localUnit, setLocalUnit] = useState<UnitOntologyTerm | undefined>();
+  const [dateTimeFormat, setDateTimeFormat] = useState<string | undefined>();
+  const [checkMarks, setCheckMarks] = useState<Map<string, boolean>>(new Map<string, boolean>());
+
+  let _typeahead: any;
+
+  const NOT_PRESENT = 'not-present';
+  const FLOAT = "float";
+  const INTEGER = "integer";
+  const DATE = "date";
 
   useEffect(() => {
     JsonLdService.initDB();
   }, []);
 
+  useEffect(() => {
+    if(!selectedOntologyTerm) return;
+    if(!localUnit){
+      JsonLdService.deleteLocalUnit(selectedOntologyTerm.ontologyClass).then((jsonLdObject) => {
+        setJsonLdObject(jsonLdObject);
+      });
+      return;
+    } 
+    JsonLdService.addLocalUnit(selectedOntologyTerm.ontologyClass, localUnit.preferredLabel, localUnit.classId).then((jsonLdObject) => {
+      setJsonLdObject(jsonLdObject);
+    });
+  }, [selectedOntologyTerm, localUnit]);
+
+  useEffect(() => {
+    if(!selectedOntologyTerm) return;
+    if(!dateTimeFormat){
+      JsonLdService.deleteDateTimeFormat(selectedOntologyTerm.ontologyClass).then((jsonLdObject) => {
+        setJsonLdObject(jsonLdObject);
+      });
+      return;
+    } 
+    JsonLdService.addDateTimeFormat(selectedOntologyTerm.ontologyClass, dateTimeFormat).then((jsonLdObject) => {
+      setJsonLdObject(jsonLdObject);
+    });
+  }, [selectedOntologyTerm, dateTimeFormat]);
+
+  useEffect(() => {
+    determineCheckMarks(jsonLdObject);
+  }, [jsonLdObject]);
+
+  const determineCheckMarks = async (jsonLdObject) => {
+    const checkMarks: Map<string, boolean> = new Map<string, boolean>();
+    for(let ontologyTerm of googleSheetData) {
+      const isMappingComplete = await JsonLdService.isMappingComplete(ontologyTerm.ontologyClass, ontologyTerm.valueClass);
+      checkMarks.set(ontologyTerm.ontologyClass, isMappingComplete);
+    }
+    setCheckMarks(checkMarks);
+  }
 
   const handleGoogleSheetData = (data: any) => {
     setGoogleSheetData(data);
     setShowList(true);
-  };
-
-  const handleCsvUpload = (localTerms: any, data: any, fileName: string) => {
-    setLocalTerms(localTerms);
-    setCsvData(data);
-    setCsvFileName(fileName);
+    refreshJsonLdObject();
   };
 
   const handleOntologyTermClick = (ontologyTerm: OntologyTerm) => {
@@ -45,6 +98,26 @@ function App() {
         setSelectedMapping('');
       } else {
         setSelectedMapping(mapping.source.column);
+        if(mapping.source.unit){
+          setLocalUnit(options.find((option) => mapping.source.unit.uri === option.classId));
+        } else {
+          setLocalUnit({
+            classId: undefined,
+            preferredLabel: undefined,
+            synonyms: undefined,
+            definitions: undefined,
+            obsolete: undefined,
+            cui: undefined,
+            semanticTypes: undefined,
+            parents: undefined,
+            hasRelatedSynonym: undefined
+          });
+        }
+        if(mapping.source.dateTimeFormat){
+          setDateTimeFormat(mapping.source.dateTimeFormat);
+        } else {
+          setDateTimeFormat(undefined);
+        }
       }
     });
   };
@@ -53,6 +126,12 @@ function App() {
     setShowList(false);
     setSelectedOntologyTerm(null);
   };
+
+  const handleCsvDataChange = (csvName: string, data: Map<string, any>) => {
+    setCsvFileName(csvName);
+    setCsvData(data);
+    setLocalTerms(Array.from(data.keys()));
+  }
 
   const handleMappingChange = (event: any) => {
     if (!selectedOntologyTerm) return;
@@ -64,6 +143,10 @@ function App() {
       if (selectedLocalTerm === "") {
         JsonLdService.deleteMapping({
           uri: selectedOntologyTerm.ontologyClass,
+        }).then(() => {
+          JsonLdService.getJsonLdObject().then((jsonLdObject) => {
+            setJsonLdObject(jsonLdObject);
+          });
         });
       } else {
         JsonLdService.addMapping(
@@ -77,13 +160,27 @@ function App() {
             uri: selectedOntologyTerm.ontologyClass,
             name: selectedOntologyTerm.variable,
           }
-        );
+        ).then(() => {
+          JsonLdService.getJsonLdObject().then((jsonLdObject) => {
+            setJsonLdObject(jsonLdObject);
+          });
+        });
       }
     });
   };
 
   const getColumnStatistics = (column) => {
-    const columnData = csvData.map((row) => parseFloat(row[column])).filter((value) => !isNaN(value));
+    if(!csvData.get(column)) {
+      return {
+        mean: 0,
+        std: 0,
+        count: 0,
+        min: 0,
+        max: 0,
+      };
+    }
+    const columnData = csvData.get(column).map((value: any) => parseFloat(value))
+      .filter((value: any) => !isNaN(value));
     if (!columnData || columnData.length === 0) {
       return {
         mean: 0,
@@ -119,48 +216,67 @@ function App() {
   };
 
   const deleteJsonLd = async () => {
-    setIsModalOpen(false);
+    setIsDeleteModalOpen(false);
     await JsonLdService.deleteJsonLdObject();
+    JsonLdService.getJsonLdObject().then((jsonLdObject) => {
+      setJsonLdObject(jsonLdObject);
+    });
     if (!selectedOntologyTerm) return;
     handleOntologyTermClick(selectedOntologyTerm);
   }
 
-  const toggleModal = () => {
-    setIsModalOpen(!isModalOpen);
+  const toggleDeleteModal = () => {
+    setIsDeleteModalOpen(!isDeleteModalOpen);
   };
+
+  const togglePreviewOffcanvas = () => {
+    refreshJsonLdObject();
+    setIsPreviewOffcanvasOpen(!isPreviewOffcanvasOpen);
+  }
+
+  const refreshJsonLdObject = () => {
+    JsonLdService.getJsonLdObject().then((jsonLdObject) => {
+      setJsonLdObject(jsonLdObject);
+    });
+  }
+
+  const changeLocalUnit = (selected: UnitOntologyTerm[]) => {
+    if(!selected || selected.length === 0){
+      setLocalUnit(undefined);
+    } else {
+      setLocalUnit(selected[0]);
+    }
+  }
+
+  const changeLocalDateTimeFormat = (selected: string) => {
+    if(!selected || selected.length === 0){
+      setDateTimeFormat(undefined);
+    } else {
+      setDateTimeFormat(selected);
+    }
+  }
+
+  const defocusLocalUnit = () => {
+    if(!localUnit){
+      if(!_typeahead) return;
+      _typeahead.clear()
+      _typeahead.focus()
+    }
+  }
 
   return (
     <div>
-      <Modal show={isModalOpen} onHide={toggleModal}>
+      <Modal show={isDeleteModalOpen} onHide={toggleDeleteModal}>
         <Modal.Header closeButton>
           <Modal.Title>Warning</Modal.Title>
         </Modal.Header>
         <Modal.Body>All mapping data will be deleted. Are you sure?</Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={toggleModal}>Cancel</Button>
+          <Button variant="secondary" onClick={toggleDeleteModal}>Cancel</Button>
           <Button variant="danger" onClick={deleteJsonLd}>Yes</Button>
         </Modal.Footer>
       </Modal>
-      <nav className="navbar navbar-expand-lg navbar-light">
-        <img src={logo} className="navbar-brand d-inline-block align-top mx-3" />
-        <a className="navbar-brand text-primary" href="#">FAIRnotator</a>
-        <div className="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul className="navbar-nav mr-auto">
-            <li className="nav-item active">
-              <a className="nav-link text-primary" href="https://github.com/MaastrichtU-CDS/EPND-FAIRification">GitHub</a>
-            </li>
-            <li className="nav-item">
-              <a className="nav-link text-primary" href="https://github.com/MaastrichtU-CDS/EPND-FAIRification">How-to</a>
-            </li>
-            <li className="nav-item">
-              <a className="nav-link text-primary" href="https://github.com/MaastrichtU-CDS/EPND-FAIRification">FAQ</a>
-            </li>
-          </ul>
-        </div>
-        <button className="btn btn-danger p-2 mx-3" onClick={toggleModal}>
-          Delete Local Data
-        </button>
-      </nav>
+      <JsonLdPreviewOffcanvas isOpen={isPreviewOffcanvasOpen} onToggle={togglePreviewOffcanvas} jsonLdObject={jsonLdObject} />
       <div className="container-fluid custom-container">
         <div className="d-flex justify-content-center">
           <div className="row h-100 w-75">
@@ -176,6 +292,7 @@ function App() {
                       onFetchData={handleGoogleSheetData}
                       onOntologyTermClick={handleOntologyTermClick}
                       showList={showList}
+                      checkMarks={checkMarks}
                       onClose={handleSheetCloseClick}
                     />
                   </div>
@@ -185,8 +302,19 @@ function App() {
 
             <div className="col-lg-6 mb-3 h-100">
               <div className="card h-100 overflow-auto">
-                <div className="card-header">
+                <div className="card-header d-flex justify-content-between">
                   <h5>Mappings</h5>
+                  <div>
+                    <button className="btn btn-danger p-2 mx-1" onClick={toggleDeleteModal}>
+                      <FontAwesomeIcon icon={faTrashCan} />
+                    </button>
+                    <button className="btn btn-primary p-2 mx-1" onClick={togglePreviewOffcanvas}>
+                      <FontAwesomeIcon icon={faEye} />
+                    </button>
+                    <button className="btn btn-primary p-2 mx-1" onClick={handleExportJsonLd}>
+                      <FontAwesomeIcon icon={faFloppyDisk} />
+                    </button>
+                  </div>
                 </div>
                 <div className="card-body">
                   {selectedOntologyTerm && (
@@ -194,11 +322,11 @@ function App() {
                       <h1 className="text-primary pb-3">{selectedOntologyTerm && selectedOntologyTerm.variable}</h1>
                       <p><b>Ontology Class: </b> {selectedOntologyTerm && selectedOntologyTerm.ontologyClass}</p>
                       <p><b>Data Type: </b> {selectedOntologyTerm && selectedOntologyTerm.type}</p>
-                      <p><b>Unit: </b> {selectedOntologyTerm && selectedOntologyTerm.unit} {selectedOntologyTerm && selectedOntologyTerm.unitClass && '(' + selectedOntologyTerm.unitClass + ')'}</p>
+                      {/* <p><b>Unit: </b> {selectedOntologyTerm && options.find((option) => selectedOntologyTerm.unitClass === option.)?.preferredLabel} {selectedOntologyTerm && selectedOntologyTerm.unitClass && '(' + selectedOntologyTerm.unitClass + ')'}</p> */}
                     </div>
                   )}
-                  {selectedOntologyTerm && localTerms && localTerms.length > 0 && (
-                    <div className="form-group">
+                  {csvData && csvData.size > 0 && selectedOntologyTerm && localTerms && localTerms.length > 0 && (
+                    <div className="form-group m-2">
                       <label htmlFor="columnSelect">Select Mapping:</label>
                       <select
                         id="columnSelect"
@@ -206,7 +334,8 @@ function App() {
                         value={selectedMapping}
                         onChange={handleMappingChange}
                       >
-                        <option value="">Not Present</option>
+                        <option value="" disabled> Provide the Corresponding Local Value </option>
+                        <option value="not-present">Not Present</option>
                         {localTerms.map((column, index) => (
                           <option key={index} value={column}>
                             {column}
@@ -215,14 +344,41 @@ function App() {
                       </select>
                     </div>
                   )}
-                  {selectedMapping && selectedOntologyTerm && selectedOntologyTerm.valueClass && selectedOntologyTerm.valueClass.length > 0 && (
+                  {csvData && csvData.size > 0 && selectedMapping && selectedOntologyTerm && selectedOntologyTerm.valueClass && selectedOntologyTerm.valueClass.length > 0 && (
                     <CategoricalValues
                       csvData={csvData}
                       selectedOntologyTerm={selectedOntologyTerm}
                       selectedMapping={selectedMapping}
+                      refreshJsonLdObject={refreshJsonLdObject}
                     />
                   )}
-                  {selectedMapping && selectedOntologyTerm && (selectedOntologyTerm.type === "float" || selectedOntologyTerm.type === "integer") && (
+
+                  {csvData && csvData.size > 0 && selectedMapping && selectedMapping !== NOT_PRESENT && selectedOntologyTerm && selectedOntologyTerm.type === DATE && (
+                    <div className="form-group m-2">
+                      <label htmlFor="local-unit-select">Select Local Date/Time Format Used:</label>
+                      <DateFormatSelect selectedFormat={dateTimeFormat} onSelectChange={changeLocalDateTimeFormat}></DateFormatSelect>
+                    </div>
+                  )}
+
+                  {csvData && csvData.size > 0 && selectedMapping && selectedMapping !== NOT_PRESENT && selectedOntologyTerm && (selectedOntologyTerm.type === FLOAT || selectedOntologyTerm.type === INTEGER) && (
+                    <div className="form-group m-2">
+                        <label htmlFor="local-unit-select">Select Local Unit Used:</label>
+                        <Typeahead
+                        id="local-unit-select"
+                        ref={(ref) => _typeahead = ref}
+                        labelKey="preferredLabel"
+                        //@ts-ignore Unsure how to properly use typing here without casting
+                        onChange={changeLocalUnit}
+                        onBlur={defocusLocalUnit}
+                        options={options}
+                        placeholder="Select a local unit..."
+                        //@ts-ignore Unsure how to properly use typing here without casting
+                        selected={localUnit?.preferredLabel ? [localUnit] : []}
+                      />
+                    </div>
+                  )}
+
+                  {csvData && csvData.size > 0 && selectedMapping && selectedOntologyTerm && (selectedOntologyTerm.type === FLOAT || selectedOntologyTerm.type === INTEGER) && (
                     <div className="mt-3">
                       {(() => {
                         const stats = getColumnStatistics(selectedMapping);
@@ -250,6 +406,18 @@ function App() {
                       })()}
                     </div>
                   )}
+
+                  {(!csvData || csvData.size === 0) && (
+                    <div className="my-5 text-center d-flex justify-content-center align-items-center">
+                      <h3 className=" my-5 text-primary text-muted">Please Add Local Data</h3>
+                    </div>
+                  )}
+
+                 {(csvData && csvData.size > 0 && !showList) && (
+                    <div className="my-5 text-center d-flex justify-content-center align-items-center">
+                      <h3 className=" my-5 text-primary text-muted">Please provide a Google Sheet with Terminology Data</h3>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -262,14 +430,8 @@ function App() {
                 <div className="card-body">
                   <div className="flex-grow-1 d-flex justify-content-center m-3">
                     <CsvUploader
-                      onUpload={handleCsvUpload}
+                      onDataChange={handleCsvDataChange}
                     />
-                  </div>
-                  <div className="d-flex justify-content-center">
-                    <button className="btn btn-primary d-flex align-content-center p-3 my-2" onClick={handleExportJsonLd}>
-                      Export JSON-LD
-                    </button>
-
                   </div>
                 </div>
               </div>

@@ -3,10 +3,22 @@ import axios from 'axios';
 import Papa from 'papaparse';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { OntologyTerm } from '../models/ontology-term';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleCheck, faCircleXmark } from '@fortawesome/free-regular-svg-icons';
 
-const GoogleSheetReader = ({ data, onFetchData, onOntologyTermClick, showList, onClose }) => {
+export interface SheetReaderProps {
+  data: OntologyTerm[];
+  onFetchData: (data: any) => void;
+  onOntologyTermClick: (term: OntologyTerm) => void;
+  showList: boolean;
+  checkMarks: Map<string, boolean>;
+  onClose: () => void;
+}
+
+const GoogleSheetReader = ({ data, onFetchData, onOntologyTermClick, showList, checkMarks, onClose }: SheetReaderProps) => {
   const [sheetLink, setSheetLink] = useState('');
   const [loading, setLoading] = useState(false);
+  const [unableToFetch, setUnableToFetch] = useState(false);
 
   const handleInputChange = (event) => {
     setSheetLink(event.target.value);
@@ -15,10 +27,14 @@ const GoogleSheetReader = ({ data, onFetchData, onOntologyTermClick, showList, o
   const fetchData = async (event) => {
     event.preventDefault();
     setLoading(true);
+    setUnableToFetch(false);
     const sheetIdMatch = sheetLink.match(/\/spreadsheets\/d\/(.*?)\//);
+    let gidMatch = sheetLink.match(/gid=(\d+)/);
+    if(!gidMatch || gidMatch.length === 0) {
+      gidMatch = ['0','0'];
+    }
     if (sheetIdMatch && sheetIdMatch[1]) {
-      const csvExportUrl = `https://docs.google.com/spreadsheets/d/${sheetIdMatch[1]}/export?gid=0&format=csv`;
-
+      const csvExportUrl = `https://docs.google.com/spreadsheets/d/${sheetIdMatch[1]}/export?gid=${gidMatch[1]}&format=csv`;
       try {
         const response = await axios.get(csvExportUrl);
         Papa.parse(response.data, {
@@ -39,13 +55,21 @@ const GoogleSheetReader = ({ data, onFetchData, onOntologyTermClick, showList, o
       } catch (error) {
         console.error('Error fetching and parsing Google Sheet:', error);
         setLoading(false);
+        setUnableToFetch(true);
       }
+    } else {
+      setLoading(false);
+      setUnableToFetch(true);
     }
   };
 
+  const isChecked = (termName:string): boolean | undefined => {
+    return checkMarks.get(termName);
+  }
+
   return (
     <div className="container d-flex h-100 w-100 align-items-center justify-content-center flex-column">
-      {showList && !loading && (
+      {showList && !loading && !unableToFetch && (
         <div className="w-100 d-flex justify-content-end">
           <button className="btn btn-close m-2" onClick={onClose}></button>
         </div>
@@ -63,22 +87,33 @@ const GoogleSheetReader = ({ data, onFetchData, onOntologyTermClick, showList, o
       {loading && <div className="spinner-border text-primary" role="status">
         <span className="sr-only"></span>
       </div>}
-      {showList && !loading && (
-        <div className="h-100">
+      {showList && !loading && !unableToFetch && (
+        <div className="h-100 w-100 p-3">
           <div className="list-container">
             <ul className="list-group">
               {data.map((item, index) => (
                 <li
                   key={index}
-                  className="list-group-item"
+                  className="list-group-item d-flex justify-content-between align-items-center"
                   style={{ cursor: 'pointer' }}
                   onClick={() => onOntologyTermClick(item)}
                 >
-                  {item.variable}
+                  <div>{item.variable}</div>
+                  {checkMarks && checkMarks.size > 0 && isChecked(item.ontologyClass) && (
+                    <div className='text-success'><FontAwesomeIcon icon={faCircleCheck} /></div>
+                  )}
+                  {checkMarks && checkMarks.size > 0 && !isChecked(item.ontologyClass) && (
+                    <div className='text-danger'><FontAwesomeIcon icon={faCircleXmark} /></div>
+                  )}
                 </li>
               ))}
             </ul>
           </div>
+        </div>
+      )}
+      {unableToFetch && (
+        <div className="alert alert-danger m-3" role="alert">
+          Unable to fetch data from the provided Google Sheet. Please check the link and try again.
         </div>
       )}
     </div>

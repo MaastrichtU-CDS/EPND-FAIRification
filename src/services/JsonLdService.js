@@ -1,5 +1,8 @@
 import { openDB } from 'idb';
 
+var FLOAT = 'float';
+var INTEGER = 'integer';
+
 class JsonLdService {
   db;
 
@@ -19,6 +22,7 @@ class JsonLdService {
   }
 
   async getJsonLdObject() {
+    if(!this.db) return;
     return (await this.db.get('jsonLdStore', 1)).jsonLdObject;
   }
 
@@ -60,6 +64,49 @@ class JsonLdService {
       jsonLdObject.mappings[existingMappingIndex].target.value_mapping.push({ source, target });
     }
     await this.saveJsonLdObject(jsonLdObject);
+    return jsonLdObject;
+  }
+
+  async addLocalUnit(selectedOntologyTerm, localUnitName, localUnitUri){
+    if (!localUnitName || !localUnitUri) return;
+    const jsonLdObject = await this.getJsonLdObject();
+    const existingMappingIndex = jsonLdObject.mappings.findIndex(mapping => mapping.target.uri === selectedOntologyTerm);
+    if (existingMappingIndex === -1) return;
+
+    jsonLdObject.mappings[existingMappingIndex].source.unit = { uri: localUnitUri, name: localUnitName };
+    await this.saveJsonLdObject(jsonLdObject);
+    return jsonLdObject;
+  }
+
+  async deleteLocalUnit(selectedOntologyTerm){
+    const jsonLdObject = await this.getJsonLdObject();
+    const existingMappingIndex = jsonLdObject.mappings.findIndex(mapping => mapping.target.uri === selectedOntologyTerm);
+    if (existingMappingIndex === -1) return;
+
+    delete jsonLdObject.mappings[existingMappingIndex].source.unit;
+    await this.saveJsonLdObject(jsonLdObject);
+    return jsonLdObject;
+  }
+
+  async addDateTimeFormat(selectedOntologyTerm, dateTimeFormat) {
+    if (!dateTimeFormat) return;
+    const jsonLdObject = await this.getJsonLdObject();
+    const existingMappingIndex = jsonLdObject.mappings.findIndex(mapping => mapping.target.uri === selectedOntologyTerm);
+    if (existingMappingIndex === -1) return;
+  
+    jsonLdObject.mappings[existingMappingIndex].source.dateTimeFormat = dateTimeFormat;
+    await this.saveJsonLdObject(jsonLdObject);
+    return jsonLdObject;
+  }
+  
+  async deleteDateTimeFormat(selectedOntologyTerm) {
+    const jsonLdObject = await this.getJsonLdObject();
+    const existingMappingIndex = jsonLdObject.mappings.findIndex(mapping => mapping.target.uri === selectedOntologyTerm);
+    if (existingMappingIndex === -1) return;
+  
+    delete jsonLdObject.mappings[existingMappingIndex].source.dateTimeFormat;
+    await this.saveJsonLdObject(jsonLdObject);
+    return jsonLdObject;
   }
 
   async addMapping(source, target) {
@@ -72,6 +119,7 @@ class JsonLdService {
     }
 
     await this.saveJsonLdObject(jsonLdObject);
+    return jsonLdObject;
   }
 
   async deleteMapping(target) {
@@ -92,6 +140,32 @@ class JsonLdService {
     }
   }
 
+  async isMappingComplete(targetUri, valueClasses){
+    const jsonLdObject = await this.getJsonLdObject();
+    const existingMappingIndex = jsonLdObject.mappings.findIndex(mapping => mapping.target.uri === targetUri);
+    if (existingMappingIndex === -1) return false;
+    const target = jsonLdObject.mappings[existingMappingIndex].target
+    const source = jsonLdObject.mappings[existingMappingIndex].source
+    if (target.value_mapping) {
+      let valueMapped = false;
+      for(const valueClass of valueClasses){
+        valueMapped = false;
+        for (const valueMapping of target.value_mapping) {  
+          if(valueClass === valueMapping.target.uri){
+            valueMapped = true;
+          }
+        }
+      }
+      if (!valueMapped) return false;
+    }
+    if(target.type.toLowerCase() === FLOAT || target.type.toLowerCase() === INTEGER){
+      if(!source || !source.unit){
+        return false;
+      }
+    }
+    return true;
+  }
+
   // Csv structure in the JSON-LD object will be reconsidered in the future, now opting for a database object without a schema where all columns are of type string.
   async addCsvDatasource(name, columns) {
     const database = {
@@ -109,4 +183,5 @@ class JsonLdService {
   }
 }
 
-export default new JsonLdService();
+let jsonLdService = new JsonLdService();
+export default jsonLdService;

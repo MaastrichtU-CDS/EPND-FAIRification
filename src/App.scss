@@ -9,7 +9,25 @@ $theme-colors: map-merge($theme-colors, (
 
 $btn-font-family: "Figtree","Helvetica Neue","Helvetica","Arial",sans-serif !important;
 
+$offcanvas-horizontal-width: 32%;
+
 @import "bootstrap";
+
+.accordion {
+	--bs-accordion-btn-color: black;
+	--bs-accordion-btn-bg: white;
+	--bs-accordion-active-color: white;
+	--bs-accordion-active-bg: #130b6d;
+  --bs-accordion-border-color: #130b6d;
+}
+
+.accordion-button:focus {
+  box-shadow: none;
+}
+
+.btn-close {
+  margin:-10px;
+}
 
 .btn {
   font-weight: 600; 
