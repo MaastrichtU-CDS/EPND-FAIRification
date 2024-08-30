@@ -1,0 +1,24 @@
+Domain,Variables,OntologyClass,Description,Unit,unitClass,type,ValueClass,rangeMin,rangeMax,Comments
+Demographics,Age at clinical visit,OBI:0003076,An age since birth measurement datum at the time of a clinical visit.,day,UO:UO_0000033,integer,,0,130,
+Demographics,Age at sample date,EPND:AgeAtSampleDate,Age when biosample was taken. ,day,UO:UO_0000033,integer,,0,130,
+Demographics,Biological sex,snomed:429019009,Finding related to biological sex,categorical value,,factor,"snomed:248153007, snomed:248152002, snomed:32570691000036108",,,
+Demographics,Years of education,snomed:224288002,Duration of formal education (observable entity),Count,UO_0000189,integer,,0,130,
+Diagnosis,Clinical diagnosis ,EPND:ClinicalDiagnosis ,"Diagnosis of cognitive performance, function",categorical value,,factor,"EPND:NC, EPND:MCI, EPND:Dementia",,,Multiple time points
+Diagnosis,Clinical diagnosis date,EPND:ClinicalDiagnosisDate,Date of clinical diagnosis,date YYYY-MM-DD,ISO 8601 ,date,,,,"Min date, max date?"
+Diagnosis,Clinical dementia diagnosis,EPND:ClinicalDementiaDiagnosis,Type of dementia diagnosis,categorical value,,factor,"EPND:ADDementia, EPND:DLBDementia, EPND:PDDementia",,,
+Diagnosis,AD disease staging,EPND:ADDiseaseStaging,Staging according to a combination of amyloid pathology and cognitive impairment,categorical value ,,factor,"EPND:PreclinicalAD, EPND:ProdromalAD, EPND:ADDementia",,,
+Cognition,Date of procedure,snomed:439272007,Date of procedure (observable entity),date YYYY-MM-DD,ISO 8601 ,date,,,,"Min date, max date?"
+Cognition,MoCa,snomed:459651000124107,Montreal cognitive assessment score,Integer,UO_0000189,integer,,0,31,
+Cognition,MMSE,snomed:273617000,Mini Mental State Examination,Integer,UO_0000189,integer,,0,31,
+Cognition,Memory assessment ,EPND:MemoryAssessment ,Memory assessment,Integer,UO_0000189,integer,,0,,Max score?
+Cognition,Memory raw score,EPND:MemoryRawScore,Raw score of memory assessment,Integer,UO_0000189,integer,,0,,Max score?
+Cognition,Memory local norms,EPND:MemoryLocalNorms,Local norms of memory assessment,Float,,float,,0,,Max score?
+Cognition,Memory standerdised z-score,EPND:standerdisedZScore,Z-score of memory assessment,Float,,float,,0,,Max score?
+Motor function,Motor rating scale score,snomed:273633002,Motor assessment scale score,Integer,UO_0000189,integer,,0,,Max score?
+Genetics,APOE4 status,EPND:APOE4Status,APOE 4 allele status,Boolean,,boolean," sio:SIO_000269, sio:SIO_000270  ",,,
+Genetics,APOE genotype,ncbi:25728,APOE genotype category,categorical value,,factor,"EPND:E2E2, EPND:E2E3, EPND:E2E4, EPND:E3E3, EPND:E3E4, EPND:E4E4",,,
+Genetics,GBA genotype status,EPND:GBAGenotypeStatus,GBA Genotype status,Boolean,,boolean," sio:SIO_000269, sio:SIO_000270  ",,,
+Local CSF measures,CSF Amyloid-beta42 Cutoff,EPND:CSFAmyloidBeta42Cutoff,CSF Amyloid-beta42 cut off dependent on the assay and for different pre-analytical procedures in the cohort. ,picogram/ml,snomed:258808001,float,,0,5000,Max score?
+Local CSF measures,Amyloid beta 42 status ,EPND:AmyloidBeta42Status ,Amyloid beta 42 status ,Boolean,,boolean," sio:SIO_000269, sio:SIO_000270  ",,,
+Local CSF measures,Amyloid-beta 42,EPND:AmyloidBeta42,Amyloid beta42 ,picogram/ml,snomed:258808001,float,,0,5000,Max score?
+Sample related info,Date of sample collection,LNC:MTHU015751,collection date ,date YYYY-MM-DD,ISO 8601 ,date,,,,"Min date, max date?"
