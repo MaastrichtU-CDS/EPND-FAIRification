@@ -28,8 +28,8 @@ function AppRouter() {
             <BrowserRouter>
                 <Routes>
                     <Route path="/EPND-FAIRification" element={<App />} />
-                    <Route path="/faq" element={<Faq />} />
-                    <Route path="/howto" element={<HowTo />} />
+                    <Route path="/EPND-FAIRification/faq" element={<Faq />} />
+                    <Route path="/EPND-FAIRification/howto" element={<HowTo />} />
                 </Routes>
             </BrowserRouter>
         </div>
