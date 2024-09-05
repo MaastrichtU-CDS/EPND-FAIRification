@@ -36,7 +36,7 @@ const Faq = () => {
                         How does the FAIRNotator handle privacy sensitive data?
                     </Accordion.Header>
                     <Accordion.Body>
-                        The FAIRNotator is a client-side application, meaning that the data you provide never leaves your device. The JSON-LD output of the FAIRNotator contains only mappings to the syntactical structure of your data, and does not contain any of the potentially privacy sensitive data itself.
+                        The FAIRNotator is a client-side application, which means the data you provide never leaves your device. The JSON-LD output of the FAIRNotator contains only mappings to the syntactical structure of your data, and does not contain any of the potentially privacy sensitive data itself.
                     </Accordion.Body>
                 </Accordion.Item>
             </Accordion>

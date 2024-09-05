@@ -1,5 +1,5 @@
 import React from "react";
-import { HashRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import App from "./App.tsx";
 import Faq from "./components/Faq.tsx";
 import logo from './assets/logo.svg';
@@ -25,13 +25,13 @@ function AppRouter() {
                     </ul>
                 </div>
             </nav>
-            <HashRouter>
+            <BrowserRouter>
                 <Routes>
                     <Route path="/EPND-FAIRification" element={<App />} />
                     <Route path="/EPND-FAIRification/faq" element={<Faq />} />
                     <Route path="/EPND-FAIRification/howto" element={<HowTo />} />
                 </Routes>
-            </HashRouter>
+            </BrowserRouter>
         </div>
     )
 }
