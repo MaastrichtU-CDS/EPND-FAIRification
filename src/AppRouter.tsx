@@ -17,10 +17,10 @@ function AppRouter() {
                             <a className="nav-link text-primary" href="https://github.com/MaastrichtU-CDS/EPND-FAIRification">GitHub</a>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link text-primary" href="/howto">How-to</a>
+                            <a className="nav-link text-primary" href="/EPND-FAIRification/howto">How-to</a>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link text-primary" href="/faq">FAQ</a>
+                            <a className="nav-link text-primary" href="/EPND-FAIRification/faq">FAQ</a>
                         </li>
                     </ul>
                 </div>
