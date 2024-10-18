@@ -322,7 +322,6 @@ function App() {
                       <h1 className="text-primary pb-3">{selectedOntologyTerm && selectedOntologyTerm.variable}</h1>
                       <p><b>Ontology Class: </b> {selectedOntologyTerm && selectedOntologyTerm.ontologyClass}</p>
                       <p><b>Data Type: </b> {selectedOntologyTerm && selectedOntologyTerm.type}</p>
-                      {/* <p><b>Unit: </b> {selectedOntologyTerm && options.find((option) => selectedOntologyTerm.unitClass === option.)?.preferredLabel} {selectedOntologyTerm && selectedOntologyTerm.unitClass && '(' + selectedOntologyTerm.unitClass + ')'}</p> */}
                     </div>
                   )}
                   {csvData && csvData.size > 0 && selectedOntologyTerm && localTerms && localTerms.length > 0 && (

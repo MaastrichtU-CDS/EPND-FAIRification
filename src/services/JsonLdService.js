@@ -141,6 +141,7 @@ class JsonLdService {
   }
 
   async isMappingComplete(targetUri, valueClasses){
+    if(!targetUri) return false;
     const jsonLdObject = await this.getJsonLdObject();
     const existingMappingIndex = jsonLdObject.mappings.findIndex(mapping => mapping.target.uri === targetUri);
     if (existingMappingIndex === -1) return false;

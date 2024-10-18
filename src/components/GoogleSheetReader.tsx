@@ -5,6 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { OntologyTerm } from '../models/ontology-term';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleCheck, faCircleXmark } from '@fortawesome/free-regular-svg-icons';
+import { parse } from 'mathjs';
 
 export interface SheetReaderProps {
   data: OntologyTerm[];
@@ -19,6 +20,7 @@ const GoogleSheetReader = ({ data, onFetchData, onOntologyTermClick, showList, c
   const [sheetLink, setSheetLink] = useState('');
   const [loading, setLoading] = useState(false);
   const [unableToFetch, setUnableToFetch] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleInputChange = (event) => {
     setSheetLink(event.target.value);
@@ -28,6 +30,7 @@ const GoogleSheetReader = ({ data, onFetchData, onOntologyTermClick, showList, c
     event.preventDefault();
     setLoading(true);
     setUnableToFetch(false);
+    setErrorMessage('');
     const sheetIdMatch = sheetLink.match(/\/spreadsheets\/d\/(.*?)\//);
     let gidMatch = sheetLink.match(/gid=(\d+)/);
     if(!gidMatch || gidMatch.length === 0) {
@@ -40,7 +43,7 @@ const GoogleSheetReader = ({ data, onFetchData, onOntologyTermClick, showList, c
         Papa.parse(response.data, {
           header: true,
           complete: (result) => {
-            const parsedData: OntologyTerm = result.data.map(row => ({
+            const parsedData: OntologyTerm[] = result.data.map((row: any) => ({
               variable: row.Variables,
               ontologyClass: row.OntologyClass,
               unit: row.Unit,
@@ -48,6 +51,12 @@ const GoogleSheetReader = ({ data, onFetchData, onOntologyTermClick, showList, c
               unitClass: row.unitClass,
               valueClass: row.ValueClass ? row.ValueClass.replace(/\s/g, "").split(',') : []
             }));
+            const invalidTerms = parsedData.filter(term => 
+              !term.ontologyClass || !term.unit || !term.type
+            );
+            if (invalidTerms.length > 0) {
+              throw new Error('Some terms in the sheet have missing or empty fields for Ontology Class, Unit or Type. Please make sure all terms have values for these fields.');
+            }
             onFetchData(parsedData);
             setLoading(false);
           }
@@ -56,10 +65,12 @@ const GoogleSheetReader = ({ data, onFetchData, onOntologyTermClick, showList, c
         console.error('Error fetching and parsing Google Sheet:', error);
         setLoading(false);
         setUnableToFetch(true);
+        setErrorMessage(error.message);
       }
     } else {
       setLoading(false);
       setUnableToFetch(true);
+      setErrorMessage('Invalid Google Sheet link provided. The google sheet URL can be copy pasted directly from the address bar in the browser.');
     }
   };
 
@@ -113,7 +124,7 @@ const GoogleSheetReader = ({ data, onFetchData, onOntologyTermClick, showList, c
       )}
       {unableToFetch && (
         <div className="alert alert-danger m-3" role="alert">
-          Unable to fetch data from the provided Google Sheet. Please check the link and try again.
+          Unable to fetch data from the provided Google Sheet: {errorMessage}
         </div>
       )}
     </div>
