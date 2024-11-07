@@ -1,16 +1,16 @@
 {
   "files": {
     "main.css": "/EPND-FAIRification/static/css/main.a9535248.css",
-    "main.js": "/EPND-FAIRification/static/js/main.56ffeef8.js",
+    "main.js": "/EPND-FAIRification/static/js/main.35eb6095.js",
     "static/js/453.d855a71b.chunk.js": "/EPND-FAIRification/static/js/453.d855a71b.chunk.js",
     "static/media/logo.svg": "/EPND-FAIRification/static/media/logo.44705d7ee7d2015aeeca794b79750c6b.svg",
     "index.html": "/EPND-FAIRification/index.html",
     "main.a9535248.css.map": "/EPND-FAIRification/static/css/main.a9535248.css.map",
-    "main.56ffeef8.js.map": "/EPND-FAIRification/static/js/main.56ffeef8.js.map",
+    "main.35eb6095.js.map": "/EPND-FAIRification/static/js/main.35eb6095.js.map",
     "453.d855a71b.chunk.js.map": "/EPND-FAIRification/static/js/453.d855a71b.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.a9535248.css",
-    "static/js/main.56ffeef8.js"
+    "static/js/main.35eb6095.js"
   ]
 }
