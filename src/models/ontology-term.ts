@@ -1,8 +1,8 @@
 export interface OntologyTerm {
-    variable: string;
-    ontologyClass: string;
+    name: string;  
+    classIdentifier: string;
+    description: string;
     type: string;
-    unit: string;
-    unitClass: string;
-    valueClass: string[];
+    unitIdentifiers: string[];
+    unitNames: string[];
   }

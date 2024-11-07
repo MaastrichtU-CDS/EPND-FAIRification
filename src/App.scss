@@ -74,3 +74,25 @@ html, body {
   overflow-y: auto;
   max-height: 100%;
 }
+
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--lightestgrey); 
+}
+
+::-webkit-scrollbar-thumb {
+  background: #dee2e6;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #adb5bd; 
+}
+
+option:checked {
+  background-color: #eef0e6 !important;
+}

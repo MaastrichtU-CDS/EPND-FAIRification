@@ -41,6 +41,8 @@ function App() {
   const FLOAT = "float";
   const INTEGER = "integer";
   const DATE = "date";
+  const CATEGORICAL = "categorical";
+  const BOOLEAN = "boolean";
 
   useEffect(() => {
     JsonLdService.initDB();
@@ -48,26 +50,42 @@ function App() {
 
   useEffect(() => {
     if(!selectedOntologyTerm) return;
+    JsonLdService.getMapping(selectedOntologyTerm.classIdentifier).then((mapping) => {
+      if (!mapping || !mapping.source || !mapping.source.column) {
+        setSelectedMapping('');
+        setLocalUnit(undefined);
+        return;
+      }
+      if(mapping.source.unit){
+        setLocalUnit(options.find((option) => mapping.source.unit.uri === option.classId));
+      } else {
+        setLocalUnit(undefined);
+      }
+    });
+  }, [selectedOntologyTerm]);
+
+  useEffect(() => {
+    if(!selectedOntologyTerm) return;
     if(!localUnit){
-      JsonLdService.deleteLocalUnit(selectedOntologyTerm.ontologyClass).then((jsonLdObject) => {
+      JsonLdService.deleteLocalUnit(selectedOntologyTerm.classIdentifier).then((jsonLdObject) => {
         setJsonLdObject(jsonLdObject);
       });
       return;
     } 
-    JsonLdService.addLocalUnit(selectedOntologyTerm.ontologyClass, localUnit.preferredLabel, localUnit.classId).then((jsonLdObject) => {
+    JsonLdService.addLocalUnit(selectedOntologyTerm, localUnit.preferredLabel, localUnit.classId).then((jsonLdObject) => {
       setJsonLdObject(jsonLdObject);
     });
-  }, [selectedOntologyTerm, localUnit]);
+  }, [localUnit]);
 
   useEffect(() => {
     if(!selectedOntologyTerm) return;
     if(!dateTimeFormat){
-      JsonLdService.deleteDateTimeFormat(selectedOntologyTerm.ontologyClass).then((jsonLdObject) => {
+      JsonLdService.deleteDateTimeFormat(selectedOntologyTerm).then((jsonLdObject) => {
         setJsonLdObject(jsonLdObject);
       });
       return;
     } 
-    JsonLdService.addDateTimeFormat(selectedOntologyTerm.ontologyClass, dateTimeFormat).then((jsonLdObject) => {
+    JsonLdService.addDateTimeFormat(selectedOntologyTerm, dateTimeFormat).then((jsonLdObject) => {
       setJsonLdObject(jsonLdObject);
     });
   }, [selectedOntologyTerm, dateTimeFormat]);
@@ -79,8 +97,8 @@ function App() {
   const determineCheckMarks = async (jsonLdObject) => {
     const checkMarks: Map<string, boolean> = new Map<string, boolean>();
     for(let ontologyTerm of googleSheetData) {
-      const isMappingComplete = await JsonLdService.isMappingComplete(ontologyTerm.ontologyClass, ontologyTerm.valueClass);
-      checkMarks.set(ontologyTerm.ontologyClass, isMappingComplete);
+      const isMappingComplete = await JsonLdService.isMappingComplete(ontologyTerm.classIdentifier, ontologyTerm.unitIdentifiers);
+      checkMarks.set(ontologyTerm.classIdentifier, isMappingComplete);
     }
     setCheckMarks(checkMarks);
   }
@@ -93,7 +111,7 @@ function App() {
 
   const handleOntologyTermClick = (ontologyTerm: OntologyTerm) => {
     setSelectedOntologyTerm(ontologyTerm);
-    JsonLdService.getMapping(ontologyTerm.ontologyClass).then((mapping) => {
+    JsonLdService.getMapping(ontologyTerm.classIdentifier).then((mapping) => {
       if (!mapping || !mapping.source || !mapping.source.column) {
         setSelectedMapping('');
       } else {
@@ -101,17 +119,7 @@ function App() {
         if(mapping.source.unit){
           setLocalUnit(options.find((option) => mapping.source.unit.uri === option.classId));
         } else {
-          setLocalUnit({
-            classId: undefined,
-            preferredLabel: undefined,
-            synonyms: undefined,
-            definitions: undefined,
-            obsolete: undefined,
-            cui: undefined,
-            semanticTypes: undefined,
-            parents: undefined,
-            hasRelatedSynonym: undefined
-          });
+          setLocalUnit(undefined);
         }
         if(mapping.source.dateTimeFormat){
           setDateTimeFormat(mapping.source.dateTimeFormat);
@@ -142,7 +150,7 @@ function App() {
     JsonLdService.addCsvDatasource(fileNameWithoutExtension, localTerms).then(() => {
       if (selectedLocalTerm === "") {
         JsonLdService.deleteMapping({
-          uri: selectedOntologyTerm.ontologyClass,
+          uri: selectedOntologyTerm.classIdentifier,
         }).then(() => {
           JsonLdService.getJsonLdObject().then((jsonLdObject) => {
             setJsonLdObject(jsonLdObject);
@@ -156,9 +164,10 @@ function App() {
             column: selectedLocalTerm,
           },
           {
-            type: selectedOntologyTerm.unit,
-            uri: selectedOntologyTerm.ontologyClass,
-            name: selectedOntologyTerm.variable,
+            uri: selectedOntologyTerm.classIdentifier,
+            name: selectedOntologyTerm.name,
+            description: selectedOntologyTerm.description,
+            type: selectedOntologyTerm.type,
           }
         ).then(() => {
           JsonLdService.getJsonLdObject().then((jsonLdObject) => {
@@ -235,7 +244,7 @@ function App() {
   }
 
   const refreshJsonLdObject = () => {
-    JsonLdService.getJsonLdObject().then((jsonLdObject) => {
+    return JsonLdService.getJsonLdObject().then((jsonLdObject) => {
       setJsonLdObject(jsonLdObject);
     });
   }
@@ -319,8 +328,9 @@ function App() {
                 <div className="card-body">
                   {selectedOntologyTerm && (
                     <div>
-                      <h1 className="text-primary pb-3">{selectedOntologyTerm && selectedOntologyTerm.variable}</h1>
-                      <p><b>Ontology Class: </b> {selectedOntologyTerm && selectedOntologyTerm.ontologyClass}</p>
+                      <h1 className="text-primary pb-3">{selectedOntologyTerm && selectedOntologyTerm.name}</h1>
+                      <p style={{maxHeight: '8em', overflowY: 'scroll'}}><b>Description: </b> {selectedOntologyTerm && selectedOntologyTerm.description}</p>
+                      <p><b>Ontology Class Identifier: </b> {selectedOntologyTerm && selectedOntologyTerm.classIdentifier}</p>
                       <p><b>Data Type: </b> {selectedOntologyTerm && selectedOntologyTerm.type}</p>
                     </div>
                   )}
@@ -343,7 +353,8 @@ function App() {
                       </select>
                     </div>
                   )}
-                  {csvData && csvData.size > 0 && selectedMapping && selectedOntologyTerm && selectedOntologyTerm.valueClass && selectedOntologyTerm.valueClass.length > 0 && (
+                  {csvData && csvData.size > 0 && selectedMapping && selectedOntologyTerm && selectedOntologyTerm.classIdentifier && 
+                  (selectedOntologyTerm.type === CATEGORICAL || selectedOntologyTerm.type === BOOLEAN)  && selectedOntologyTerm.unitIdentifiers.length > 1 && (
                     <CategoricalValues
                       csvData={csvData}
                       selectedOntologyTerm={selectedOntologyTerm}

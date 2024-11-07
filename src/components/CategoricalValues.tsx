@@ -3,9 +3,11 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { OntologyTerm } from '../models/ontology-term';
 import JsonLdService from '../services/JsonLdService';
 import { ValueMapping } from '../models/value-mapping';
-import config from '../config/global-config.json';
 
 const CategoricalValues = ({ csvData, selectedOntologyTerm, selectedMapping, refreshJsonLdObject }) => {
+  const CATEGORICAL = "categorical";
+  const BOOLEAN = "boolean";
+
   const [categoricalValueMappings, setCategoricalValueMappings] = useState<Map<string, any>>(new Map<string, any>());
   const [uniqueCategoricalValues, setUniqueCategoricalValues] = useState<string[]>([]);
 
@@ -28,85 +30,56 @@ const CategoricalValues = ({ csvData, selectedOntologyTerm, selectedMapping, ref
   }, [selectedMapping, selectedOntologyTerm, csvData]);
   
   useEffect(() => {
-    const assignCategoricalValueMappings = (ontologyTerm: OntologyTerm | null) => {
-      if (!ontologyTerm) return;
-  
-      const selectedCategoricalValues = new Map<string, any>();
-      JsonLdService.getMapping(ontologyTerm.ontologyClass).then((mapping) => {
-        ontologyTerm.valueClass.forEach((value, index) => {
-          if (mapping && mapping.source && mapping.target && mapping.target.value_mapping) {
-            const selectedCategoricalMapping = mapping.target.value_mapping.find((value_mapping: ValueMapping) => value_mapping.target.uri === value);
-            if (selectedCategoricalMapping && selectedCategoricalMapping.source) {
-              selectedCategoricalValues.set(value, selectedCategoricalMapping.source);
-            } else {
-              selectedCategoricalValues.set(value, null);
-            }
-          } else {
-            selectedCategoricalValues.set(value, null);
-          }
-        });
-        const promises = determineLabels(selectedCategoricalValues);
-        Promise.all(promises).then((results:any) => {
-          setCategoricalValueMappings(new Map<string, any>(results));
-        });
-      });
-    }
-
-    const determineLabels = (categoricalValueMappings: Map<string, any>): Promise<any>[] => {
-      const promises: Promise<any>[] = [];
-      categoricalValueMappings.forEach((value: any, key: string) => {
-        promises.push(fetchOntologyTermLabel(key).then(label => {
-            return [label, categoricalValueMappings.get(key)];
-        }));
-      });
-      return promises;
-    }
-
     assignCategoricalValueMappings(selectedOntologyTerm)
-  }, [selectedOntologyTerm]);
+  }, [selectedOntologyTerm, selectedMapping]);
 
-  const handleCategoricalValueSelectionChange = (index: number, event: any) => {
-    if (!selectedOntologyTerm) return;
-    const targetUri = selectedOntologyTerm.valueClass[index];
-    if (!targetUri) return;
-    if (!event || !event.target) return;
-    let value = event.target.value;
-    if (!value) value = "";
-
-    JsonLdService.addCategoricalValueMapping(selectedOntologyTerm.ontologyClass, event.target.value, targetUri).then(() => {
-      refreshJsonLdObject();
+  const assignCategoricalValueMappings = (ontologyTerm: OntologyTerm | null) => {
+    if (!ontologyTerm) return;
+    if (ontologyTerm.type !== CATEGORICAL && ontologyTerm.type !== BOOLEAN) return;
+    if(!ontologyTerm.unitIdentifiers || ontologyTerm.unitIdentifiers.length < 2) return; // Categorical variables and booleans should have at least 2 possible values
+    const selectedCategoricalValues = new Map<string, any>();
+    JsonLdService.getMapping(ontologyTerm.classIdentifier).then((mapping) => {
+      ontologyTerm.unitIdentifiers.forEach((unitIdentifier: string) => {
+        const valueMappings = mapping?.target?.value_mapping?.filter((valueMapping: ValueMapping) => valueMapping.target.uri === unitIdentifier) || [];
+        const sources = valueMappings.map((valueMapping: ValueMapping) => valueMapping.source).filter(Boolean);
+        selectedCategoricalValues.set(unitIdentifier, sources.length ? sources : []);
+      });
+      setCategoricalValueMappings(new Map<string, any>(selectedCategoricalValues)); // Force re-render
     });
-    fetchOntologyTermLabel(targetUri).then(label => {
-      categoricalValueMappings.set(label, value);
-      setCategoricalValueMappings(new Map<string, any>(categoricalValueMappings)); // Force re-render
-    })
+  }
+  const handleCategoricalValueSelectionChange = (index: number, event: any) => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (!selectedOntologyTerm) return;
+    const targetUri = selectedOntologyTerm.unitIdentifiers[index];
+    if (!targetUri || !event?.target?.value) return;
+
+    const value = event.target.value;
+    const hasValue = categoricalValueMappings.get(targetUri)?.includes(value);
+
+    const updateMappings = () => {
+      assignCategoricalValueMappings(selectedOntologyTerm);
+      refreshJsonLdObject();
+    };
+
+    if (value === "not-present" && !hasValue) {
+      JsonLdService.removeAllCategoricalValueMappingsForTargetUri(selectedOntologyTerm.classIdentifier, targetUri)
+        .then(() => JsonLdService.addCategoricalValueMapping(selectedOntologyTerm.classIdentifier, value, targetUri))
+        .then(updateMappings);
+    } else if (hasValue) {
+      JsonLdService.removeCategoricalValueMapping(selectedOntologyTerm.classIdentifier, value, targetUri)
+        .then(updateMappings);
+    } else {
+      JsonLdService.removeCategoricalValueMapping(selectedOntologyTerm.classIdentifier, "not-present", targetUri)
+        .then(() => JsonLdService.addCategoricalValueMapping(selectedOntologyTerm.classIdentifier, value, targetUri))
+        .then(updateMappings);
+    }
   };
 
-
-  const fetchOntologyTermLabel = async (ontologyId) => {
-    const query = encodeURIComponent(ontologyId).toUpperCase();
-    const url = `${config.OLS_API_URL}/ontologies/snomed/terms?obo_id=${query}`;
-    try {
-      const response = await fetch(url, {
-        headers: {
-          'Accept': 'application/json'
-        },
-      });
-
-      const responseJson = await response.json();
-      if(!responseJson || !responseJson._embedded || !responseJson._embedded.terms || responseJson._embedded.terms.length === 0) {
-        return ontologyId;
-      }
-      return responseJson._embedded.terms[0].label + ` (${ontologyId})`;
-    } catch (error) {
-      return ontologyId;
-    }
-  }
-  
   return (
     <div className="mt-3">
-      {selectedOntologyTerm.valueClass && selectedOntologyTerm.valueClass.length > 0 && (
-        <div className="table-responsive" style={{ maxHeight: '400px', overflowY: 'auto' }}>
+      {selectedOntologyTerm.unitIdentifiers && selectedOntologyTerm.unitIdentifiers.length > 1 && (
+        <div className="table-responsive">
           <table className="table table-bordered">
             <thead>
               <tr>
@@ -116,15 +89,17 @@ const CategoricalValues = ({ csvData, selectedOntologyTerm, selectedMapping, ref
             </thead>
             <tbody>
               {
-                Array.from(categoricalValueMappings.entries()).map((value: any, index: any, array) => {
+                Array.from(categoricalValueMappings.entries()).map((valueMapping: any, index: any, array) => {
                   return (
-                    <tr key={value[0]}>
-                      <td>{value[0]}</td>
+                    <tr key={valueMapping[0]}>
                       <td>
-                        <select value={value[1] !== undefined ? value[1] : undefined} className="form-select"
-                          defaultValue={'DEFAULT'} onChange={(event) => handleCategoricalValueSelectionChange(index, event)}>
-                          <option value="DEFAULT" disabled> Provide the Corresponding Local Value </option>
-                          <option value="not-present">Not Present</option>                        
+                        {selectedOntologyTerm.unitNames.length > index && selectedOntologyTerm.unitNames[index] ?
+                      selectedOntologyTerm.unitNames[index] + ` (${valueMapping[0]})` : valueMapping[0]}</td>
+                      <td>
+                        <select multiple defaultValue={[]} value={valueMapping[1]} className="form-select"
+                          onMouseDown={(event) => handleCategoricalValueSelectionChange(index, event)}
+                          onChange={(event) => handleCategoricalValueSelectionChange(index, event)}>
+                          <option value="not-present">Not Present</option>
                           {uniqueCategoricalValues.map((term : string, idx: number) => (
                             <option key={idx} value={term}>{term}</option>
                           ))}

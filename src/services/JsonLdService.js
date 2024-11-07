@@ -2,6 +2,9 @@ import { openDB } from 'idb';
 
 var FLOAT = 'float';
 var INTEGER = 'integer';
+var DATE = 'date';
+var CATEGORICAL = 'categorical';
+var BOOLEAN = 'boolean';
 
 class JsonLdService {
   db;
@@ -57,7 +60,7 @@ class JsonLdService {
     }
     
     const existingCategoricalValueIndex = jsonLdObject.mappings[existingMappingIndex].target.value_mapping.findIndex(v => {
-      return v.target.uri === target.uri});
+      return v.source === source && v.target.uri === target.uri});
     if (existingCategoricalValueIndex !== -1) {
       jsonLdObject.mappings[existingMappingIndex].target.value_mapping[existingCategoricalValueIndex] = { source, target };
     } else {
@@ -67,13 +70,52 @@ class JsonLdService {
     return jsonLdObject;
   }
 
+  async removeCategoricalValueMapping(mappingUri, source, targetUri) {
+    const target = { uri: targetUri };
+    const jsonLdObject = await this.getJsonLdObject();
+    const existingMappingIndex = jsonLdObject.mappings.findIndex(mapping => mapping.target.uri === mappingUri);
+    if (existingMappingIndex === -1) {
+      throw new Error('Target mapping not found');
+    }
+
+    if (!jsonLdObject.mappings[existingMappingIndex].target.value_mapping) {
+      return;
+    }
+
+    const existingCategoricalValueIndex = jsonLdObject.mappings[existingMappingIndex].target.value_mapping.findIndex(v => {
+      return v.source === source && v.target.uri === target.uri});
+    if (existingCategoricalValueIndex !== -1) {
+      jsonLdObject.mappings[existingMappingIndex].target.value_mapping.splice(existingCategoricalValueIndex, 1);
+      await this.saveJsonLdObject(jsonLdObject);
+    }
+  }
+
+  async removeAllCategoricalValueMappingsForTargetUri(mappingUri, targetUri) {
+    const jsonLdObject = await this.getJsonLdObject();
+    const existingMappingIndex = jsonLdObject.mappings.findIndex(mapping => mapping.target.uri === mappingUri);
+    if (existingMappingIndex === -1) {
+      throw new Error('Target mapping not found');
+    }
+
+    if (!jsonLdObject.mappings[existingMappingIndex].target.value_mapping) {
+      return;
+    }
+
+    jsonLdObject.mappings[existingMappingIndex].target.value_mapping = jsonLdObject.mappings[existingMappingIndex].target.value_mapping.filter(v => v.target.uri !== targetUri);
+    await this.saveJsonLdObject(jsonLdObject);
+  }
+
   async addLocalUnit(selectedOntologyTerm, localUnitName, localUnitUri){
     if (!localUnitName || !localUnitUri) return;
     const jsonLdObject = await this.getJsonLdObject();
-    const existingMappingIndex = jsonLdObject.mappings.findIndex(mapping => mapping.target.uri === selectedOntologyTerm);
+    const existingMappingIndex = jsonLdObject.mappings.findIndex(mapping => mapping.target.uri === selectedOntologyTerm.classIdentifier);
     if (existingMappingIndex === -1) return;
 
     jsonLdObject.mappings[existingMappingIndex].source.unit = { uri: localUnitUri, name: localUnitName };
+    if(selectedOntologyTerm.unitIdentifiers && selectedOntologyTerm.unitIdentifiers.length === 1 && 
+       selectedOntologyTerm.unitNames && selectedOntologyTerm.unitNames.length === 1){
+        jsonLdObject.mappings[existingMappingIndex].target.unit = { uri: selectedOntologyTerm.unitIdentifiers[0], name: selectedOntologyTerm.unitNames[0]};
+    }
     await this.saveJsonLdObject(jsonLdObject);
     return jsonLdObject;
   }
@@ -91,17 +133,18 @@ class JsonLdService {
   async addDateTimeFormat(selectedOntologyTerm, dateTimeFormat) {
     if (!dateTimeFormat) return;
     const jsonLdObject = await this.getJsonLdObject();
-    const existingMappingIndex = jsonLdObject.mappings.findIndex(mapping => mapping.target.uri === selectedOntologyTerm);
+    const existingMappingIndex = jsonLdObject.mappings.findIndex(mapping => mapping.target.uri === selectedOntologyTerm.classIdentifier);
     if (existingMappingIndex === -1) return;
   
     jsonLdObject.mappings[existingMappingIndex].source.dateTimeFormat = dateTimeFormat;
+    jsonLdObject.mappings[existingMappingIndex].target.dateTimeFormat = selectedOntologyTerm.unitIdentifiers.toString();
     await this.saveJsonLdObject(jsonLdObject);
     return jsonLdObject;
   }
   
   async deleteDateTimeFormat(selectedOntologyTerm) {
     const jsonLdObject = await this.getJsonLdObject();
-    const existingMappingIndex = jsonLdObject.mappings.findIndex(mapping => mapping.target.uri === selectedOntologyTerm);
+    const existingMappingIndex = jsonLdObject.mappings.findIndex(mapping => mapping.target.uri === selectedOntologyTerm.classIdentifier);
     if (existingMappingIndex === -1) return;
   
     delete jsonLdObject.mappings[existingMappingIndex].source.dateTimeFormat;
@@ -140,27 +183,34 @@ class JsonLdService {
     }
   }
 
-  async isMappingComplete(targetUri, valueClasses){
+  async isMappingComplete(targetUri, unitIdentifiers){
     if(!targetUri) return false;
     const jsonLdObject = await this.getJsonLdObject();
     const existingMappingIndex = jsonLdObject.mappings.findIndex(mapping => mapping.target.uri === targetUri);
     if (existingMappingIndex === -1) return false;
-    const target = jsonLdObject.mappings[existingMappingIndex].target
     const source = jsonLdObject.mappings[existingMappingIndex].source
-    if (target.value_mapping) {
+    const target = jsonLdObject.mappings[existingMappingIndex].target
+
+    if(target.type && (target.type.toLowerCase() === CATEGORICAL || target.type.toLowerCase() === BOOLEAN)){
+      if (!target.value_mapping) return false;
       let valueMapped = false;
-      for(const valueClass of valueClasses){
+      for(const unitIdentifier of unitIdentifiers){
         valueMapped = false;
         for (const valueMapping of target.value_mapping) {  
-          if(valueClass === valueMapping.target.uri){
+          if(unitIdentifier === valueMapping.target.uri){
             valueMapped = true;
           }
         }
       }
       if (!valueMapped) return false;
     }
-    if(target.type.toLowerCase() === FLOAT || target.type.toLowerCase() === INTEGER){
+    if(target.type && (target.type.toLowerCase() === FLOAT || target.type.toLowerCase() === INTEGER)){
       if(!source || !source.unit){
+        return false;
+      }
+    }
+    if(target.type && target.type.toLowerCase() === DATE){
+      if(!source || !source.dateTimeFormat){
         return false;
       }
     }
