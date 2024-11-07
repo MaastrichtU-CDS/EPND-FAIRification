@@ -9,7 +9,7 @@ const HowTo = () => {
           <Card.Body>
             <Card.Text>
                 <h2 className="mt-3 mb-2">Adding a Terminology Sheet</h2>
-                <p className="mb-3">In the left pane, copy a link to a google sheet containing the terminology to which your data will be mapped. The current version assumes a rigid structure identical to <a href="https://github.com/MaastrichtU-CDS/EPND-FAIRification/blob/main/EPNDCS1Terminology.xls" className="text-primary">this sheet</a>. You can use the url from your address bar or the share link from the google sheet, just make sure to include the 'gid=xxxxx' part of the link. This refers to the sheet/tab to be used inside the spreadsheet. If not provided, the default gid=0 will be used.</p>
+                <p className="mb-3">In the left pane, copy a the spreadsheet ID and sheet ID (gid) to a google sheet containing the terminology to which your data will be mapped. The current version assumes a rigid structure identical to <a href="https://github.com/MaastrichtU-CDS/EPND-FAIRification/blob/fairnotator-1.0/test_definition.csv" className="text-primary">this sheet</a>.</p>
                 <h2 className="mt-3 mb-2">Providing Local Data</h2>
                 <p className="mb-3">Either drag and drop or click and select a CSV on your local device. Columns can be added or removed as needed. The 'possible values' inputs are used for mapping categorical values in your data.</p>
                 <h2 className="mt-3 mb-2">Mapping</h2>
