@@ -1,16 +1,16 @@
 {
   "files": {
-    "main.css": "/EPND-FAIRification/static/css/main.698a7cf3.css",
-    "main.js": "/EPND-FAIRification/static/js/main.bc7952a2.js",
+    "main.css": "/EPND-FAIRification/static/css/main.a9535248.css",
+    "main.js": "/EPND-FAIRification/static/js/main.56ffeef8.js",
     "static/js/453.d855a71b.chunk.js": "/EPND-FAIRification/static/js/453.d855a71b.chunk.js",
     "static/media/logo.svg": "/EPND-FAIRification/static/media/logo.44705d7ee7d2015aeeca794b79750c6b.svg",
     "index.html": "/EPND-FAIRification/index.html",
-    "main.698a7cf3.css.map": "/EPND-FAIRification/static/css/main.698a7cf3.css.map",
-    "main.bc7952a2.js.map": "/EPND-FAIRification/static/js/main.bc7952a2.js.map",
+    "main.a9535248.css.map": "/EPND-FAIRification/static/css/main.a9535248.css.map",
+    "main.56ffeef8.js.map": "/EPND-FAIRification/static/js/main.56ffeef8.js.map",
     "453.d855a71b.chunk.js.map": "/EPND-FAIRification/static/js/453.d855a71b.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.698a7cf3.css",
-    "static/js/main.bc7952a2.js"
+    "static/css/main.a9535248.css",
+    "static/js/main.56ffeef8.js"
   ]
 }
