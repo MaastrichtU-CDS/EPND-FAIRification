@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.26.1 (HEAD)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: rdf-store
+  name: rdf-store
+spec:
+  ports:
+    - name: "7200"
+      port: 7200
+      targetPort: 7200
+  selector:
+    io.kompose.service: rdf-store
+status:
+  loadBalancer: {}
